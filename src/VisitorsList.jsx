@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Search, Settings, ChevronDown, Edit, Trash2, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Layout from './components/Layout';
 
 const VisitorsList = () => {
+  const navigate = useNavigate();
   const [visitors] = useState([
     { id: 1, name: 'John Doe', email: 'johndoe@gmail.com', visits: 36, shows: 12, lastVisit: '05/21/2025', membership: 'Gold Membership' },
     { id: 2, name: 'Jane Smith', email: 'janesmith@gmail.com', visits: 49, shows: 15, lastVisit: '06/15/2025', membership: 'Platinum Membership' },
@@ -51,6 +53,10 @@ const VisitorsList = () => {
     }
     setSelectedVisitors(newSelected);
     setSelectAll(newSelected.size === visitors.length);
+  };
+
+  const handleVisitorClick = (id) => {
+    navigate(`/visitors/${id}`);
   };
 
   return (
@@ -145,7 +151,12 @@ const VisitorsList = () => {
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{visitor.name}</div>
+                    <button
+                      onClick={() => handleVisitorClick(visitor.id)}
+                      className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                    >
+                      {visitor.name}
+                    </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">{visitor.email}</div>
