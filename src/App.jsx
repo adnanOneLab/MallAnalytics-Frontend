@@ -1,7 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import VisitorsList from './VisitorsList';
-import Dashboard from './components/Dashboard';
-import VisitorsProfile from './components/VisitorsProfile';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import VisitorsList from "./pages/visitors/VisitorsList";
+import Dashboard from "./pages/dashboard/Dashboard";
+import RegistrationForm from "./pages/registration/RegistrationForm";
+import VisitorsProfile from './pages/visitors/VisitorsProfile';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/visitors" element={<VisitorsList />} />
         <Route path="/visitors/:id" element={<VisitorsProfile />} />
+        <Route path="/register-user" element={<RegistrationForm />} />
       </Routes>
     </Router>
   );
