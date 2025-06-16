@@ -218,16 +218,17 @@ const RegistrationForm = () => {
             <PhotoCapture onPhotoAccepted={handlePhotoAccepted} />
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full bg-[#192A3A] text-white p-3 rounded-lg font-medium transition-colors ${
-              isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#1a3a4f]'
-            }`}
-            
-          >
-            {isSubmitting ? 'Registering...' : 'Register'}
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`w-full bg-[#192A3A] text-white p-3 rounded-lg font-medium transition-colors ${
+                isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#1a3a4f]'
+              }`}
+            >
+              {isSubmitting ? 'Registering...' : 'Register'}
+            </button>
+          </div>
         </form>
       </div>
     </div>
