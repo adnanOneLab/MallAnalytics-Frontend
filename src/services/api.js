@@ -1,27 +1,12 @@
 // src/services/api.js
 import axios from 'axios';
 
-// Get the current hostname and use it for the API URL if VITE_API_URL is not set
-const getBaseUrl = () => {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
-  
-  // In development, always use HTTP
-  const isDevelopment = import.meta.env.DEV;
-  const protocol = isDevelopment ? 'http' : window.location.protocol;
-  const hostname = window.location.hostname;
-  const port = '8000'; // Your backend port
-  
-  // For local development, use localhost
-  const apiHost = isDevelopment ? 'localhost' : hostname;
-  
-  return `${protocol}//${apiHost}:${port}/api`;
-};
+// Hardcoded API URL for development
+const BASE_URL = 'http://localhost:8000/api';
 
 const api = axios.create({
-  baseURL: getBaseUrl(),
-  timeout: 30000, // Increased timeout to 30 seconds for photo uploads
+  baseURL: BASE_URL,
+  timeout: 30000, // 30 seconds timeout for photo uploads
   headers: {
     'Content-Type': 'application/json',
   },
