@@ -14,7 +14,7 @@ const RegistrationForm = () => {
     date_of_birth: null,
     address: '',
     cell_phone: '',
-    profiling_questions: []
+    interests: []
   });
   const [showCalendar, setShowCalendar] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -37,9 +37,9 @@ const RegistrationForm = () => {
   const handleInterestChange = (interest) => {
     setFormData(prev => ({
       ...prev,
-      profiling_questions: prev.profiling_questions.includes(interest)
-        ? prev.profiling_questions.filter(i => i !== interest)
-        : [...prev.profiling_questions, interest]
+      interests: prev.interests.includes(interest)
+        ? prev.interests.filter(i => i !== interest)
+        : [...prev.interests, interest]
     }));
   };
 
@@ -184,7 +184,7 @@ const RegistrationForm = () => {
                   <label key={interest} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
                     <input
                       type="checkbox"
-                      checked={formData.profiling_questions.includes(interest)}
+                      checked={formData.interests.includes(interest)}
                       onChange={() => handleInterestChange(interest)}
                       className="form-checkbox h-4 w-4 text-blue-600 rounded"
                     />

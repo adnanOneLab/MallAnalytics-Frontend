@@ -1,8 +1,8 @@
 // src/services/api.js
 import axios from 'axios';
 
-// Hardcoded API URL for development
-const BASE_URL = 'http://localhost:8000/api';
+// Use local IP address for development to allow mobile access
+const BASE_URL = 'http://192.168.110.70:8000/api';
 
 const api = axios.create({
   baseURL: BASE_URL,

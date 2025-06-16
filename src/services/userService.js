@@ -21,7 +21,7 @@ export const registerUser = async (userData, photoFile) => {
       fileType: photoFile.type
     });
 
-    const photoResponse = await api.post('/upload-photo/', photoFormData, {
+    const photoResponse = await api.post('/upload-photo-local/', photoFormData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -43,13 +43,56 @@ export const registerUser = async (userData, photoFile) => {
       picture_url: photoResponse.data.photo_url,
     };
 
+    // Remove interests from user data as we'll handle them separately
+    const { interests, ...userDataWithoutInterests } = userRegistrationData;
+
     console.log('Registering user with data:', {
-      ...userRegistrationData,
+      ...userDataWithoutInterests,
       picture_url: 'URL received from server' // Don't log the actual URL
     });
 
-    const userResponse = await api.post('/users/create/', userRegistrationData);
+    const userResponse = await api.post('/users-create/', userDataWithoutInterests);
     console.log('User registered successfully:', userResponse.data);
+
+    // Create user interests if any were selected
+    if (interests && interests.length > 0) {
+      const user_id = userResponse.data.user_id;
+      console.log('Creating user interests:', interests);
+
+      // Create each interest and link it to the user
+      for (const interestName of interests) {
+        try {
+          // First, create the interest if it doesn't exist
+          const interestResponse = await api.post('/interests/', { name: interestName });
+          const interest_id = interestResponse.data.interest_id;
+
+          // Then, link the interest to the user
+          await api.post('/user-interests/', {
+            user_id,
+            interest_id,
+            source: 'registration'
+          });
+        } catch (error) {
+          // If interest already exists, just link it to the user
+          if (error.response?.status === 400 && error.response?.data?.detail?.includes('already exists')) {
+            // Get the existing interest ID
+            const interestsResponse = await api.get('/interests/');
+            const existingInterest = interestsResponse.data.find(i => i.name === interestName);
+            if (existingInterest) {
+              await api.post('/user-interests/', {
+                user_id,
+                interest_id: existingInterest.interest_id,
+                source: 'registration'
+              });
+            }
+          } else {
+            console.error('Error creating user interest:', error);
+            // Continue with other interests even if one fails
+          }
+        }
+      }
+    }
+
     return userResponse.data;
   } catch (error) {
     console.error('Registration error:', {

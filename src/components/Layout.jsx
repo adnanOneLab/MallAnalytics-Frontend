@@ -33,7 +33,7 @@ const Layout = ({ children }) => {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 w-full lg:ml-64">
+      <div className="flex-1 w-full">
         <div className="p-4 lg:p-6">
           {children}
         </div>
