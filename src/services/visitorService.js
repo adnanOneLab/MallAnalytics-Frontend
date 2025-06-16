@@ -2,7 +2,7 @@
 import api from './api';
 
 export const fetchVisitors = async () => {
-  const response = await api.get('/visitors/');
+  const response = await api.get('/users/');
   return response.data;
 };
 

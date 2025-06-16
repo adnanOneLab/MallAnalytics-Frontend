@@ -105,12 +105,12 @@ export const analyzeFaceImage = async (imageElement) => {
       details.push("Eyes are not clearly visible. Please remove sunglasses if wearing any");
     }
 
-    // Check expression
-    const isNeutral = face.expressions.neutral > 0.5;
-    if (!isNeutral) {
-      passed = false;
-      details.push("Please maintain a neutral expression");
-    }
+    // // Check expression
+    // const isNeutral = face.expressions.neutral > 0.5;
+    // if (!isNeutral) {
+    //   passed = false;
+    //   details.push("Please maintain a neutral expression");
+    // }
 
     return {
       passed,

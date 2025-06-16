@@ -206,6 +206,7 @@ const RegistrationForm = () => {
             className={`w-full bg-[#192A3A] text-white py-3 rounded-lg font-medium transition-colors ${
               isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#1a3a4f]'
             }`}
+            
           >
             {isSubmitting ? 'Registering...' : 'Register'}
           </button>
