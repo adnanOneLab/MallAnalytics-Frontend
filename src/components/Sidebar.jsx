@@ -6,7 +6,7 @@ const Sidebar = ({ onClose }) => {
   const location = useLocation();
 
   return (
-    <div className="w-64 h-full bg-[#1a1a1a] flex-shrink-0 flex flex-col">
+    <div className="w-60 h-full bg-[#1a1a1a] flex-shrink-0 flex flex-col">
       {/* Logo and Close Button */}
       <div className="p-6 border-b border-gray-800 flex items-center justify-between">
         <div className="flex items-center space-x-2">

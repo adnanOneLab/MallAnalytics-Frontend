@@ -6,6 +6,7 @@ import { loadFaceDetectionModels } from '../../utils/faceDetection';
 import PhotoCapture from './PhotoCapture';
 import SuccessModal from '../../components/SuccessModal';
 import { registerUser } from '../../services/userService';
+import api from '../../services/api';
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -16,15 +17,30 @@ const RegistrationForm = () => {
     cell_phone: '',
     interests: []
   });
+  const [availableInterests, setAvailableInterests] = useState([]);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [photoFile, setPhotoFile] = useState(null);
+  const [loadingInterests, setLoadingInterests] = useState(true);
 
   useEffect(() => {
     loadFaceDetectionModels();
+    fetchInterests();
   }, []);
+
+  const fetchInterests = async () => {
+    try {
+      const response = await api.get('/interests/');
+      setAvailableInterests(response.data);
+    } catch (error) {
+      console.error('Error fetching interests:', error);
+      setError('Failed to load interests. Please try again later.');
+    } finally {
+      setLoadingInterests(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -178,21 +194,23 @@ const RegistrationForm = () => {
 
           <div>
             <label className="block text-sm font-medium mb-2">Interests</label>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              {["Sports", "Clothing", "Food", "Fitness", "Electronics", "Books", "Beauty", "Home"].map(
-                (interest) => (
-                  <label key={interest} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
+            {loadingInterests ? (
+              <div className="text-sm text-gray-500">Loading interests...</div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                {availableInterests.map((interest) => (
+                  <label key={interest.interest_id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
                     <input
                       type="checkbox"
-                      checked={formData.interests.includes(interest)}
-                      onChange={() => handleInterestChange(interest)}
+                      checked={formData.interests.includes(interest.name)}
+                      onChange={() => handleInterestChange(interest.name)}
                       className="form-checkbox h-4 w-4 text-blue-600 rounded"
                     />
-                    <span>{interest}</span>
+                    <span>{interest.name}</span>
                   </label>
-                )
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div>
@@ -203,7 +221,7 @@ const RegistrationForm = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full bg-[#192A3A] text-white py-3 rounded-lg font-medium transition-colors ${
+            className={`w-full bg-[#192A3A] text-white p-3 rounded-lg font-medium transition-colors ${
               isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#1a3a4f]'
             }`}
             

@@ -48,7 +48,7 @@ function App() {
           }
         />
 
-        <Route path="/visitors/:id" element={<VisitorsProfile />} />
+        <Route path="/visitor/:id" element={<VisitorsProfile />} />
         <Route
           path="/register-user"
           element={
