@@ -1,7 +1,13 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import VisitorsList from "./VisitorsList";
-import Dashboard from "./components/Dashboard";
-import RegistrationForm from "./RegistrationForm";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import VisitorsList from "./pages/visitors/VisitorsList";
+import Dashboard from "./pages/dashboard/Dashboard";
+import RegistrationForm from "./pages/registration/RegistrationForm";
+import VisitorsProfile from "./pages/visitors/VisitorsProfile";
 
 // Sample user object for now
 const user = {
@@ -21,7 +27,10 @@ function App() {
         <Route
           path="/"
           element={
-            <ProtectedRoute isAllowed={user.isSubscribed} redirectTo="/register-user">
+            <ProtectedRoute
+              isAllowed={user.isSubscribed}
+              redirectTo="/register-user"
+            >
               <Dashboard />
             </ProtectedRoute>
           }
@@ -30,16 +39,20 @@ function App() {
         <Route
           path="/visitors"
           element={
-            <ProtectedRoute isAllowed={user.isSubscribed} redirectTo="/register-user">
+            <ProtectedRoute
+              isAllowed={user.isSubscribed}
+              redirectTo="/register-user"
+            >
               <VisitorsList />
             </ProtectedRoute>
           }
         />
 
+        <Route path="/visitors/:id" element={<VisitorsProfile />} />
         <Route
           path="/register-user"
           element={
-            <ProtectedRoute isAllowed={!user.isSubscribed} redirectTo="/">
+            <ProtectedRoute isAllowed={user.isSubscribed} redirectTo="/">
               <RegistrationForm />
             </ProtectedRoute>
           }

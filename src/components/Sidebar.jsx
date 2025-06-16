@@ -1,26 +1,34 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { User, LogOut, LayoutDashboard, Users } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, Users, X } from 'lucide-react';
 
-const Sidebar = () => {
+const Sidebar = ({ onClose }) => {
   const location = useLocation();
 
   return (
-    <div className="w-64 bg-[#1a1a1a] flex-shrink-0 flex flex-col">
-      {/* Logo */}
-      <div className="p-6 border-b border-gray-800">
+    <div className="w-64 h-full bg-[#1a1a1a] flex-shrink-0 flex flex-col">
+      {/* Logo and Close Button */}
+      <div className="p-6 border-b border-gray-800 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
             <span className="text-black font-bold text-sm">W</span>
           </div>
           <span className="font-semibold text-lg text-white">WISE Video</span>
         </div>
+        {/* Close button for mobile */}
+        <button
+          onClick={onClose}
+          className="lg:hidden p-1 text-gray-400 hover:text-white"
+        >
+          <X className="w-6 h-6" />
+        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         <Link
           to="/"
+          onClick={onClose}
           className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
             location.pathname === '/'
               ? 'bg-black/50 text-white'
@@ -32,6 +40,7 @@ const Sidebar = () => {
         </Link>
         <Link
           to="/visitors"
+          onClick={onClose}
           className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
             location.pathname === '/visitors'
               ? 'bg-black/50 text-white'
@@ -40,6 +49,18 @@ const Sidebar = () => {
         >
           <Users className="w-5 h-5" />
           <span>Visitors</span>
+        </Link>
+        <Link
+          to="/register-user"
+          onClick={onClose}
+          className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+            location.pathname === '/register-user'
+              ? 'bg-black/50 text-white'
+              : 'text-gray-400 hover:text-white hover:bg-black/50'
+          }`}
+        >
+          <User className="w-5 h-5" />
+          <span>Register User</span>
         </Link>
       </nav>
 
@@ -51,7 +72,10 @@ const Sidebar = () => {
           </div>
           <span className="text-gray-300">Admin User</span>
         </div>
-        <button className="flex items-center space-x-3 text-gray-400 hover:text-white px-3 py-2 rounded-lg w-full hover:bg-black/50 transition-colors">
+        <button 
+          onClick={onClose}
+          className="flex items-center space-x-3 text-gray-400 hover:text-white px-3 py-2 rounded-lg w-full hover:bg-black/50 transition-colors"
+        >
           <LogOut className="w-5 h-5" />
           <span>Logout</span>
         </button>
