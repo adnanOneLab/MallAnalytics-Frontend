@@ -76,8 +76,8 @@ const VisitorsList = () => {
     setSelectAll(newSelected.size === visitors.length);
   };
 
-  const handleVisitorClick = (id) => {
-    navigate(`/visitors/${id}`);
+  const handleVisitorClick = (user_id) => {
+    navigate(`/visitors/${user_id}`);
   };
 
   return (
@@ -162,18 +162,18 @@ const VisitorsList = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {visitors.map((visitor) => (
-                <tr key={visitor.id} className="hover:bg-gray-50">
+                <tr key={visitor.user_id} className="hover:bg-gray-50">
                   <td className="w-12 px-6 py-4 whitespace-nowrap">
                     <input
                       type="checkbox"
-                      checked={selectedVisitors.has(visitor.id)}
-                      onChange={() => handleSelectVisitor(visitor.id)}
+                      checked={selectedVisitors.has(visitor.user_id)}
+                      onChange={() => handleSelectVisitor(visitor.user_id)}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
-                      onClick={() => handleVisitorClick(visitor.id)}
+                      onClick={() => handleVisitorClick(visitor.user_id)}
                       className="text-sm font-medium text-blue-600 hover:text-blue-800"
                     >
                       {visitor.name}

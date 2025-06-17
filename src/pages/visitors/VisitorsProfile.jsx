@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { Search, Settings, Download, ArrowUpDown } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const VisitorDetail = () => {
+  const navigate = useNavigate();
+  const { user_id } = useParams();
+  
   const [visitData] = useState([
     { date: '05/21/2025', timeEntry: '11:26:53 am', timeExit: '4:56:26 pm', storesVisited: '03', timeSpent: '5 hours 30 minutes', interest: 'Sports Clothing' },
     { date: '05/22/2025', timeEntry: '09:15:44 am', timeExit: '12:30:12 pm', storesVisited: '02', timeSpent: '3 hours 15 minutes', interest: 'Outdoor Gear' },
@@ -30,6 +34,9 @@ const VisitorDetail = () => {
     monthlyFrequency: 6
   };
 
+  const handleVisitorClick = (visit_id) => {
+    navigate(`/visits/${visit_id}`);
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -80,7 +87,7 @@ const VisitorDetail = () => {
                 <div className="grid grid-cols-4 gap-x-8 gap-y-4">
                   <div>
                     <div className="text-sm text-gray-500 mb-1">Visitor ID</div>
-                    <div className="font-medium text-gray-900">{visitorInfo.id}</div>
+                    <div className="font-medium text-gray-900">{user_id}</div>
                   </div>
                   <div>
                     <div className="text-sm text-gray-500 mb-1">Name</div>
@@ -212,7 +219,7 @@ const VisitorDetail = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {visitData.map((visit, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                  <tr key={index} className="hover:bg-gray-50" onClick={() => handleVisitorClick(visit.id)}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {visit.date}
                     </td>
