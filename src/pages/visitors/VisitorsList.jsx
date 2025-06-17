@@ -6,7 +6,7 @@ import { fetchVisitors } from '../../services/visitorService';
 
 const VisitorsList = () => {
   const navigate = useNavigate();
-  
+
   const [visitors, setVisitors] = useState([]);
   const [loading, setLoading] = useState(true);
 
