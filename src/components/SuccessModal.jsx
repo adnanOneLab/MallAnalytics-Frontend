@@ -54,7 +54,7 @@ const SuccessModal = ({ onClose }) => {
             
             <p className="text-sm sm:text-base text-gray-600 leading-relaxed px-2">
             Thank you for registering with us. Your account has been created successfully. 
-            You can now enjoy personalized shopping experiences and track your mall visits.
+            You can now enjoy personalized shopping experiences and promotional offers.
             </p>
           </div>
 
