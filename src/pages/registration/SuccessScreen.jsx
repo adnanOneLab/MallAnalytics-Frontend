@@ -1,10 +1,29 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 
-const SuccessModal = ({ onClose }) => {
+const SuccessScreen = () => {
+  const navigate = useNavigate();
+  const successRef = useRef(null);
+
+  useEffect(() => {
+    // Scroll to the center of the success screen when component mounts
+    if (successRef.current) {
+      successRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center'
+      });
+    }
+  }, []);
+
+  const handleBackToHome = () => {
+    navigate('/');
+  };
+
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-xs mx-auto text-center overflow-hidden">
+    <div className="min-h-screen bg-black bg-opacity-50 flex items-center justify-center p-4">
+      <div ref={successRef} className="bg-white rounded-xl shadow-2xl w-full max-w-xs mx-auto text-center overflow-hidden">
         {/* Content Container */}
         <div className="p-6 sm:p-8">
           {/* Animated Success Icon with Floating Dots */}
@@ -59,16 +78,18 @@ const SuccessModal = ({ onClose }) => {
           </div>
 
           {/* OK Button */}
-          <button
-            className="w-full bg-gray-800 text-white px-6 py-3 sm:py-4 rounded-lg font-medium hover:bg-gray-900 active:bg-gray-700 transition-all duration-200 text-sm sm:text-base min-h-[48px] focus:ring-2 focus:ring-gray-800 focus:ring-offset-2"
-            onClick={onClose}
-          >
-            OK
-          </button>
+          <div className='flex justify-center'>
+            <button
+                className="w-full bg-gray-800 text-white px-6 py-3 sm:py-4 rounded-lg font-medium hover:bg-gray-900 active:bg-gray-700 transition-all duration-200 text-sm sm:text-base min-h-[48px] focus:ring-2 focus:ring-gray-800 focus:ring-offset-2"
+                onClick={handleBackToHome}
+            >
+                OK
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default SuccessModal; 
+export default SuccessScreen; 

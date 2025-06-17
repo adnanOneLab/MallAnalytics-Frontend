@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../../assets/calendarStyles.css";
 import { loadFaceDetectionModels } from '../../utils/faceDetection';
 import PhotoCapture from './PhotoCapture';
-import SuccessModal from '../../components/SuccessModal';
 import { registerUser } from '../../services/userService';
 import api from '../../services/api';
 
@@ -19,12 +19,14 @@ const RegistrationForm = () => {
   });
   const [availableInterests, setAvailableInterests] = useState([]);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [photoFile, setPhotoFile] = useState(null);
   const [loadingInterests, setLoadingInterests] = useState(true);
+  const [photoKey, setPhotoKey] = useState(0);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadFaceDetectionModels();
@@ -75,6 +77,13 @@ const RegistrationForm = () => {
 
   const handlePhotoAccepted = (url, file) => {
     setPhotoFile(file);
+    // Clear photo error when photo is selected
+    if (formErrors.photo) {
+      setFormErrors(prev => ({
+        ...prev,
+        photo: null
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -91,6 +100,14 @@ const RegistrationForm = () => {
       if (!photoFile) missingFields.push('Photo');
 
       if (missingFields.length > 0) {
+        // Set field-specific errors for missing fields
+        const fieldErrors = {};
+        if (!formData.name) fieldErrors.name = ['Name is required'];
+        if (!formData.email) fieldErrors.email = ['Email is required'];
+        if (!formData.date_of_birth) fieldErrors.date_of_birth = ['Date of birth is required'];
+        if (!photoFile) fieldErrors.photo = ['Photo is required'];
+        
+        setFormErrors(fieldErrors);
         throw new Error(`Please fill in all required fields: ${missingFields.join(', ')}`);
       }
 
@@ -109,6 +126,8 @@ const RegistrationForm = () => {
       console.log('Submitting registration with data:', userData);
       const response = await registerUser(userData, photoFile);
       console.log('Registration successful:', response);
+      
+      // Reset form data
       setFormData({
         name: '',
         email: '',
@@ -116,8 +135,18 @@ const RegistrationForm = () => {
         address: '',
         cell_phone: '',
         interests: []
-      })
-      setShowSuccessModal(true);
+      });
+      
+      // Reset photo and force PhotoCapture re-render
+      setPhotoFile(null);
+      setPhotoKey(prev => prev + 1);
+      
+      // Clear any errors
+      setError(null);
+      setFormErrors({});
+      
+      // Navigate to success page with user ID
+      navigate(`/registration-success/${response.user_id}`);
     } catch (error) {
       console.error('Registration error:', error);
     
@@ -146,10 +175,6 @@ const RegistrationForm = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 relative">
-      {showSuccessModal && (
-        <SuccessModal onClose={() => setShowSuccessModal(false)} />
-      )}
-
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg h-[90vh] overflow-y-auto p-6">
         <h2 className="text-xl font-semibold mb-3 text-center">Registration</h2>
         <hr className="w-full border-t border-gray-300 mb-6" />
@@ -209,7 +234,7 @@ const RegistrationForm = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Phone Number</label>
+            <label className="block text-sm font-medium mb-2">Phone Number *</label>
             <input
               type="tel"
               name="cell_phone"
@@ -217,6 +242,7 @@ const RegistrationForm = () => {
               onChange={handleInputChange}
               placeholder="Enter phone number"
               className="w-full px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
             />
             {formErrors.cell_phone && (
               <p className="text-sm text-red-600 mt-1 flex items-center space-x-1">
@@ -229,7 +255,7 @@ const RegistrationForm = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Address</label>
+            <label className="block text-sm font-medium mb-2">Address *</label>
             <input
               type="text"
               name="address"
@@ -237,6 +263,7 @@ const RegistrationForm = () => {
               onChange={handleInputChange}
               placeholder="Enter your address"
               className="w-full px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
             />
           </div>
 
@@ -300,7 +327,19 @@ const RegistrationForm = () => {
 
           <div>
             <label className="block text-sm font-medium mb-2">Photo *</label>
-            <PhotoCapture onPhotoAccepted={handlePhotoAccepted} />
+            <PhotoCapture 
+              key={photoKey} 
+              onPhotoAccepted={handlePhotoAccepted} 
+              photoError={formErrors.photo ? formErrors.photo[0] : null}
+            />
+            {formErrors.photo && (
+              <p className="text-sm text-red-600 mt-1 flex items-center space-x-1">
+                <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span>{formErrors.photo[0]}</span>
+              </p>
+            )}
           </div>
 
           <div className="flex justify-center">

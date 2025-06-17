@@ -7,6 +7,7 @@ import {
 import VisitorsList from "./pages/visitors/VisitorsList";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RegistrationForm from "./pages/registration/RegistrationForm";
+import SuccessScreen from "./pages/registration/SuccessScreen";
 import VisitorsProfile from "./pages/visitors/VisitorsProfile";
 import VisitorMovements from "./pages/visitors/VisitorMovements";
 
@@ -58,6 +59,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/registration-success" element={<SuccessScreen />} />
+        <Route path="/registration-success/:userId" element={<SuccessScreen />} />
         <Route path="/visits/:visit_id" element={<VisitorMovements />} />
       </Routes>
     </Router>
