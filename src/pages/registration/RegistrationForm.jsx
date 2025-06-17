@@ -95,6 +95,14 @@ const RegistrationForm = () => {
       console.log('Submitting registration with data:', userData);
       const response = await registerUser(userData, photoFile);
       console.log('Registration successful:', response);
+      setFormData({
+        name: '',
+        email: '',
+        date_of_birth: null,
+        address: '',
+        cell_phone: '',
+        interests: []
+      })
       setShowSuccessModal(true);
     } catch (error) {
       console.error('Registration error:', error);
@@ -171,7 +179,7 @@ const RegistrationForm = () => {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium mb-2">Date of Birth *</label>
             <div
               onClick={() => setShowCalendar(!showCalendar)}
@@ -180,13 +188,14 @@ const RegistrationForm = () => {
               {formData.date_of_birth ? formData.date_of_birth.toDateString() : "Select date of birth"}
             </div>
             {showCalendar && (
-              <div className="mt-2 absolute z-10 bg-white p-2 rounded-lg shadow-lg">
+              <div className="absolute top-full left-0 mt-2 z-20 bg-white p-4 rounded-xl shadow-2xl border border-gray-100 min-w-[280px]">
                 <Calendar
                   onChange={(date) => {
                     setFormData(prev => ({ ...prev, date_of_birth: date }));
                     setShowCalendar(false);
                   }}
                   value={formData.date_of_birth}
+                  className="modern-calendar"
                 />
               </div>
             )}

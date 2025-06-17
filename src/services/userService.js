@@ -59,36 +59,26 @@ export const registerUser = async (userData, photoFile) => {
       const user_id = userResponse.data.user_id;
       console.log('Creating user interests:', interests);
 
-      // Create each interest and link it to the user
+      // Get all available interests from the backend
+      const interestsResponse = await api.get('/interests/');
+      const availableInterests = interestsResponse.data;
+
+      // Link selected interests to the user
       for (const interestName of interests) {
         try {
-          // First, create the interest if it doesn't exist
-          const interestResponse = await api.post('/interests/', { name: interestName });
-          const interest_id = interestResponse.data.interest_id;
-
-          // Then, link the interest to the user
-          await api.post('/user-interests/', {
-            user_id,
-            interest_id,
-            source: 'registration'
-          });
-        } catch (error) {
-          // If interest already exists, just link it to the user
-          if (error.response?.status === 400 && error.response?.data?.detail?.includes('already exists')) {
-            // Get the existing interest ID
-            const interestsResponse = await api.get('/interests/');
-            const existingInterest = interestsResponse.data.find(i => i.name === interestName);
-            if (existingInterest) {
-              await api.post('/user-interests/', {
-                user_id,
-                interest_id: existingInterest.interest_id,
-                source: 'registration'
-              });
-            }
+          const existingInterest = availableInterests.find(i => i.name === interestName);
+          if (existingInterest) {
+            await api.post('/user-interests/', {
+              user_id,
+              interest_id: existingInterest.interest_id,
+              source: 'registration'
+            });
           } else {
-            console.error('Error creating user interest:', error);
-            // Continue with other interests even if one fails
+            console.warn(`Interest "${interestName}" not found in available interests`);
           }
+        } catch (error) {
+          console.error('Error linking user interest:', error);
+          // Continue with other interests even if one fails
         }
       }
     }
