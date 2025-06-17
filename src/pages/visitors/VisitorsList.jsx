@@ -44,8 +44,6 @@ const VisitorsList = () => {
     loadVisitors();
   }, []);
 
-  if (loading) return <p>Loading visitors...</p>;
-
   const getMembershipColor = (membership) => {
     const colors = {
       'Gold Membership': 'bg-yellow-100 text-yellow-800',
@@ -60,7 +58,7 @@ const VisitorsList = () => {
     if (selectAll) {
       setSelectedVisitors(new Set());
     } else {
-      setSelectedVisitors(new Set(visitors.map(v => v.id)));
+      setSelectedVisitors(new Set(visitors.map(v => v.user_id)));
     }
     setSelectAll(!selectAll);
   };
@@ -161,53 +159,61 @@ const VisitorsList = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {visitors.map((visitor) => (
-                <tr key={visitor.user_id} className="hover:bg-gray-50">
-                  <td className="w-12 px-6 py-4 whitespace-nowrap">
-                    <input
-                      type="checkbox"
-                      checked={selectedVisitors.has(visitor.user_id)}
-                      onChange={() => handleSelectVisitor(visitor.user_id)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleVisitorClick(visitor.user_id)}
-                      className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                    >
-                      {visitor.name}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{visitor.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {visitor.visits}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {visitor.shows}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {visitor.lastVisit}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2.5 py-0.5 text-xs font-medium rounded-full ${getMembershipColor(visitor.membership)}`}>
-                      {visitor.membership}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex items-center space-x-3">
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button className="text-gray-400 hover:text-red-600">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+              {loading ? (
+                <tr>
+                  <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
+                    Loading visitors...
                   </td>
                 </tr>
-              ))}
+              ) : (
+                visitors.map((visitor) => (
+                  <tr key={visitor.user_id} className="hover:bg-gray-50">
+                    <td className="w-12 px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={selectedVisitors.has(visitor.user_id)}
+                        onChange={() => handleSelectVisitor(visitor.user_id)}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        onClick={() => handleVisitorClick(visitor.user_id)}
+                        className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                      >
+                        {visitor.name}
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{visitor.email}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {visitor.visits}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {visitor.shows}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {visitor.lastVisit}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2.5 py-0.5 text-xs font-medium rounded-full ${getMembershipColor(visitor.membership)}`}>
+                        {visitor.membership}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <div className="flex items-center space-x-3">
+                        <button className="text-gray-400 hover:text-gray-600">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button className="text-gray-400 hover:text-red-600">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

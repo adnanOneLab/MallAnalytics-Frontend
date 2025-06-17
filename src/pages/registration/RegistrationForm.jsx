@@ -6,6 +6,7 @@ import { loadFaceDetectionModels } from '../../utils/faceDetection';
 import PhotoCapture from './PhotoCapture';
 import SuccessModal from '../../components/SuccessModal';
 import { registerUser } from '../../services/userService';
+import api from '../../services/api';
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -14,17 +15,32 @@ const RegistrationForm = () => {
     date_of_birth: null,
     address: '',
     cell_phone: '',
-    profiling_questions: []
+    interests: []
   });
+  const [availableInterests, setAvailableInterests] = useState([]);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [photoFile, setPhotoFile] = useState(null);
+  const [loadingInterests, setLoadingInterests] = useState(true);
 
   useEffect(() => {
     loadFaceDetectionModels();
+    fetchInterests();
   }, []);
+
+  const fetchInterests = async () => {
+    try {
+      const response = await api.get('/interests/');
+      setAvailableInterests(response.data);
+    } catch (error) {
+      console.error('Error fetching interests:', error);
+      setError('Failed to load interests. Please try again later.');
+    } finally {
+      setLoadingInterests(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,9 +53,9 @@ const RegistrationForm = () => {
   const handleInterestChange = (interest) => {
     setFormData(prev => ({
       ...prev,
-      profiling_questions: prev.profiling_questions.includes(interest)
-        ? prev.profiling_questions.filter(i => i !== interest)
-        : [...prev.profiling_questions, interest]
+      interests: prev.interests.includes(interest)
+        ? prev.interests.filter(i => i !== interest)
+        : [...prev.interests, interest]
     }));
   };
 
@@ -79,6 +95,14 @@ const RegistrationForm = () => {
       console.log('Submitting registration with data:', userData);
       const response = await registerUser(userData, photoFile);
       console.log('Registration successful:', response);
+      setFormData({
+        name: '',
+        email: '',
+        date_of_birth: null,
+        address: '',
+        cell_phone: '',
+        interests: []
+      })
       setShowSuccessModal(true);
     } catch (error) {
       console.error('Registration error:', error);
@@ -155,7 +179,7 @@ const RegistrationForm = () => {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium mb-2">Date of Birth *</label>
             <div
               onClick={() => setShowCalendar(!showCalendar)}
@@ -164,13 +188,14 @@ const RegistrationForm = () => {
               {formData.date_of_birth ? formData.date_of_birth.toDateString() : "Select date of birth"}
             </div>
             {showCalendar && (
-              <div className="mt-2 absolute z-10 bg-white p-2 rounded-lg shadow-lg">
+              <div className="absolute top-full left-0 mt-2 z-20 bg-white p-4 rounded-xl shadow-2xl border border-gray-100 min-w-[280px]">
                 <Calendar
                   onChange={(date) => {
                     setFormData(prev => ({ ...prev, date_of_birth: date }));
                     setShowCalendar(false);
                   }}
                   value={formData.date_of_birth}
+                  className="modern-calendar"
                 />
               </div>
             )}
@@ -178,21 +203,23 @@ const RegistrationForm = () => {
 
           <div>
             <label className="block text-sm font-medium mb-2">Interests</label>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              {["Sports", "Clothing", "Food", "Fitness", "Electronics", "Books", "Beauty", "Home"].map(
-                (interest) => (
-                  <label key={interest} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
+            {loadingInterests ? (
+              <div className="text-sm text-gray-500">Loading interests...</div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                {availableInterests.map((interest) => (
+                  <label key={interest.interest_id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
                     <input
                       type="checkbox"
-                      checked={formData.profiling_questions.includes(interest)}
-                      onChange={() => handleInterestChange(interest)}
+                      checked={formData.interests.includes(interest.name)}
+                      onChange={() => handleInterestChange(interest.name)}
                       className="form-checkbox h-4 w-4 text-blue-600 rounded"
                     />
-                    <span>{interest}</span>
+                    <span>{interest.name}</span>
                   </label>
-                )
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div>
@@ -200,16 +227,17 @@ const RegistrationForm = () => {
             <PhotoCapture onPhotoAccepted={handlePhotoAccepted} />
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full bg-[#192A3A] text-white py-3 rounded-lg font-medium transition-colors ${
-              isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#1a3a4f]'
-            }`}
-            
-          >
-            {isSubmitting ? 'Registering...' : 'Register'}
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`w-full bg-[#192A3A] text-white p-3 rounded-lg font-medium transition-colors ${
+                isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#1a3a4f]'
+              }`}
+            >
+              {isSubmitting ? 'Registering...' : 'Register'}
+            </button>
+          </div>
         </form>
       </div>
     </div>

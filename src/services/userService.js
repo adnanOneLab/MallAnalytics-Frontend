@@ -21,7 +21,7 @@ export const registerUser = async (userData, photoFile) => {
       fileType: photoFile.type
     });
 
-    const photoResponse = await api.post('/upload-photo/', photoFormData, {
+    const photoResponse = await api.post('/upload-photo-local/', photoFormData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -43,13 +43,46 @@ export const registerUser = async (userData, photoFile) => {
       picture_url: photoResponse.data.photo_url,
     };
 
+    // Remove interests from user data as we'll handle them separately
+    const { interests, ...userDataWithoutInterests } = userRegistrationData;
+
     console.log('Registering user with data:', {
-      ...userRegistrationData,
+      ...userDataWithoutInterests,
       picture_url: 'URL received from server' // Don't log the actual URL
     });
 
-    const userResponse = await api.post('users-create/', userRegistrationData);
+    const userResponse = await api.post('/users-create/', userDataWithoutInterests);
     console.log('User registered successfully:', userResponse.data);
+
+    // Create user interests if any were selected
+    if (interests && interests.length > 0) {
+      const user_id = userResponse.data.user_id;
+      console.log('Creating user interests:', interests);
+
+      // Get all available interests from the backend
+      const interestsResponse = await api.get('/interests/');
+      const availableInterests = interestsResponse.data;
+
+      // Link selected interests to the user
+      for (const interestName of interests) {
+        try {
+          const existingInterest = availableInterests.find(i => i.name === interestName);
+          if (existingInterest) {
+            await api.post('/user-interests/', {
+              user_id,
+              interest_id: existingInterest.interest_id,
+              source: 'registration'
+            });
+          } else {
+            console.warn(`Interest "${interestName}" not found in available interests`);
+          }
+        } catch (error) {
+          console.error('Error linking user interest:', error);
+          // Continue with other interests even if one fails
+        }
+      }
+    }
+
     return userResponse.data;
   } catch (error) {
     console.error('Registration error:', {
