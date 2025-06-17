@@ -8,6 +8,7 @@ import VisitorsList from "./pages/visitors/VisitorsList";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RegistrationForm from "./pages/registration/RegistrationForm";
 import VisitorsProfile from "./pages/visitors/VisitorsProfile";
+import VisitorMovements from "./pages/visitors/VisitorMovements";
 
 // Sample user object for now
 const user = {
@@ -48,7 +49,7 @@ function App() {
           }
         />
 
-        <Route path="/visitor/:id" element={<VisitorsProfile />} />
+        <Route path="/visitors/:user_id" element={<VisitorsProfile />} />
         <Route
           path="/register-user"
           element={
@@ -57,6 +58,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/visits/:visit_id" element={<VisitorMovements />} />
       </Routes>
     </Router>
   );

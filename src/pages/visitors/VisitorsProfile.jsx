@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { Search, Settings, Download, ArrowUpDown } from 'lucide-react';
 import { fetchVisitorProfile } from '../../services/visitorService';
 
 import Layout from '../../components/Layout';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const VisitorDetail = () => {
-  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user_id } = useParams();
+  
+  // const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [visitorInfo, setVisitorInfo] = useState(null);
@@ -16,7 +19,7 @@ const VisitorDetail = () => {
     const loadVisitorProfile = async () => {
       try {
         setLoading(true);
-        const data = await fetchVisitorProfile(id);
+        const data = await fetchVisitorProfile(user_id);
         setVisitorInfo({
           id: data.id,
           name: data.name,
@@ -47,7 +50,7 @@ const VisitorDetail = () => {
     };
 
     loadVisitorProfile();
-  }, [id]);
+  }, [user_id]);
 
   if (loading) {
     return (
@@ -77,6 +80,9 @@ const VisitorDetail = () => {
     );
   }
 
+  const handleVisitorClick = (visit_id) => {
+    navigate(`/visits/${visit_id}`);
+  };
   return (
     <Layout>
     <div className="min-h-screen bg-gray-50">
@@ -141,7 +147,7 @@ const VisitorDetail = () => {
                 <div className="grid grid-cols-4 gap-x-8 gap-y-4">
                   <div>
                     <div className="text-sm text-gray-500 mb-1">Visitor ID</div>
-                    <div className="font-medium text-gray-900">{visitorInfo.id || '-'}</div>
+                    <div className="font-medium text-gray-900">{user_id}</div>
                   </div>
                   <div>
                     <div className="text-sm text-gray-500 mb-1">Name</div>
@@ -272,36 +278,28 @@ const VisitorDetail = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {visitData.length > 0 ? (
-                  visitData.map((visit, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {visit.date || '-'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {visit.timeEntry || '-'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {visit.timeExit || '-'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {visit.storesVisited || '0'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {visit.timeSpent || '-'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {visit.interest || '-'}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
-                      No visit history available
+                {visitData.map((visit, index) => (
+                  <tr key={index} className="hover:bg-gray-50" onClick={() => handleVisitorClick(visit.id)}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {visit.date}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {visit.timeEntry}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {visit.timeExit}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {visit.storesVisited}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {visit.timeSpent}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {visit.interest}
                     </td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>

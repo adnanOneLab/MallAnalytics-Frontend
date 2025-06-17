@@ -53,3 +53,8 @@ export const fetchVisitorProfile = async (userId) => {
     throw error;
   }
 };
+
+export const fetchMovementsByVisitId=async(visit_id)=>{
+  const response=await api.get(`/movements/${visit_id}/`);
+  return response.data
+}

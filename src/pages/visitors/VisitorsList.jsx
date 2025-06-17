@@ -74,8 +74,8 @@ const VisitorsList = () => {
     setSelectAll(newSelected.size === visitors.length);
   };
 
-  const handleVisitorClick = (id) => {
-    navigate(`/visitor/${id}`);
+  const handleVisitorClick = (user_id) => {
+    navigate(`/visitors/${user_id}`);
   };
 
   return (
