@@ -1,8 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Search, Settings, ChevronDown, Edit, Trash2, User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import Layout from '../../components/Layout';
-import { fetchVisitors } from '../../services/visitorService';
+import React, { useEffect, useState } from "react";
+import {
+  Search,
+  Settings,
+  ChevronDown,
+  Edit,
+  Trash2,
+  User,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import Layout from "../../components/Layout";
+import { fetchVisitors } from "../../services/visitorService";
 
 const VisitorsList = () => {
   const navigate = useNavigate();
@@ -16,10 +23,17 @@ const VisitorsList = () => {
   useEffect(() => {
     const loadVisitors = async () => {
       try {
-        const data = await fetchVisitors();
-        setVisitors(data);
+        const response = await fetchVisitors(); // your API call
+        if (Array.isArray(response)) {
+          setVisitors(response);
+        } else if (response && Array.isArray(response.data)) {
+          setVisitors(response.data);
+        } else {
+          console.error("Unexpected response:", response);
+          setVisitors([]); // fallback
+        }
       } catch (error) {
-        console.error('Failed to fetch visitors:', error);
+        console.error("Failed to fetch visitors:", error);
       } finally {
         setLoading(false);
       }
@@ -30,19 +44,19 @@ const VisitorsList = () => {
 
   const getMembershipColor = (membership) => {
     const colors = {
-      'Gold Membership': 'bg-yellow-100 text-yellow-800',
-      'Platinum Membership': 'bg-purple-100 text-purple-800',
-      'Silver Membership': 'bg-gray-100 text-gray-800',
-      'Bronze Membership': 'bg-orange-100 text-orange-800'
+      "Gold Membership": "bg-yellow-100 text-yellow-800",
+      "Platinum Membership": "bg-purple-100 text-purple-800",
+      "Silver Membership": "bg-gray-100 text-gray-800",
+      "Bronze Membership": "bg-orange-100 text-orange-800",
     };
-    return colors[membership] || 'bg-gray-100 text-gray-800';
+    return colors[membership] || "bg-gray-100 text-gray-800";
   };
 
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedVisitors(new Set());
     } else {
-      setSelectedVisitors(new Set(visitors.map(v => v.user_id)));
+      setSelectedVisitors(new Set(visitors.map((v) => v.user_id)));
     }
     setSelectAll(!selectAll);
   };
@@ -66,7 +80,9 @@ const VisitorsList = () => {
     <Layout>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Visitors List</h1>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+            Visitors List
+          </h1>
           <p className="text-gray-600">3,265 Visits</p>
         </div>
         <div className="flex items-center space-x-4">
@@ -119,25 +135,46 @@ const VisitorsList = () => {
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Name
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Email
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Visits
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Shows
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Last Visit
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Membership
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Actions
                 </th>
               </tr>
@@ -145,7 +182,10 @@ const VisitorsList = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
+                  <td
+                    colSpan="8"
+                    className="px-6 py-8 text-center text-gray-500"
+                  >
                     Loading visitors...
                   </td>
                 </tr>
@@ -169,7 +209,9 @@ const VisitorsList = () => {
                       </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{visitor.email}</div>
+                      <div className="text-sm text-gray-900">
+                        {visitor.email}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {visitor.visits}
@@ -181,7 +223,11 @@ const VisitorsList = () => {
                       {visitor.lastVisit}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2.5 py-0.5 text-xs font-medium rounded-full ${getMembershipColor(visitor.membership)}`}>
+                      <span
+                        className={`inline-flex px-2.5 py-0.5 text-xs font-medium rounded-full ${getMembershipColor(
+                          visitor.membership
+                        )}`}
+                      >
                         {visitor.membership}
                       </span>
                     </td>
