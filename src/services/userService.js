@@ -14,6 +14,13 @@ export const registerUser = async (userData, photoFile) => {
     // First, upload the photo
     const photoFormData = new FormData();
     photoFormData.append('photo', photoFile);
+    
+    // Add user data to the form data for validation
+    Object.keys(userData).forEach(key => {
+      if (userData[key] !== null && userData[key] !== undefined) {
+        photoFormData.append(key, userData[key]);
+      }
+    });
 
     console.log('Starting photo upload...', {
       fileName: photoFile.name,
@@ -21,20 +28,50 @@ export const registerUser = async (userData, photoFile) => {
       fileType: photoFile.type
     });
 
-    const photoResponse = await api.post('/upload-photo-local/', photoFormData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      onUploadProgress: (progressEvent) => {
-        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        console.log(`Upload progress: ${percentCompleted}%`);
-      },
-    });
+    let photoResponse;
+    try {
+      photoResponse = await api.post('/upload-photo-local/', photoFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          console.log(`Upload progress: ${percentCompleted}%`);
+        },
+      });
 
-    console.log('Photo uploaded successfully:', photoResponse.data);
+      console.log('Photo uploaded successfully:', photoResponse.data);
 
-    if (!photoResponse.data.photo_url) {
-      throw new Error('Server did not return a photo URL');
+      if (!photoResponse.data.photo_url) {
+        throw new Error('Server did not return a photo URL');
+      }
+    } catch (photoError) {
+      console.error('Photo upload error:', photoError);
+      
+      // Handle photo upload specific errors
+      if (photoError.response?.status === 400) {
+        const errorData = photoError.response.data;
+        
+        // For validation errors, preserve the original error structure
+        if (errorData.email || errorData.name || errorData.date_of_birth || 
+            errorData.cell_phone || errorData.address || errorData.picture_url) {
+          // Re-throw the original error to preserve the response structure
+          throw photoError;
+        }
+        
+        // Handle other specific errors
+        if (errorData.detail) {
+          throw new Error(errorData.detail);
+        }
+        if (errorData.message) {
+          throw new Error(errorData.message);
+        }
+        
+        throw new Error('Photo upload failed. Please check your information and try again.');
+      }
+      
+      // Re-throw the error to be handled by the main catch block
+      throw photoError;
     }
 
     // Then, register the user with the photo URL
@@ -98,11 +135,77 @@ export const registerUser = async (userData, photoFile) => {
     }
 
     if (error.response?.status === 413) {
-      throw new Error('The photo file is too large. Please choose a smaller image.');
+      throw new Error('The photo file is too large. Please choose a smaller image (maximum 5MB).');
     }
 
     if (error.response?.status === 504) {
       throw new Error('The server took too long to respond. Please try again.');
+    }
+
+    if (error.response?.status === 400) {
+      const errorData = error.response.data;
+      
+      // Handle validation errors
+      if (errorData.name) {
+        throw new Error(`Name error: ${errorData.name.join(', ')}`);
+      }
+      if (errorData.email) {
+        throw new Error(`Email error: ${errorData.email.join(', ')}`);
+      }
+      if (errorData.date_of_birth) {
+        throw new Error(`Date of birth error: ${errorData.date_of_birth.join(', ')}`);
+      }
+      if (errorData.cell_phone) {
+        throw new Error(`Phone number error: ${errorData.cell_phone.join(', ')}`);
+      }
+      if (errorData.address) {
+        throw new Error(`Address error: ${errorData.address.join(', ')}`);
+      }
+      if (errorData.picture_url) {
+        throw new Error(`Photo error: ${errorData.picture_url.join(', ')}`);
+      }
+      
+      // Handle general 400 errors
+      if (errorData.detail) {
+        throw new Error(errorData.detail);
+      }
+      if (errorData.message) {
+        throw new Error(errorData.message);
+      }
+      
+      throw new Error('Please check your information and try again.');
+    }
+
+    if (error.response?.status === 409) {
+      throw new Error('A user with this email already exists. Please use a different email address.');
+    }
+
+    if (error.response?.status === 422) {
+      throw new Error('The provided data is invalid. Please check your information and try again.');
+    }
+
+    if (error.response?.status === 500) {
+      throw new Error('Server error occurred. Please try again later or contact support.');
+    }
+
+    if (error.response?.status === 503) {
+      throw new Error('Service temporarily unavailable. Please try again later.');
+    }
+
+    // Handle photo upload specific errors
+    if (error.message.includes('photo')) {
+      if (error.message.includes('size')) {
+        throw new Error('Photo file is too large. Please choose an image smaller than 5MB.');
+      }
+      if (error.message.includes('format') || error.message.includes('type')) {
+        throw new Error('Invalid photo format. Please use JPG, PNG, or GIF images.');
+      }
+      throw new Error('Photo upload failed. Please try again.');
+    }
+
+    // Handle interest-related errors
+    if (error.message.includes('interest')) {
+      throw new Error('There was an issue saving your interests. Your account was created but interests may not be saved.');
     }
 
     // Throw the error with a user-friendly message

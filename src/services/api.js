@@ -46,6 +46,12 @@ api.interceptors.response.use(
       throw new Error('The server took too long to respond. Please try again.');
     }
 
+    // For validation errors (400), preserve the original error structure
+    if (error.response.status === 400) {
+      // Re-throw the original error to preserve response.data for field-specific errors
+      throw error;
+    }
+
     // Handle other errors
     const errorMessage = error.response.data?.detail || 
                         error.response.data?.message || 

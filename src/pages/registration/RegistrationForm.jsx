@@ -22,6 +22,7 @@ const RegistrationForm = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
   const [photoFile, setPhotoFile] = useState(null);
   const [loadingInterests, setLoadingInterests] = useState(true);
 
@@ -48,6 +49,19 @@ const RegistrationForm = () => {
       ...prev,
       [name]: value
     }));
+    
+    // Clear field-specific error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
+    
+    // Clear general error when user starts typing
+    if (error) {
+      setError(null);
+    }
   };
 
   const handleInterestChange = (interest) => {
@@ -106,11 +120,29 @@ const RegistrationForm = () => {
       setShowSuccessModal(true);
     } catch (error) {
       console.error('Registration error:', error);
-      setError(error.message || 'An unexpected error occurred. Please try again.');
+    
+      // Check if it's a validation error with field-specific errors
+      if (error.response && error.response.data && typeof error.response.data === 'object') {
+        const data = error.response.data;
+        
+        // Set field-specific errors
+        setFormErrors(data);
+        
+        // Also show the first error at the top
+        const firstField = Object.keys(data)[0];
+        const message = Array.isArray(data[firstField]) ? data[firstField][0] : data[firstField];
+        setError(message || 'Validation failed. Please check your input.');
+      } else {
+        // Handle errors thrown by userService (these are regular Error objects with messages)
+        setError(error.message || 'An unexpected error occurred. Please try again.');
+        
+        // Clear any previous field-specific errors
+        setFormErrors({});
+      }
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 relative">
@@ -123,8 +155,13 @@ const RegistrationForm = () => {
         <hr className="w-full border-t border-gray-300 mb-6" />
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
-            {error}
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm font-medium">
+            <div className="flex items-start space-x-2">
+              <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <span>{error}</span>
+            </div>
           </div>
         )}
 
@@ -140,6 +177,14 @@ const RegistrationForm = () => {
               className="w-full px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
+            {formErrors.name && (
+              <p className="text-sm text-red-600 mt-1 flex items-center space-x-1">
+                <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span>{formErrors.name[0]}</span>
+              </p>
+            )}
           </div>
 
           <div>
@@ -153,6 +198,14 @@ const RegistrationForm = () => {
               className="w-full px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
+            {formErrors.email && (
+              <p className="text-sm text-red-600 mt-1 flex items-center space-x-1">
+                <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span>{formErrors.email[0]}</span>
+              </p>
+            )}
           </div>
 
           <div>
@@ -165,6 +218,14 @@ const RegistrationForm = () => {
               placeholder="Enter phone number"
               className="w-full px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
+            {formErrors.cell_phone && (
+              <p className="text-sm text-red-600 mt-1 flex items-center space-x-1">
+                <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span>{formErrors.cell_phone[0]}</span>
+              </p>
+            )}
           </div>
 
           <div>
@@ -193,11 +254,26 @@ const RegistrationForm = () => {
                   onChange={(date) => {
                     setFormData(prev => ({ ...prev, date_of_birth: date }));
                     setShowCalendar(false);
+                    // Clear date of birth error when user selects a date
+                    if (formErrors.date_of_birth) {
+                      setFormErrors(prev => ({
+                        ...prev,
+                        date_of_birth: null
+                      }));
+                    }
                   }}
                   value={formData.date_of_birth}
                   className="modern-calendar"
                 />
               </div>
+            )}
+            {formErrors.date_of_birth && (
+              <p className="text-sm text-red-600 mt-1 flex items-center space-x-1">
+                <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span>{formErrors.date_of_birth[0]}</span>
+              </p>
             )}
           </div>
 
