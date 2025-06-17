@@ -40,6 +40,7 @@ export const fetchVisitorProfile = async (userId) => {
       monthlyFrequency: userData.monthly_freq,
       interests: interests.map(interest => interest.interest.name),
       visits: userData.visits.map(visit => ({
+        visit_id:visit.visit_id,
         date: new Date(visit.visit_date).toLocaleDateString(),
         timeEntry: new Date(visit.start_time).toLocaleTimeString(),
         timeExit: visit.end_time ? new Date(visit.end_time).toLocaleTimeString() : '-',

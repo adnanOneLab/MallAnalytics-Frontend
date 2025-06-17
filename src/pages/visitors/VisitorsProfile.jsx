@@ -128,11 +128,11 @@ const VisitorDetail = () => {
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = '';
-                      e.target.parentElement.innerHTML = `
-                        <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 text-2xl font-bold">
-                          ${visitorInfo.name.split(' ').map(n => n[0]).join('')}
-                        </div>
-                      `;
+                      // e.target.parentElement.innerHTML = `
+                      //   <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 text-2xl font-bold">
+                      //     ${visitorInfo.name.split(' ').map(n => n[0]).join('')}
+                      //   </div>
+                      // `;
                     }}
                   />
                 ) : (
@@ -279,7 +279,7 @@ const VisitorDetail = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {visitData.map((visit, index) => (
-                  <tr key={index} className="hover:bg-gray-50" onClick={() => handleVisitorClick(visit.id)}>
+                  <tr key={index} className="hover:bg-gray-50" onClick={() => handleVisitorClick(visit.visit_id)}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {visit.date}
                     </td>

@@ -7,75 +7,42 @@ import {
   Trash2,
   User,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { fetchMovementsByVisitId } from "../../services/visitorService";
 
 const VisitorMovements = () => {
   const navigate = useNavigate();
-//   const [movements] = useState([
-//     {
-//       camera_id: 265985,
-//       start_time: "11:26:33 am",
-//       end_time: "11:30:33 am",
-//       situation: "Walking",
-//       location: "Hall A",
-//       store_name: "Puma",
-//     },
-//     {
-//       camera_id: 265986,
-//       start_time: "11:26:33 am",
-//       end_time: "11:30:33 am",
-//       situation: "Walking",
-//       location: "Hall A",
-//       store_name: "Puma",
-//     },
-//     {
-//       camera_id: 265987,
-//       start_time: "11:26:33 am",
-//       end_time: "11:30:33 am",
-//       situation: "Walking",
-//       location: "Hall A",
-//       store_name: "Puma",
-//     },
-//     {
-//       camera_id: 265988,
-//       start_time: "11:26:33 am",
-//       end_time: "11:30:33 am",
-//       situation: "Walking",
-//       location: "Hall A",
-//       store_name: "Puma",
-//     },
-//   ]);
+  const { visit_id } = useParams();
 
-    const [movements, setMovements] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [movements, setMovements] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [selectedVisitors, setSelectedVisitors] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
 
-    useEffect(() => {
-      const loadVisitors = async () => {
-        try {
-          const data = await fetchMovementsByVisitId();
-          setMovements(data);
-        } catch (error) {
-          console.error('Failed to fetch visitors:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
+  useEffect(() => {
+    const loadVisitors = async () => {
+      try {
+        const data = await fetchMovementsByVisitId(visit_id);
+        setMovements(data);
+      } catch (error) {
+        console.error("Failed to fetch visitors:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      loadVisitors();
-    }, []);
+    loadVisitors();
+  }, [visit_id]);
 
-    if (loading) return <p>Loading visitors...</p>;
+  if (loading) return <p>Loading visitors...</p>;
 
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedVisitors(new Set());
     } else {
-      setSelectedVisitors(new Set(movements||[].map((v) => v.id)));
+      setSelectedVisitors(new Set(movements || [].map((v) => v.id)));
     }
     setSelectAll(!selectAll);
   };
@@ -124,7 +91,7 @@ const VisitorMovements = () => {
             <div className="flex items-center space-x-3">
               <div>Showing 05/21/2025</div>
             </div>
-            <div style={{display:'flex'}}>
+            <div style={{ display: "flex" }}>
               <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                 Export to CSV
               </button>
@@ -191,7 +158,7 @@ const VisitorMovements = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {movements||[].map((visitor) => (
+              {(movements || []).map((visitor) => (
                 <tr key={visitor.camera_id} className="hover:bg-gray-50">
                   <td className="w-12 px-6 py-4 whitespace-nowrap">
                     <input
@@ -224,7 +191,7 @@ const VisitorMovements = () => {
                     {visitor.location}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {visitor.store_name}
+                    {visitor.store || "N/A"}
                   </td>
 
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
