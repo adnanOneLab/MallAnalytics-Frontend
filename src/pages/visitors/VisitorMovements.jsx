@@ -14,7 +14,8 @@ import { fetchMovementsByVisitId } from "../../services/visitorService";
 const VisitorMovements = () => {
   const navigate = useNavigate();
   const { visit_id } = useParams();
-
+  console.log(visit_id,'visit_iddsdfsdf');
+  
   const [movements, setMovements] = useState([]);
   const [loading, setLoading] = useState(true);
 
