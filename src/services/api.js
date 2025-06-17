@@ -2,7 +2,8 @@
 import axios from 'axios';
 
 // Use local IP address for development to allow mobile access
-const BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api` || "http://localhost:8000/api";
+const BACKEND = import.meta.env.VITE_BACKEND_URL;
+const BASE_URL = BACKEND ? `${BACKEND}/api` : "http://localhost:8000/api";
 
 const api = axios.create({
   baseURL: BASE_URL,
