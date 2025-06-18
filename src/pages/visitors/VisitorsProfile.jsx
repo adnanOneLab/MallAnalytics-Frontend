@@ -94,7 +94,7 @@ const VisitorDetail = () => {
               <span className="font-semibold text-lg">Visitor</span>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          {/* <div className="flex items-center space-x-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
@@ -108,7 +108,7 @@ const VisitorDetail = () => {
                 <span className="text-white text-sm font-medium">JD</span>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -223,7 +223,7 @@ const VisitorDetail = () => {
               <div className="text-sm text-gray-500">
                 Showing <span className="font-medium text-gray-900">{visitData.length || '0'}</span> Visits
               </div>
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <button className="flex items-center space-x-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 text-sm">
                   <Download className="w-4 h-4" />
                   <span>Export</span>
@@ -231,7 +231,7 @@ const VisitorDetail = () => {
                 <button className="p-2 text-gray-500 hover:text-gray-700 rounded-lg">
                   <Settings className="w-4 h-4" />
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
 

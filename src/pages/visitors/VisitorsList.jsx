@@ -85,7 +85,7 @@ const VisitorsList = () => {
           </h1>
           <p className="text-gray-600">3,265 Visits</p>
         </div>
-        <div className="flex items-center space-x-4">
+        {/* <div className="flex items-center space-x-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
@@ -97,11 +97,11 @@ const VisitorsList = () => {
           <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
             <User className="w-4 h-4 text-gray-600" />
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Controls */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -120,8 +120,10 @@ const VisitorsList = () => {
               <Settings className="w-4 h-4" />
             </button>
           </div>
-        </div>
+        </div> */}
 
+      {/* Table Container */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
