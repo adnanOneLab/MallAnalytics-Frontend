@@ -3,7 +3,8 @@ import axios from 'axios';
 
 // Use local IP address for development to allow mobile access
 const BACKEND = import.meta.env.VITE_BACKEND_URL;
-const BASE_URL = BACKEND ? `${BACKEND}/api` : "http://localhost:8000/api";
+// const BASE_URL = BACKEND ? `${BACKEND}/api` : "http://localhost:8000/api";
+const BASE_URL='https://mallanalytics-backend.onrender.com/api/';
 
 const api = axios.create({
   baseURL: BASE_URL,

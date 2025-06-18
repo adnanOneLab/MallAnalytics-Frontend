@@ -30,7 +30,7 @@ export const registerUser = async (userData, photoFile) => {
 
     let photoResponse;
     try {
-      photoResponse = await api.post('/upload-photo-local/', photoFormData, {
+      photoResponse = await api.post('/upload-photo/', photoFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
