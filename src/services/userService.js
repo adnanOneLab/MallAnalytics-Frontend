@@ -7,8 +7,8 @@ export const registerUser = async (userData, photoFile) => {
       throw new Error('No photo file provided');
     }
 
-    if (photoFile.size > 5 * 1024 * 1024) { // 5MB limit
-      throw new Error('Photo file is too large. Maximum size is 5MB.');
+    if (photoFile.size > 10 * 1024 * 1024) { // 10MB limit
+      throw new Error('Photo file is too large. Maximum size is 10MB.');
     }
 
     // First, upload the photo
@@ -136,7 +136,7 @@ export const registerUser = async (userData, photoFile) => {
     }
 
     if (error.response?.status === 413) {
-      throw new Error('The photo file is too large. Please choose a smaller image (maximum 5MB).');
+      throw new Error('The photo file is too large. Please choose a smaller image (maximum 10MB).');
     }
 
     if (error.response?.status === 504) {
@@ -196,7 +196,7 @@ export const registerUser = async (userData, photoFile) => {
     // Handle photo upload specific errors
     if (error.message.includes('photo')) {
       if (error.message.includes('size')) {
-        throw new Error('Photo file is too large. Please choose an image smaller than 5MB.');
+        throw new Error('Photo file is too large. Please choose an image smaller than 10MB.');
       }
       if (error.message.includes('format') || error.message.includes('type')) {
         throw new Error('Invalid photo format. Please use JPG, PNG, or GIF images.');

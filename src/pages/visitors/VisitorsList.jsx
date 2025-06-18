@@ -83,7 +83,7 @@ const VisitorsList = () => {
           <h1 className="text-2xl font-semibold text-gray-900 mb-2">
             Visitors List
           </h1>
-          <p className="text-gray-600">3,265 Visits</p>
+          <p className="text-gray-600">{visitors.length} Visits</p>
         </div>
         {/* <div className="flex items-center space-x-4">
           <div className="relative">
