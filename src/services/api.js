@@ -8,7 +8,7 @@ const BASE_URL='https://mallanalytics-backend.onrender.com/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 30000, // 30 seconds timeout for photo uploads
+  timeout: 60000, // 60 seconds timeout for photo uploads
   headers: {
     'Content-Type': 'application/json',
   },

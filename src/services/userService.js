@@ -78,7 +78,7 @@ export const registerUser = async (userData, photoFile) => {
     const userRegistrationData = {
       ...userData,
       picture_url: photoResponse.data.photo_url,
-      face_id:photoResponse.data.face_id,
+      // face_id:photoResponse.data.face_id,
     };
 
     // Remove interests from user data as we'll handle them separately

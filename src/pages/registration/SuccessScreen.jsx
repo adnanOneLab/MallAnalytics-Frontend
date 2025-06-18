@@ -18,7 +18,7 @@ const SuccessScreen = () => {
   }, []);
 
   const handleBackToHome = () => {
-    navigate('/');
+    navigate('/register-user');
   };
 
   return (
