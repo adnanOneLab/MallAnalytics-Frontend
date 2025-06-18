@@ -26,7 +26,7 @@ export const fetchVisitorProfile = async (userId) => {
       email: userData.email,
       phone: userData.cell_phone,
       address: userData.address,
-      picture_url: userData.picture_url ? `${BASE_URL}${userData.picture_url}` : null,
+      picture_url: userData.picture_url,
       monthlyVisits: userData.monthly_visits,
       yearlyVisits: userData.yearly_visits,
       lifeVisits: userData.life_visits,
