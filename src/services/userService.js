@@ -218,3 +218,8 @@ export const registerUser = async (userData, photoFile) => {
     );
   }
 }; 
+
+export const getPresignedUrl = async (s3_key) => {
+  const response = await api.get('/get-photo-url/', { params: { s3_key } });
+  return response.data.url;
+};

@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Settings, Download, ArrowUpDown } from 'lucide-react';
-import { fetchVisitorProfile } from '../../services/visitorService';
+import React, { useState, useEffect } from "react";
+import { Search, Settings, Download, ArrowUpDown } from "lucide-react";
+import { fetchVisitorProfile } from "../../services/visitorService";
 
-import Layout from '../../components/Layout';
-import { useNavigate, useParams } from 'react-router-dom';
+import Layout from "../../components/Layout";
+import { useNavigate, useParams } from "react-router-dom";
+import { getPresignedUrl } from "../../services/userService";
 
 const VisitorDetail = () => {
   const navigate = useNavigate();
   const { user_id } = useParams();
-  
+
   // const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [visitorInfo, setVisitorInfo] = useState(null);
   const [visitData, setVisitData] = useState([]);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   useEffect(() => {
     const loadVisitorProfile = async () => {
@@ -37,13 +39,13 @@ const VisitorDetail = () => {
           firstVisit: data.firstVisit,
           lastVisit: data.lastVisit,
           recency: data.recency,
-          monthlyFrequency: data.monthlyFrequency
+          monthlyFrequency: data.monthlyFrequency,
         });
         setVisitData(data.visits);
         setError(null);
       } catch (err) {
-        console.error('Error loading visitor profile:', err);
-        setError('Failed to load visitor profile. Please try again later.');
+        console.error("Error loading visitor profile:", err);
+        setError("Failed to load visitor profile. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -51,6 +53,21 @@ const VisitorDetail = () => {
 
     loadVisitorProfile();
   }, [user_id]);
+
+  useEffect(() => {
+    const getTempUrl = async () => {
+      try {
+        if (visitorInfo?.picture_url) {
+          const signedUrl = await getPresignedUrl(visitorInfo.picture_url);
+          setPreviewUrl(signedUrl);
+        }
+      } catch (error) {
+        console.error("Failed to fetch pre-signed URL:", error);
+      }
+    };
+
+    getTempUrl();
+  }, [visitorInfo]);
 
   if (loading) {
     return (
@@ -112,109 +129,148 @@ const VisitorDetail = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="py-3">
-        {/* Visitor Profile Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex flex-col">
-            <div className="flex items-start space-x-8 mb-6">
-              {/* Profile Image */}
-              <div className="w-32 h-32 bg-gray-200 rounded-lg overflow-hidden">
-                {visitorInfo.picture_url ? (
-                  <img
-                    src={visitorInfo.picture_url}
-                    alt={visitorInfo.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = '';
-                      // e.target.parentElement.innerHTML = `
-                      //   <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 text-2xl font-bold">
-                      //     ${visitorInfo.name.split(' ').map(n => n[0]).join('')}
-                      //   </div>
-                      // `;
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 text-2xl font-bold">
-                    {visitorInfo.name.split(' ').map(n => n[0]).join('')}
+        {/* Main Content */}
+        <div className="py-3">
+          {/* Visitor Profile Section */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="flex flex-col">
+              <div className="flex items-start space-x-8 mb-6">
+                {/* Profile Image */}
+                <div className="w-32 h-32 bg-gray-200 rounded-lg overflow-hidden">
+                  {previewUrl ? (
+                    <img
+                      src={previewUrl}
+                      alt={visitorInfo.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "";
+                        // e.target.parentElement.innerHTML = `
+                        //   <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 text-2xl font-bold">
+                        //     ${visitorInfo.name.split(' ').map(n => n[0]).join('')}
+                        //   </div>
+                        // `;
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 text-2xl font-bold">
+                      {visitorInfo.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </div>
+                  )}
+                </div>
+
+                {/* Basic Info Grid */}
+                <div className="flex-1">
+                  <div className="grid grid-cols-4 gap-x-8 gap-y-4">
+                    <div>
+                      <div className="text-sm text-gray-500 mb-1">
+                        Visitor ID
+                      </div>
+                      <div className="font-medium text-gray-900">{user_id}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500 mb-1">Name</div>
+                      <div className="font-medium text-gray-900">
+                        {visitorInfo.name || "-"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500 mb-1">Email</div>
+                      <div className="font-medium text-blue-600">
+                        {visitorInfo.email || "-"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500 mb-1">
+                        Phone Number
+                      </div>
+                      <div className="font-medium text-gray-900">
+                        {visitorInfo.phone || "-"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500 mb-1">Address</div>
+                      <div className="font-medium text-gray-900">
+                        {visitorInfo.address || "-"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500 mb-1">
+                        Monthly Visits
+                      </div>
+                      <div className="text-lg font-semibold text-gray-900">
+                        {visitorInfo.monthlyVisits || "0"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500 mb-1">
+                        Yearly Visits
+                      </div>
+                      <div className="text-lg font-semibold text-gray-900">
+                        {visitorInfo.yearlyVisits || "0"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500 mb-1">
+                        Life Visits
+                      </div>
+                      <div className="text-lg font-semibold text-gray-900">
+                        {visitorInfo.lifeVisits || "0"}
+                      </div>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
 
-              {/* Basic Info Grid */}
-              <div className="flex-1">
-                <div className="grid grid-cols-4 gap-x-8 gap-y-4">
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">Visitor ID</div>
-                    <div className="font-medium text-gray-900">{user_id}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">Name</div>
-                    <div className="font-medium text-gray-900">{visitorInfo.name || '-'}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">Email</div>
-                    <div className="font-medium text-blue-600">{visitorInfo.email || '-'}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">Phone Number</div>
-                    <div className="font-medium text-gray-900">{visitorInfo.phone || '-'}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">Address</div>
-                    <div className="font-medium text-gray-900">{visitorInfo.address || '-'}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">Monthly Visits</div>
-                    <div className="text-lg font-semibold text-gray-900">{visitorInfo.monthlyVisits || '0'}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">Yearly Visits</div>
-                    <div className="text-lg font-semibold text-gray-900">{visitorInfo.yearlyVisits || '0'}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">Life Visits</div>
-                    <div className="text-lg font-semibold text-gray-900">{visitorInfo.lifeVisits || '0'}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              {/* Horizontal Line */}
+              <hr className="mb-6 border-gray-200" />
 
-            {/* Horizontal Line */}
-            <hr className="mb-6 border-gray-200" />
-
-            {/* Stores Visited Stats - Single line */}
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center space-x-4">
-                <div>
-                  <span className="text-gray-500">Stores visited month:</span>
-                  <span className="ml-2 font-semibold text-gray-900">{visitorInfo.storesVisitedMonth || '0'}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Stores visited life:</span>
-                  <span className="ml-2 font-semibold text-gray-900">{visitorInfo.storesVisitedLife || '0'}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">First visit:</span>
-                  <span className="ml-2 font-semibold text-gray-900">{visitorInfo.firstVisit || '-'}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Last visit:</span>
-                  <span className="ml-2 font-semibold text-gray-900">{visitorInfo.lastVisit || '-'}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Recency:</span>
-                  <span className="ml-2 font-semibold text-gray-900">{visitorInfo.recency || '0'} days</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Monthly Frequency:</span>
-                  <span className="ml-2 font-semibold text-gray-900">{visitorInfo.monthlyFrequency || '0'} visits</span>
+              {/* Stores Visited Stats - Single line */}
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center space-x-4">
+                  <div>
+                    <span className="text-gray-500">Stores visited month:</span>
+                    <span className="ml-2 font-semibold text-gray-900">
+                      {visitorInfo.storesVisitedMonth || "0"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Stores visited life:</span>
+                    <span className="ml-2 font-semibold text-gray-900">
+                      {visitorInfo.storesVisitedLife || "0"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">First visit:</span>
+                    <span className="ml-2 font-semibold text-gray-900">
+                      {visitorInfo.firstVisit || "-"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Last visit:</span>
+                    <span className="ml-2 font-semibold text-gray-900">
+                      {visitorInfo.lastVisit || "-"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Recency:</span>
+                    <span className="ml-2 font-semibold text-gray-900">
+                      {visitorInfo.recency || "0"} days
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Monthly Frequency:</span>
+                    <span className="ml-2 font-semibold text-gray-900">
+                      {visitorInfo.monthlyFrequency || "0"} visits
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
         {/* Visit History Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -235,77 +291,81 @@ const VisitorDetail = () => {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <div className="flex items-center space-x-1">
-                      <span>Date</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <div className="flex items-center space-x-1">
-                      <span>Time of entry</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <div className="flex items-center space-x-1">
-                      <span>Time of Exit</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <div className="flex items-center space-x-1">
-                      <span>Stores Visited</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <div className="flex items-center space-x-1">
-                      <span>Time spent</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <div className="flex items-center space-x-1">
-                      <span>Interest</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {visitData.map((visit, index) => (
-                  <tr key={index} className="hover:bg-gray-50" onClick={() => handleVisitorClick(visit.visit_id)}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {visit.date}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {visit.timeEntry}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {visit.timeExit}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {visit.storesVisited}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {visit.timeSpent}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {visit.interest}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>Date</span>
+                        <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>Time of entry</span>
+                        <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>Time of Exit</span>
+                        <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>Stores Visited</span>
+                        <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>Time spent</span>
+                        <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>Interest</span>
+                        <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {visitData.map((visit, index) => (
+                    <tr
+                      key={index}
+                      className="hover:bg-gray-50"
+                      onClick={() => handleVisitorClick(visit.visit_id)}
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {visit.date}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {visit.timeEntry}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {visit.timeExit}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {visit.storesVisited}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {visit.timeSpent}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {visit.interest}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </Layout>
   );
 };
