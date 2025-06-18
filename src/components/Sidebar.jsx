@@ -48,19 +48,7 @@ const Sidebar = ({ onClose }) => {
           }`}
         >
           <Users className="w-5 h-5" />
-          <span>Visitors</span>
-        </Link>
-        <Link
-          to="/register-user"
-          onClick={onClose}
-          className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-            location.pathname === '/register-user'
-              ? 'bg-black/50 text-white'
-              : 'text-gray-400 hover:text-white hover:bg-black/50'
-          }`}
-        >
-          <User className="w-5 h-5" />
-          <span>Register User</span>
+          <span>Visitors List</span>
         </Link>
       </nav>
 

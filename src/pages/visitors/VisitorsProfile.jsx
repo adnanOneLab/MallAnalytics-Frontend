@@ -91,7 +91,7 @@ const VisitorDetail = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <span className="font-semibold text-lg">Visitor's Profile</span>
+              <span className="font-semibold text-lg">Visitor</span>
             </div>
           </div>
           <div className="flex items-center space-x-4">
