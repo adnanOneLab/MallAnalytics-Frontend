@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { User, LogOut, LayoutDashboard, Users, X } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, Users, X, Mail } from 'lucide-react';
 
 const Sidebar = ({ onClose }) => {
   const location = useLocation();
 
   return (
-    <div className="w-60 h-full bg-[#1a1a1a] flex-shrink-0 flex flex-col">
+    <div className="w-60 min-h-screen bg-[#1a1a1a] flex-shrink-0 flex flex-col">
       {/* Logo and Close Button */}
       <div className="p-6 border-b border-gray-800 flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -42,13 +42,25 @@ const Sidebar = ({ onClose }) => {
           to="/visitors"
           onClick={onClose}
           className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-            location.pathname === '/visitors'
+            location.pathname.startsWith('/visitors')
               ? 'bg-black/50 text-white'
               : 'text-gray-400 hover:text-white hover:bg-black/50'
           }`}
         >
           <Users className="w-5 h-5" />
           <span>Visitors List</span>
+        </Link>
+        <Link
+          to="/campaigns"
+          onClick={onClose}
+          className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+            location.pathname.startsWith('/campaigns')
+              ? 'bg-black/50 text-white'
+              : 'text-gray-400 hover:text-white hover:bg-black/50'
+          }`}
+        >
+          <Mail className="w-5 h-5" />
+          <span>Campaigns</span>
         </Link>
       </nav>
 
