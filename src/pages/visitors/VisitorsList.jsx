@@ -16,31 +16,35 @@ const VisitorsList = () => {
 
   const [visitors, setVisitors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   const [selectedVisitors, setSelectedVisitors] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
 
   useEffect(() => {
     const loadVisitors = async () => {
+      setLoading(true);
       try {
-        const response = await fetchVisitors(); // your API call
-        if (Array.isArray(response)) {
-          setVisitors(response);
-        } else if (response && Array.isArray(response.data)) {
-          setVisitors(response.data);
-        } else {
-          console.error("Unexpected response:", response);
-          setVisitors([]); // fallback
-        }
+        const response = await fetchVisitors({ search: searchTerm, page: currentPage, pageSize });
+        setVisitors(response.results || []);
+        setTotalCount(response.count || 0);
+        setTotalPages(Math.ceil((response.count || 0) / pageSize));
       } catch (error) {
         console.error("Failed to fetch visitors:", error);
+        setVisitors([]);
+        setTotalCount(0);
+        setTotalPages(1);
       } finally {
         setLoading(false);
       }
     };
 
     loadVisitors();
-  }, []);
+  }, [searchTerm, currentPage, pageSize]);
 
   const getMembershipColor = (membership) => {
     const colors = {
@@ -85,32 +89,37 @@ const VisitorsList = () => {
           </h1>
           <p className="text-gray-600">{visitors.length} Visits</p>
         </div>
-        {/* <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
               placeholder="Search"
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+              value={searchTerm}
+              onChange={e => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
             />
           </div>
-          <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+          {/* <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
             <User className="w-4 h-4 text-gray-600" />
-          </div>
-        </div> */}
+          </div> */}
+        </div>
       </div>
 
       {/* Controls */}
-      {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+              {/* <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
                 Mail Promotion
               </button>
               <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                 Export to CSV
-              </button>
+              </button> */}
               <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center space-x-2">
                 <span>Filters</span>
                 <ChevronDown className="w-4 h-4" />
@@ -120,7 +129,8 @@ const VisitorsList = () => {
               <Settings className="w-4 h-4" />
             </button>
           </div>
-        </div> */}
+        </div>
+      </div>
 
       {/* Table Container */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -248,6 +258,29 @@ const VisitorsList = () => {
               )}
             </tbody>
           </table>
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+            <div className="text-sm text-gray-600">
+              Showing page {currentPage} of {totalPages} ({totalCount} total visitors)
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                className="px-3 py-1 border rounded disabled:opacity-50"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <span className="text-sm">Page {currentPage}</span>
+              <button
+                className="px-3 py-1 border rounded disabled:opacity-50"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>
