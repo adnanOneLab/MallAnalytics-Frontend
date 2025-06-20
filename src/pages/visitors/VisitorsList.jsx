@@ -10,6 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { fetchVisitors } from "../../services/visitorService";
+import AddContactModal from './AddContactModal';
 
 const VisitorsList = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const VisitorsList = () => {
 
   const [selectedVisitors, setSelectedVisitors] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
+  const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
 
   useEffect(() => {
     const loadVisitors = async () => {
@@ -114,10 +116,12 @@ const VisitorsList = () => {
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              {/* <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                Mail Promotion
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                onClick={() => setIsAddContactModalOpen(true)}
+              >
+                Add to Email Campaign
               </button>
-              <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+              {/* <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                 Export to CSV
               </button> */}
               <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center space-x-2">
@@ -283,6 +287,7 @@ const VisitorsList = () => {
           </div>
         </div>
       </div>
+      <AddContactModal isOpen={isAddContactModalOpen} onClose={() => setIsAddContactModalOpen(false)} />
     </Layout>
   );
 };

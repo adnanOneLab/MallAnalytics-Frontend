@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Search, Moon, Bell, Plus, Trash2 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import Layout from '../../components/Layout';
-import { useNavigate } from 'react-router-dom';
+import EmailModal from './EmailModal';
 
 export default function CampaignTable() {
   const [campaigns, setCampaigns] = useState([
@@ -18,7 +18,7 @@ export default function CampaignTable() {
     { id: 10, name: "High-Performance Plastics for Aviation Innovation", delivered: 30, opened: 25, bounced: 3, scheduled: 2, active: false },
   ]);
 
-  const navigate = useNavigate();
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   const toggleActive = (id) => {
     setCampaigns(campaigns.map(campaign => 
@@ -33,6 +33,7 @@ export default function CampaignTable() {
   return (
     <Layout>
       <div className="px-6 py-6">
+        <EmailModal isOpen={isEmailModalOpen} onClose={() => setIsEmailModalOpen(false)} />
         <div className="bg-white rounded-lg shadow-sm">
           {/* Table Header */}
           <div className="px-6 py-4 border-b border-gray-200">
@@ -42,7 +43,7 @@ export default function CampaignTable() {
               </div>
               <button
                 className="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-700 transition-colors"
-                onClick={() => navigate('/campaigns/new')}
+                onClick={() => setIsEmailModalOpen(true)}
               >
                 <Plus className="w-4 h-4" />
                 <span>New Campaign</span>

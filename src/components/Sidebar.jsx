@@ -54,13 +54,25 @@ const Sidebar = ({ onClose }) => {
           to="/campaigns"
           onClick={onClose}
           className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-            location.pathname.startsWith('/campaigns')
+            location.pathname.startsWith('/campaigns') && location.pathname !== '/campaigns/new'
               ? 'bg-black/50 text-white'
               : 'text-gray-400 hover:text-white hover:bg-black/50'
           }`}
         >
           <Megaphone className="w-5 h-5" />
           <span>Campaigns</span>
+        </Link>
+        <Link
+          to="/campaigns/new"
+          onClick={onClose}
+          className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+            location.pathname === '/campaigns/new'
+              ? 'bg-black/50 text-white'
+              : 'text-gray-400 hover:text-white hover:bg-black/50'
+          }`}
+        >
+          <Megaphone className="w-5 h-5" />
+          <span>Campaign Management</span>
         </Link>
       </nav>
 
