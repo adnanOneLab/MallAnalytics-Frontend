@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { User, LogOut, LayoutDashboard, Users, X, Mail } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, Users, X, Megaphone } from 'lucide-react';
 
 const Sidebar = ({ onClose }) => {
   const location = useLocation();
@@ -59,7 +59,7 @@ const Sidebar = ({ onClose }) => {
               : 'text-gray-400 hover:text-white hover:bg-black/50'
           }`}
         >
-          <Mail className="w-5 h-5" />
+          <Megaphone className="w-5 h-5" />
           <span>Campaigns</span>
         </Link>
       </nav>

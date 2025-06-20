@@ -11,6 +11,7 @@ import SuccessScreen from "./pages/registration/SuccessScreen";
 import VisitorsProfile from "./pages/visitors/VisitorsProfile";
 import VisitorMovements from "./pages/visitors/VisitorMovements";
 import CampaignTable from "./pages/campaigns/Campaigns";
+import CampaignManagement from "./pages/campaigns/CampaignManagement";
 
 // Sample user object for now
 const user = {
@@ -71,6 +72,17 @@ function App() {
               redirectTo="/register-user"
             >
               <CampaignTable />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/campaigns/new"
+          element={
+            <ProtectedRoute
+              isAllowed={user.isSubscribed}
+              redirectTo="/register-user"
+            >
+              <CampaignManagement />
             </ProtectedRoute>
           }
         />

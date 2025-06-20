@@ -6,7 +6,7 @@ const Layout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Mobile menu button */}
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -16,11 +16,15 @@ const Layout = ({ children }) => {
       </button>
 
       {/* Sidebar - hidden on mobile unless toggled */}
-      <div className={`
-        fixed lg:static inset-y-0 left-0 z-40
-        transform transition-transform duration-200 ease-in-out
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
+      <div
+        className={`
+          fixed lg:static inset-y-0 left-0 z-40
+          transform transition-transform duration-200 ease-in-out
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          w-60
+        `}
+        style={{ height: '100vh' }}
+      >
         <Sidebar onClose={() => setIsSidebarOpen(false)} />
       </div>
 
@@ -33,8 +37,8 @@ const Layout = ({ children }) => {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 w-full">
-        <div className="p-4 lg:p-6">
+      <div className="flex-1 w-full h-full overflow-y-auto">
+        <div className="p-4 lg:p-6 min-h-full">
           {children}
         </div>
       </div>
