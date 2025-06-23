@@ -1,7 +1,27 @@
-import React from 'react';
-import Layout from '../../components/Layout';
+import React, { useEffect, useState } from "react";
+import Layout from "../../components/Layout";
+import api from "../../services/api";
 
 const Dashboard = () => {
+  const [metrics, setMetrics] = useState({
+    total_visitors: 0,
+    active_users: 0,
+    avg_visit_duration: null,
+  });
+
+  useEffect(() => {
+    api
+      .get("/dashboard-metrics/")
+      .then((res) => setMetrics(res.data))
+      .catch((err) => console.error("Failed to fetch dashboard metrics", err));
+  }, []);
+
+  const formatDuration = (duration) => {
+    if (!duration) return "0m";
+    const [hours, minutes] = duration.split(":");
+    return `${parseInt(hours)}h ${parseInt(minutes)}m`;
+  };
+
   return (
     <Layout>
       <div className="mb-6">
@@ -9,30 +29,38 @@ const Dashboard = () => {
         <p className="text-gray-600">Welcome to WISE Video Analytics</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Total Visitors Card */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-medium text-gray-900">Total Visitors</h3>
-          <p className="text-3xl font-bold text-gray-900 mt-2">3,265</p>
+          <p className="text-3xl font-bold text-gray-900 mt-2">
+            {metrics.total_visitors}
+          </p>
           <p className="text-sm text-gray-600 mt-1">+12% from last month</p>
         </div>
 
         {/* Active Shows Card */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-medium text-gray-900">Active Shows</h3>
-          <p className="text-3xl font-bold text-gray-900 mt-2">24</p>
+          <h3 className="text-lg font-medium text-gray-900">Active Visitors</h3>
+          <p className="text-3xl font-bold text-gray-900 mt-2">
+            {metrics.active_users}
+          </p>
           <p className="text-sm text-gray-600 mt-1">+3 new this week</p>
         </div>
 
         {/* Average Visit Duration Card */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-medium text-gray-900">Avg. Visit Duration</h3>
-          <p className="text-3xl font-bold text-gray-900 mt-2">45m</p>
+          <h3 className="text-lg font-medium text-gray-900">
+            Avg. Visit Duration
+          </h3>
+          <p className="text-3xl font-bold text-gray-900 mt-2">
+            {formatDuration(metrics.avg_visit_duration)}
+          </p>
           <p className="text-sm text-gray-600 mt-1">+5m from last month</p>
         </div>
 
         {/* Membership Distribution Card */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-medium text-gray-900">Membership Distribution</h3>
           <div className="mt-4 space-y-2">
             <div className="flex items-center justify-between">
@@ -52,10 +80,10 @@ const Dashboard = () => {
               <span className="text-sm font-medium text-gray-900">20%</span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </Layout>
   );
 };
 
-export default Dashboard; 
+export default Dashboard;
