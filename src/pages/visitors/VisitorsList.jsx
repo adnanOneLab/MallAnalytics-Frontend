@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { fetchVisitors } from "../../services/visitorService";
 import AddContactModal from "./AddContactModal";
+import api from "../../services/api";
 
 const VisitorsList = () => {
   const navigate = useNavigate();
@@ -36,6 +37,18 @@ const VisitorsList = () => {
     visits: "",
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+
+  const handleDelete = async (userId) => {
+    try {
+      await api.delete(`/users/${userId}/`);
+      setVisitors(visitors.filter((v) => v.user_id !== userId));
+      setShowDeleteConfirm(false);
+    } catch (error) {
+      console.error("Delete failed", error);
+    }
+  };
 
   useEffect(() => {
     const loadVisitors = async () => {
@@ -415,7 +428,13 @@ const VisitorsList = () => {
                         <button className="text-gray-400 hover:text-gray-600">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button className="text-gray-400 hover:text-red-600">
+                        <button
+                          className="text-gray-400 hover:text-red-600"
+                          onClick={() => {
+                            setUserToDelete(visitor);
+                            setShowDeleteConfirm(true);
+                          }}
+                        >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -458,6 +477,33 @@ const VisitorsList = () => {
         onClose={() => setIsAddContactModalOpen(false)}
         selectedVisitors={Array.from(selectedVisitors)} // 👈 convert Set to array
       />
+      {showDeleteConfirm && userToDelete && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded shadow-lg">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Delete {userToDelete.name}?
+            </h2>
+            <p className="text-sm text-gray-700 mb-4">
+              Are you sure you want to delete this user? This action cannot be
+              undone.
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                onClick={() => handleDelete(userToDelete.user_id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };
