@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const ContactsTab = () => {
   const navigate = useNavigate();
   const [contacts, setContacts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { id } = useParams();
   console.log(id, "idsdsdf", contacts);
 
@@ -14,22 +15,34 @@ const ContactsTab = () => {
   }, [id]);
 
   const fetchContacts = async () => {
+    setLoading(true);
     try {
       const res = await api.get(`/campaigns/${id}/contacts/`);
       setContacts(res.data);
     } catch (error) {
       console.error("Error fetching contacts:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+  
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <div></div>
         <div className="flex space-x-3">
-          <button className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center" onClick={() =>
-                      navigate(`/visitors`)
-                    }>
+          <button
+            className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center"
+            onClick={() => navigate(`/visitors`)}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Add Visitors
           </button>
