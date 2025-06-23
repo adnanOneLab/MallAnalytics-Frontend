@@ -42,14 +42,12 @@ const ContactsTab = () => {
               <tr>
                 <th className="px-6 py-3"><input type="checkbox" /></th>
                 <th className="px-6 py-3">Name</th>
-                <th className="px-6 py-3">Title</th>
-                <th className="px-6 py-3">Organization</th>
-                <th className="px-6 py-3">City</th>
-                <th className="px-6 py-3">State</th>
-                <th className="px-6 py-3">Country</th>
-                <th className="px-6 py-3">Phone</th>
-                <th className="px-6 py-3">Email Address</th>
-                <th className="px-6 py-3">Group</th>
+                <th className="px-6 py-3">Email</th>
+                <th className="px-6 py-3">Visits</th>
+                <th className="px-6 py-3">Shows</th>
+                <th className="px-6 py-3">Last Visit</th>
+                <th className="px-6 py-3">Membership</th>
+                <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -57,13 +55,11 @@ const ContactsTab = () => {
                 <tr key={contact.contact_id}>
                   <td className="px-6 py-4"><input type="checkbox" /></td>
                   <td className="px-6 py-4">{contact.name}</td>
-                  <td className="px-6 py-4">{contact.title}</td>
-                  <td className="px-6 py-4">{contact.organization}</td>
-                  <td className="px-6 py-4">{contact.city}</td>
-                  <td className="px-6 py-4">{contact.state}</td>
-                  <td className="px-6 py-4">{contact.country}</td>
-                  <td className="px-6 py-4">{contact.phone}</td>
                   <td className="px-6 py-4">{contact.email}</td>
+                  <td className="px-6 py-4">{contact.visits}</td>
+                  <td className="px-6 py-4">{contact.shows}</td>
+                  <td className="px-6 py-4">{contact.last_visit}</td>
+                  <td className="px-6 py-4">{contact.membership}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       contact.group ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
