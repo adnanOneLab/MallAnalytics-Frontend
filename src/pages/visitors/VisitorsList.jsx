@@ -26,7 +26,16 @@ const VisitorsList = () => {
   const [selectedVisitors, setSelectedVisitors] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
-  console.log(selectedVisitors, "selectedVisitors");
+  const [filters, setFilters] = useState({
+    name: "",
+    email: "",
+    membership: "",
+    store: "",
+    monthlyFreq: "",
+    lastVisit: "",
+    visits: "",
+  });
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const loadVisitors = async () => {
@@ -36,6 +45,7 @@ const VisitorsList = () => {
           search: searchTerm,
           page: currentPage,
           pageSize,
+          ...filters,
         });
         setVisitors(response.results || []);
         setTotalCount(response.count || 0);
@@ -51,7 +61,7 @@ const VisitorsList = () => {
     };
 
     loadVisitors();
-  }, [searchTerm, currentPage, pageSize]);
+  }, [searchTerm, currentPage, pageSize, filters]);
 
   const getMembershipColor = (membership) => {
     const colors = {
@@ -135,10 +145,150 @@ const VisitorsList = () => {
               {/* <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                 Export to CSV
               </button> */}
-              <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center space-x-2">
-                <span>Filters</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
+              <div className="flex items-center space-x-3 relative">
+                <button
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center space-x-2"
+                  onClick={() => setShowFilters(!showFilters)}
+                >
+                  <span>Filters</span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                {showFilters && (
+                  <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg p-4 border z-10">
+                    <div className="mb-3">
+                      <label className="block text-sm text-gray-700">
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full border rounded px-2 py-1"
+                        value={filters.name}
+                        onChange={(e) =>
+                          setFilters({ ...filters, name: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="block text-sm text-gray-700">
+                        Email
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full border rounded px-2 py-1"
+                        value={filters.email}
+                        onChange={(e) =>
+                          setFilters({ ...filters, email: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="block text-sm text-gray-700">
+                        Membership
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full border rounded px-2 py-1"
+                        value={filters.membership}
+                        onChange={(e) =>
+                          setFilters({ ...filters, membership: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="block text-sm text-gray-700">
+                        Stores Visited
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full border rounded px-2 py-1"
+                        value={filters.store}
+                        onChange={(e) =>
+                          setFilters({ ...filters, store: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="block text-sm text-gray-700">
+                        Visits
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full border rounded px-2 py-1"
+                        value={filters.visits}
+                        onChange={(e) =>
+                          setFilters({ ...filters, visits: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="block text-sm text-gray-700">
+                        Monthly Frequency
+                      </label>
+                      <input
+                        type="number"
+                        className="w-full border rounded px-2 py-1"
+                        value={filters.monthlyFreq}
+                        onChange={(e) =>
+                          setFilters({
+                            ...filters,
+                            monthlyFreq: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="block text-sm text-gray-700">
+                        Last Visit (YYYY-MM-DD)
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full border rounded px-2 py-1"
+                        value={filters.lastVisit}
+                        onChange={(e) =>
+                          setFilters({ ...filters, lastVisit: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="flex justify-end mt-4 space-x-2">
+                      <button
+                        className="px-4 py-1 rounded bg-gray-100 text-sm text-gray-700 hover:bg-gray-200"
+                        onClick={() => {
+                          setFilters({
+                            name: "",
+                            email: "",
+                            membership: "",
+                            store: "",
+                            monthlyFreq: "",
+                            lastVisit: "",
+                            visits: "",
+                          });
+                          setShowFilters(false);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="px-4 py-1 rounded bg-blue-600 text-white text-sm hover:bg-blue-700"
+                        onClick={() => {
+                          setCurrentPage(1); // reset pagination if needed
+                          setFilters({
+                            name: "",
+                            email: "",
+                            membership: "",
+                            store: "",
+                            monthlyFreq: "",
+                            lastVisit: "",
+                            visits: "",
+                          });
+                          setShowFilters(false);
+                        }}
+                      >
+                        Search
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
             <button className="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
               <Settings className="w-4 h-4" />

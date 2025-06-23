@@ -4,14 +4,18 @@ import api from './api';
 // Get the base URL from the api instance
 const BASE_URL = api.defaults.baseURL.replace('/api', '');
 
-export const fetchVisitors = async ({ search = '', page = 1, pageSize = 10 } = {}) => {
-  const response = await api.get('/users/', {
-    params: {
-      search,
-      page,
-      page_size: pageSize,
-    },
-  });
+// export const fetchVisitors = async ({ search = '', page = 1, pageSize = 10 } = {}) => {
+//   const response = await api.get('/users/', {
+//     params: {
+//       search,
+//       page,
+//       page_size: pageSize,
+//     },
+//   });
+//   return response.data;
+// };
+export const fetchVisitors = async (params = {}) => {
+  const response = await api.get('/users/', { params });
   return response.data;
 };
 
