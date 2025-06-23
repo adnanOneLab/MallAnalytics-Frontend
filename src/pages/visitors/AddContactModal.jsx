@@ -84,10 +84,10 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
           </div>
 
           <h3 className="text-lg font-semibold mb-2">
-            Contacts Added Successfully to campaign 🎉
+            Visitors Added Successfully to campaign 🎉
           </h3>
           <p className="text-sm text-gray-600 mb-6">
-            Contacts were added to the campaign. Remember that each contact can
+            Visitors were added to the campaign. Remember that each visitor can
             belong to only one specific campaign.
           </p>
 
@@ -111,7 +111,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-medium text-gray-900">
-            Add Contact(s) to Email Campaign
+            Add Visitor(s) to Email Campaign
           </h2>
           <button
             onClick={handleClose}
@@ -124,7 +124,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
         {/* Content */}
         <div className="space-y-6">
           <p className="text-sm text-gray-600">
-            Select the sequence to which you would like to add the contact. You
+            Select the sequence to which you would like to add the visitor. You
             can also create a new sequence if none of the available options fit
             your needs.
           </p>
@@ -194,7 +194,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
             disabled={!selectedCampaign}
             className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-900 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           >
-            Add Contact
+            Add Visitors
           </button>
         </div>
       </div>

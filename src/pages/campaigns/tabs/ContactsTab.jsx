@@ -8,7 +8,6 @@ const ContactsTab = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
-  console.log(id, "idsdsdf", contacts);
 
   useEffect(() => {
     if (id) fetchContacts();
@@ -20,7 +19,7 @@ const ContactsTab = () => {
       const res = await api.get(`/campaigns/${id}/contacts/`);
       setContacts(res.data);
     } catch (error) {
-      console.error("Error fetching contacts:", error);
+      console.error("Error fetching Visitors:", error);
     } finally {
       setLoading(false);
     }
@@ -33,7 +32,11 @@ const ContactsTab = () => {
       </div>
     );
   }
-  
+
+  const handleVisitorClick = (user_id) => {
+    navigate(`/visitors/${user_id}`);
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -86,7 +89,10 @@ const ContactsTab = () => {
                   <td className="px-6 py-4">
                     <input type="checkbox" />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap flex items-center space-x-2">
+                  <td
+                    className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                    onClick={() => handleVisitorClick(contact.user.user_id)}
+                  >
                     <span>{contact.user.name}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

@@ -122,8 +122,13 @@ const VisitorsList = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <button
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  selectedVisitors.size > 0
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
                 onClick={() => setIsAddContactModalOpen(true)}
+                disabled={selectedVisitors.size === 0}
               >
                 Add to Email Campaign
               </button>
@@ -299,7 +304,7 @@ const VisitorsList = () => {
       <AddContactModal
         isOpen={isAddContactModalOpen}
         onClose={() => setIsAddContactModalOpen(false)}
-        selectedVisitors={Array.from(selectedVisitors)}  // 👈 convert Set to array
+        selectedVisitors={Array.from(selectedVisitors)} // 👈 convert Set to array
       />
     </Layout>
   );

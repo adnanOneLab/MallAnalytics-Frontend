@@ -106,20 +106,21 @@ export default function CampaignTable() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {campaigns.map((campaign) => (
-                  <tr
-                    key={campaign.id}
-                    className="hover:bg-gray-50"
-                    onClick={() =>
-                      navigate(`/campaigns/${campaign.campaign_id}/manage`)
-                    }
-                  >
+                  <tr key={campaign.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <input
                           type="checkbox"
                           className="h-4 w-4 text-blue-600 border-gray-300 rounded mr-3"
                         />
-                        <span className="text-sm text-gray-900 max-w-xs truncate">
+                        <span
+                          className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                          onClick={() =>
+                            navigate(
+                              `/campaigns/${campaign.campaign_id}/manage`
+                            )
+                          }
+                        >
                           {campaign.name}
                         </span>
                       </div>
@@ -142,7 +143,7 @@ export default function CampaignTable() {
                           toggleActive(campaign.campaign_id, campaign.is_active)
                         }
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          campaign.active ? "bg-green-500" : "bg-gray-300"
+                          campaign.is_active ? "bg-green-500" : "bg-gray-300"
                         }`}
                       >
                         <span
