@@ -7,6 +7,7 @@ const Dashboard = () => {
     total_visitors: 0,
     active_users: 0,
     avg_visit_duration: null,
+    new_active_users:null,
   });
 
   useEffect(() => {
@@ -45,7 +46,7 @@ const Dashboard = () => {
           <p className="text-3xl font-bold text-gray-900 mt-2">
             {metrics.active_users}
           </p>
-          <p className="text-sm text-gray-600 mt-1">+3 new this week</p>
+          <p className="text-sm text-gray-600 mt-1">+{metrics.new_active_users} new this week</p>
         </div>
 
         {/* Average Visit Duration Card */}
