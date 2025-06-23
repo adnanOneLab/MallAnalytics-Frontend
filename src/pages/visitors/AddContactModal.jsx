@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { X, ChevronDown } from "lucide-react";
 import api from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
   const [campaigns, setCampaigns] = useState([]);
   const [selectedCampaign, setSelectedCampaign] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  console.log(selectedCampaign,'selectedCampaignsd');
+  
+
+  const navigate = useNavigate();
 
   // 🟢 Fetch all campaigns on mount
   useEffect(() => {
@@ -35,7 +42,8 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
       });
 
       console.log("Contacts added successfully!");
-      onClose();
+      // onClose();
+      setSuccess(true);
     } catch (error) {
       console.error("Failed to add contacts:", error);
     }
@@ -52,6 +60,50 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
   };
 
   if (!isOpen) return null;
+
+  if (success) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-xl p-8 w-full max-w-md text-center relative">
+          <button
+            onClick={() => {
+              setSuccess(false);
+              onClose(); // Close main modal
+            }}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="flex justify-center mb-6">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/845/845646.png"
+              alt="Success"
+              className="w-16 h-16"
+            />
+          </div>
+
+          <h3 className="text-lg font-semibold mb-2">
+            Contacts Added Successfully to campaign 🎉
+          </h3>
+          <p className="text-sm text-gray-600 mb-6">
+            Contacts were added to the campaign. Remember that each contact can
+            belong to only one specific campaign.
+          </p>
+
+          <button
+            onClick={() => {
+              setSuccess(false);
+              navigate(`/campaigns/${selectedCampaign}/manage/`)
+            }}
+            className="bg-gray-900 text-white px-6 py-2 rounded-md hover:bg-gray-800"
+          >
+            View Campaign
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -87,7 +139,8 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-left flex items-center justify-between bg-gray-50 text-gray-500"
               >
-                {campaigns.find(c => c.campaign_id === selectedCampaign)?.name || 'Email Campaign'}
+                {campaigns.find((c) => c.campaign_id === selectedCampaign)
+                  ?.name || "Email Campaign"}
                 <ChevronDown
                   className={`w-4 h-4 transition-transform ${
                     isDropdownOpen ? "rotate-180" : ""
