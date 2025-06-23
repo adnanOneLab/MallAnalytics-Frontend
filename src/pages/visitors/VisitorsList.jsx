@@ -44,35 +44,35 @@ const VisitorsList = () => {
     try {
       await api.delete(`/users/${userId}/`);
       setVisitors(visitors.filter((v) => v.user_id !== userId));
+      await loadVisitors();
       setShowDeleteConfirm(false);
     } catch (error) {
       console.error("Delete failed", error);
     }
   };
 
+  const loadVisitors = async () => {
+    setLoading(true);
+    try {
+      const response = await fetchVisitors({
+        search: searchTerm,
+        page: currentPage,
+        pageSize,
+        ...filters,
+      });
+      setVisitors(response.results || []);
+      setTotalCount(response.count || 0);
+      setTotalPages(Math.ceil((response.count || 0) / pageSize));
+    } catch (error) {
+      console.error("Failed to fetch visitors:", error);
+      setVisitors([]);
+      setTotalCount(0);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const loadVisitors = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchVisitors({
-          search: searchTerm,
-          page: currentPage,
-          pageSize,
-          ...filters,
-        });
-        setVisitors(response.results || []);
-        setTotalCount(response.count || 0);
-        setTotalPages(Math.ceil((response.count || 0) / pageSize));
-      } catch (error) {
-        console.error("Failed to fetch visitors:", error);
-        setVisitors([]);
-        setTotalCount(0);
-        setTotalPages(1);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadVisitors();
   }, [searchTerm, currentPage, pageSize, filters]);
 
