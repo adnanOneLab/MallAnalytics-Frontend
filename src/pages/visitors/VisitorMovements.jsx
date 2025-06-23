@@ -7,12 +7,11 @@ import {
   Trash2,
   User,
 } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { fetchMovementsByVisitId } from "../../services/visitorService";
 
 const VisitorMovements = () => {
-  const navigate = useNavigate();
   const { visit_id } = useParams();
   console.log(visit_id,'visit_iddsdfsdf');
   
@@ -59,9 +58,9 @@ const VisitorMovements = () => {
     setSelectAll(newSelected.size === movements.length);
   };
 
-  const handleVisitorClick = (id) => {
-    navigate(`/visitors/${id}`);
-  };
+  // const handleVisitorClick = (id) => {
+  //   navigate(`/visitors/${id}`);
+  // };
 
   return (
     <Layout>
@@ -170,12 +169,12 @@ const VisitorMovements = () => {
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleVisitorClick(visitor.camera_id)}
+                    <div
+                      // onClick={() => handleVisitorClick(visitor.camera_id)}
                       className="text-sm font-medium text-blue-600 hover:text-blue-800"
                     >
                       {visitor.camera_id}
-                    </button>
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">

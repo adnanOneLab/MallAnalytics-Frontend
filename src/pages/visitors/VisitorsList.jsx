@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { fetchVisitors } from "../../services/visitorService";
-import AddContactModal from './AddContactModal';
+import AddContactModal from "./AddContactModal";
 
 const VisitorsList = () => {
   const navigate = useNavigate();
@@ -26,12 +26,17 @@ const VisitorsList = () => {
   const [selectedVisitors, setSelectedVisitors] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
+  console.log(selectedVisitors, "selectedVisitors");
 
   useEffect(() => {
     const loadVisitors = async () => {
       setLoading(true);
       try {
-        const response = await fetchVisitors({ search: searchTerm, page: currentPage, pageSize });
+        const response = await fetchVisitors({
+          search: searchTerm,
+          page: currentPage,
+          pageSize,
+        });
         setVisitors(response.results || []);
         setTotalCount(response.count || 0);
         setTotalPages(Math.ceil((response.count || 0) / pageSize));
@@ -99,7 +104,7 @@ const VisitorsList = () => {
               placeholder="Search"
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
               value={searchTerm}
-              onChange={e => {
+              onChange={(e) => {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
@@ -116,7 +121,8 @@ const VisitorsList = () => {
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                 onClick={() => setIsAddContactModalOpen(true)}
               >
                 Add to Email Campaign
@@ -265,12 +271,13 @@ const VisitorsList = () => {
           {/* Pagination Controls */}
           <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
             <div className="text-sm text-gray-600">
-              Showing page {currentPage} of {totalPages} ({totalCount} total visitors)
+              Showing page {currentPage} of {totalPages} ({totalCount} total
+              visitors)
             </div>
             <div className="flex items-center space-x-2">
               <button
                 className="px-3 py-1 border rounded disabled:opacity-50"
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
               >
                 Previous
@@ -278,7 +285,9 @@ const VisitorsList = () => {
               <span className="text-sm">Page {currentPage}</span>
               <button
                 className="px-3 py-1 border rounded disabled:opacity-50"
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage === totalPages}
               >
                 Next
@@ -287,7 +296,11 @@ const VisitorsList = () => {
           </div>
         </div>
       </div>
-      <AddContactModal isOpen={isAddContactModalOpen} onClose={() => setIsAddContactModalOpen(false)} />
+      <AddContactModal
+        isOpen={isAddContactModalOpen}
+        onClose={() => setIsAddContactModalOpen(false)}
+        selectedVisitors={Array.from(selectedVisitors)}  // 👈 convert Set to array
+      />
     </Layout>
   );
 };
