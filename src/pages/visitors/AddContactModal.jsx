@@ -2,15 +2,26 @@ import React, { useEffect, useState } from "react";
 import { X, ChevronDown } from "lucide-react";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import CreateCampaignModal from "../campaigns/CreateCampaignModal";
 
 export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
   const [campaigns, setCampaigns] = useState([]);
   const [selectedCampaign, setSelectedCampaign] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  console.log(selectedCampaign,'selectedCampaignsd');
-  
+  const handleCreateNew = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCampaignCreated = (newCampaign) => {
+    setIsCreateModalOpen(false);
+    setCampaigns((prev) => [...prev, newCampaign]);
+    setSelectedCampaign(newCampaign.campaign_id);
+  };
+
+  console.log(selectedCampaign, "selectedCampaignsd");
 
   const navigate = useNavigate();
 
@@ -53,12 +64,6 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
     if (onClose) onClose();
   };
 
-  const handleCreateNew = () => {
-    // Handle create new campaign logic
-    console.log("Creating new campaign");
-    // This could open the Create Email Campaign modal
-  };
-
   if (!isOpen) return null;
 
   if (success) {
@@ -94,7 +99,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
           <button
             onClick={() => {
               setSuccess(false);
-              navigate(`/campaigns/${selectedCampaign}/manage/`)
+              navigate(`/campaigns/${selectedCampaign}/manage/`);
             }}
             className="bg-gray-900 text-white px-6 py-2 rounded-md hover:bg-gray-800"
           >
@@ -197,6 +202,11 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
             Add Visitors
           </button>
         </div>
+        <CreateCampaignModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onCreated={handleCampaignCreated}
+        />
       </div>
     </div>
   );
