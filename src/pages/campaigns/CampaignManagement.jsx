@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Plus, Trash2, MoreVertical } from 'lucide-react';
 import Layout from '../../components/Layout';
+import ContactsTab from '../campaigns/tabs/ContactsTab'
 
 const CampaignManagement = () => {
   const [activeTab, setActiveTab] = useState('emails');
@@ -167,7 +168,8 @@ const CampaignManagement = () => {
     contact.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     contact.organization.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  console.log(filteredContacts,'filteredContactssdfdf');
+  
   const Header = () => (
     <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
       <h1 className="text-2xl font-semibold text-gray-900">Campaign</h1>
@@ -292,87 +294,90 @@ const CampaignManagement = () => {
     </div>
   );
 
-  const ContactsTab = () => (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div className="text-sm text-orange-600">
-          <strong>Note:</strong> If CRM is connected you can find all of this contacts in CRM as well
-        </div>
-        <div className="flex space-x-3">
-          <button className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center">
-            <Plus className="w-4 h-4 mr-2" />
-            Add contacts
-          </button>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-            Add Steps
-          </button>
-        </div>
-      </div>
+  // const ContactsTab = () => (
+  //   <div className="p-6">
+  //     <div className="flex justify-between items-center mb-6">
+  //       {/* <div className="text-sm text-orange-600">
+  //         <strong>Note:</strong> If CRM is connected you can find all of this contacts in CRM as well
+  //       </div> */}
+  //       <div>
+
+  //       </div>
+  //       <div className="flex space-x-3">
+  //         <button className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center">
+  //           <Plus className="w-4 h-4 mr-2" />
+  //           Add contacts
+  //         </button>
+  //         <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+  //           Add Steps
+  //         </button>
+  //       </div>
+  //     </div>
       
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <input type="checkbox" className="rounded border-gray-300" />
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organization</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email Address</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Group</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredContacts.map((contact) => (
-                <tr key={contact.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {contact.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.title}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.organization}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.city}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.state}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.country}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.phone}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      contact.group ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      {contact.group || 'No Group'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
+  //     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+  //       <div className="overflow-x-auto">
+  //         <table className="min-w-full divide-y divide-gray-200">
+  //           <thead className="bg-gray-50">
+  //             <tr>
+  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+  //                 <input type="checkbox" className="rounded border-gray-300" />
+  //               </th>
+  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organization</th>
+  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
+  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th>
+  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
+  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email Address</th>
+  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Group</th>
+  //             </tr>
+  //           </thead>
+  //           <tbody className="bg-white divide-y divide-gray-200">
+  //             {filteredContacts.map((contact) => (
+  //               <tr key={contact.id} className="hover:bg-gray-50">
+  //                 <td className="px-6 py-4 whitespace-nowrap">
+  //                   <input type="checkbox" className="rounded border-gray-300" />
+  //                 </td>
+  //                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+  //                   {contact.name}
+  //                 </td>
+  //                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+  //                   {contact.title}
+  //                 </td>
+  //                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+  //                   {contact.organization}
+  //                 </td>
+  //                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+  //                   {contact.city}
+  //                 </td>
+  //                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+  //                   {contact.state}
+  //                 </td>
+  //                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+  //                   {contact.country}
+  //                 </td>
+  //                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+  //                   {contact.phone}
+  //                 </td>
+  //                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+  //                   {contact.email}
+  //                 </td>
+  //                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+  //                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+  //                     contact.group ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+  //                   }`}>
+  //                     {contact.group || 'No Group'}
+  //                   </span>
+  //                 </td>
+  //               </tr>
+  //             ))}
+  //           </tbody>
+  //         </table>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
 
   const SettingsTab = () => (
     <div className="p-6">

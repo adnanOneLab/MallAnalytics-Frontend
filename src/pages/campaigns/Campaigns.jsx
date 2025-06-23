@@ -1,45 +1,70 @@
-import React, { useState } from 'react';
-import { Search, Moon, Bell, Plus, Trash2 } from 'lucide-react';
-import Sidebar from '../../components/Sidebar';
-import Layout from '../../components/Layout';
-import EmailModal from './EmailModal';
+import React, { useEffect, useState } from "react";
+import { Search, Moon, Bell, Plus, Trash2 } from "lucide-react";
+import Sidebar from "../../components/Sidebar";
+import Layout from "../../components/Layout";
+import EmailModal from "./EmailModal";
+import api from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 export default function CampaignTable() {
-  const [campaigns, setCampaigns] = useState([
-    { id: 1, name: "High-Performance Plastics for Aviation Innovation", delivered: 30, opened: 25, bounced: 3, scheduled: 2, active: false },
-    { id: 2, name: "High-Performance Plastics for Aviation Innovation", delivered: 30, opened: 25, bounced: 3, scheduled: 2, active: true },
-    { id: 3, name: "High-Performance Plastics for Aviation Innovation", delivered: 30, opened: 25, bounced: 3, scheduled: 2, active: false },
-    { id: 4, name: "High-Performance Plastics for Aviation Innovation", delivered: 30, opened: 25, bounced: 3, scheduled: 2, active: false },
-    { id: 5, name: "High-Performance Plastics for Aviation Innovation", delivered: 30, opened: 25, bounced: 3, scheduled: 2, active: true },
-    { id: 6, name: "High-Performance Plastics for Aviation Innovation", delivered: 30, opened: 25, bounced: 3, scheduled: 2, active: false },
-    { id: 7, name: "High-Performance Plastics for Aviation Innovation", delivered: 30, opened: 25, bounced: 3, scheduled: 2, active: true },
-    { id: 8, name: "High-Performance Plastics for Aviation Innovation", delivered: 30, opened: 25, bounced: 3, scheduled: 2, active: false },
-    { id: 9, name: "High-Performance Plastics for Aviation Innovation", delivered: 30, opened: 25, bounced: 3, scheduled: 2, active: false },
-    { id: 10, name: "High-Performance Plastics for Aviation Innovation", delivered: 30, opened: 25, bounced: 3, scheduled: 2, active: false },
-  ]);
+  const navigate = useNavigate();
 
+  const [campaigns, setCampaigns] = useState([]);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
-  const toggleActive = (id) => {
-    setCampaigns(campaigns.map(campaign => 
-      campaign.id === id ? { ...campaign, active: !campaign.active } : campaign
-    ));
+  // 🔹 Fetch campaigns on mount
+  useEffect(() => {
+    fetchCampaigns();
+  }, [isEmailModalOpen]);
+
+  const fetchCampaigns = async () => {
+    try {
+      const res = await api.get("/campaigns/");
+      setCampaigns(res.data);
+    } catch (error) {
+      console.error("Failed to fetch campaigns:", error);
+    }
   };
 
-  const deleteCampaign = (id) => {
-    setCampaigns(campaigns.filter(campaign => campaign.id !== id));
+  // 🔹 Toggle active status
+  const toggleActive = async (id, currentStatus) => {
+    try {
+      await api.patch(`/campaigns/${id}/toggle/`, {
+        is_active: !currentStatus,
+      });
+      fetchCampaigns();
+    } catch (err) {
+      console.error("Failed to toggle active status:", err);
+    }
+  };
+
+  // 🔹 Delete campaign
+  const deleteCampaign = async (id) => {
+    try {
+      await api.delete(`/campaigns/${id}/`);
+      fetchCampaigns();
+    } catch (err) {
+      console.error("Failed to delete campaign:", err);
+    }
   };
 
   return (
     <Layout>
       <div className="px-6 py-6">
-        <EmailModal isOpen={isEmailModalOpen} onClose={() => setIsEmailModalOpen(false)} />
+        <EmailModal
+          isOpen={isEmailModalOpen}
+          onClose={() => setIsEmailModalOpen(false)}
+        />
         <div className="bg-white rounded-lg shadow-sm">
           {/* Table Header */}
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-500">
-                Showing <span className="font-medium text-gray-900">{campaigns.length}</span> Campaigns
+                Showing{" "}
+                <span className="font-medium text-gray-900">
+                  {campaigns.length}
+                </span>{" "}
+                Campaigns
               </div>
               <button
                 className="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-700 transition-colors"
@@ -81,7 +106,13 @@ export default function CampaignTable() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {campaigns.map((campaign) => (
-                  <tr key={campaign.id} className="hover:bg-gray-50">
+                  <tr
+                    key={campaign.id}
+                    className="hover:bg-gray-50"
+                    onClick={() =>
+                      navigate(`/campaigns/${campaign.campaign_id}/manage`)
+                    }
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <input
@@ -107,21 +138,23 @@ export default function CampaignTable() {
                     </td>
                     <td className="px-6 py-4">
                       <button
-                        onClick={() => toggleActive(campaign.id)}
+                        onClick={() =>
+                          toggleActive(campaign.campaign_id, campaign.is_active)
+                        }
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          campaign.active ? 'bg-green-500' : 'bg-gray-300'
+                          campaign.active ? "bg-green-500" : "bg-gray-300"
                         }`}
                       >
                         <span
                           className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                            campaign.active ? 'translate-x-6' : 'translate-x-1'
+                            campaign.active ? "translate-x-6" : "translate-x-1"
                           }`}
                         />
                       </button>
                     </td>
                     <td className="px-6 py-4">
                       <button
-                        onClick={() => deleteCampaign(campaign.id)}
+                        onClick={() => deleteCampaign(campaign.campaign_id)}
                         className="text-gray-400 hover:text-red-600 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />

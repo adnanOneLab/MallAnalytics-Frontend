@@ -1,17 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
+import api from '../../services/api';
 
 export default function AddContactModal({ isOpen, onClose }) {
+  const [campaigns, setCampaigns] = useState([]);
   const [selectedCampaign, setSelectedCampaign] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Mock email campaigns data
-  const emailCampaigns = [
-    'Marketing Campaign Q1',
-    'Product Launch 2024',
-    'Customer Onboarding',
-    'Newsletter Subscribers'
-  ];
+  // 🟢 Fetch all campaigns on mount
+  useEffect(() => {
+    if (isOpen) {
+      api.get('/campaigns/')
+        .then(res => {
+          setCampaigns(res.data);
+        })
+        .catch(err => {
+          console.error('Error fetching campaigns:', err);
+        });
+    }
+  }, [isOpen]);
 
   const handleAddContact = () => {
     // Handle add contact logic here
@@ -68,16 +75,16 @@ export default function AddContactModal({ isOpen, onClose }) {
               {isDropdownOpen && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
                   <div className="py-1">
-                    {emailCampaigns.map((campaign, index) => (
+                    {campaigns.map((campaign, index) => (
                       <button
                         key={index}
                         onClick={() => {
-                          setSelectedCampaign(campaign);
+                          setSelectedCampaign(campaign.name);
                           setIsDropdownOpen(false);
                         }}
                         className="w-full px-3 py-2 text-left hover:bg-gray-50 text-sm transition-colors"
                       >
-                        {campaign}
+                        {campaign.name}
                       </button>
                     ))}
                   </div>

@@ -76,7 +76,8 @@ function App() {
           }
         />
         <Route
-          path="/campaigns/new"
+          // path="/campaigns/new"
+          path="/campaigns/:id/manage"
           element={
             <ProtectedRoute
               isAllowed={user.isSubscribed}

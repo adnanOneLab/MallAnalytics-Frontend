@@ -1,23 +1,75 @@
 import React, { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
+import api from '../../services/api';
 
 export default function CreateEmailCampaignModal({ isOpen, onClose }) {
   const [campaignName, setCampaignName] = useState('');
-  const [selectedBusinessHours, setSelectedBusinessHours] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const businessHoursOptions = [
-    'Standard Business Hours (9 AM - 5 PM)',
-    'Extended Hours (8 AM - 6 PM)',
-    'All Day (24/7)',
-    'Custom Hours'
+  const [selectedBusinessHourLabel, setSelectedBusinessHourLabel] = useState('');
+  const [selectedBusinessHourId, setSelectedBusinessHourId] = useState(null);
+  console.log(selectedBusinessHourLabel,'selectedBusinessHourLabelas');
+  
+  const staticBusinessHours = [
+    {
+      id: 1,
+      label: 'Standard Business Hours',
+      hours: [
+        { day: 'Monday', start: '08:00', end: '17:00' },
+        { day: 'Tuesday', start: '08:00', end: '17:00' },
+        { day: 'Wednesday', start: '08:00', end: '17:00' },
+        { day: 'Thursday', start: '08:00', end: '17:00' },
+        { day: 'Friday', start: '08:00', end: '17:00' },
+      ],
+    },
+    {
+      id: 2,
+      label: 'Extended Hours',
+      hours: [
+        { day: 'Monday', start: '07:00', end: '19:00' },
+        { day: 'Tuesday', start: '07:00', end: '19:00' },
+        { day: 'Wednesday', start: '07:00', end: '19:00' },
+        { day: 'Thursday', start: '07:00', end: '19:00' },
+        { day: 'Friday', start: '07:00', end: '19:00' },
+      ],
+    },
+    {
+      id: 3,
+      label: 'Weekend Hours',
+      hours: [
+        { day: 'Saturday', start: '10:00', end: '16:00' },
+        { day: 'Sunday', start: '10:00', end: '16:00' },
+      ],
+    },
   ];
 
-  const handleCreateCampaign = () => {
-    // Handle campaign creation logic here
-    console.log('Creating campaign:', { campaignName, selectedBusinessHours });
-    if (onClose) onClose();
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     api.get('/business-hours/')
+  //       .then((res) => setBusinessHoursList(res.data))
+  //       .catch((err) => console.error('Error fetching business hours:', err));
+  //   }
+  // }, [isOpen]);
+
+  const handleCreateCampaign = async () => {
+    try {
+      const payload = {
+        name: campaignName,
+        business_hours: [selectedBusinessHourId],
+        is_active: false
+      };
+      const res = await api.post('/campaigns/', payload);
+      console.log('Campaign created:', res.data);
+      onClose();
+    } catch (err) {
+      console.error('Failed to create campaign:', err);
+    }
   };
+
+  const selectedHours = staticBusinessHours.find(
+    (hour) => hour.id === selectedBusinessHourId
+  );
+
 
   const handleClose = () => {
     if (onClose) onClose();
@@ -69,23 +121,24 @@ export default function CreateEmailCampaignModal({ isOpen, onClose }) {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-left flex items-center justify-between text-gray-500 bg-white hover:bg-gray-50 transition-colors"
               >
-                <span>{selectedBusinessHours || 'Select Business Hours'}</span>
+                <span>{'Select Business Hours'}</span>
                 <ChevronDown className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               
               {isDropdownOpen && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
                   <div className="py-1">
-                    {businessHoursOptions.map((option, index) => (
+                    {staticBusinessHours.map((item) => (
                       <button
-                        key={index}
+                        key={item.id}
                         onClick={() => {
-                          setSelectedBusinessHours(option);
+                          setSelectedBusinessHourId(item.id);
+                          setSelectedBusinessHourLabel(item.label);
                           setIsDropdownOpen(false);
                         }}
-                        className="w-full px-3 py-2 text-left hover:bg-gray-50 text-sm transition-colors"
+                        className="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm"
                       >
-                        {option}
+                        {item.label}
                       </button>
                     ))}
                   </div>
@@ -94,32 +147,18 @@ export default function CreateEmailCampaignModal({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* Business Hours Display */}
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Business Hours</h3>
-            <div className="text-xs text-gray-600 space-y-1 bg-gray-50 p-3 rounded-md">
-              <div className="flex justify-between">
-                <span>Monday:</span>
-                <span>08:00 - 17:00</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Tuesday:</span>
-                <span>08:00 - 17:00</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Wednesday:</span>
-                <span>08:00 - 17:00</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Thursday:</span>
-                <span>08:00 - 17:00</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Friday:</span>
-                <span>08:00 - 17:00</span>
-              </div>
+          {/* Display Selected Hours */}
+          {/* Display Selected Hours */}
+          {selectedHours && (
+            <div className="bg-gray-50 p-3 rounded-md text-xs text-gray-700">
+              {selectedHours.hours.map((h, index) => (
+                <div key={index} className="flex justify-between">
+                  <span>{h.day}:</span>
+                  <span>{h.start} - {h.end}</span>
+                </div>
+              ))}
             </div>
-          </div>
+          )}
         </div>
 
         {/* Actions */}
