@@ -11,6 +11,7 @@ export default function CampaignTable() {
 
   const [campaigns, setCampaigns] = useState([]);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // 🔹 Fetch campaigns on mount
   useEffect(() => {
@@ -19,10 +20,13 @@ export default function CampaignTable() {
 
   const fetchCampaigns = async () => {
     try {
+      setLoading(true);
       const res = await api.get("/campaigns/");
       setCampaigns(res.data);
     } catch (error) {
       console.error("Failed to fetch campaigns:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,64 +109,88 @@ export default function CampaignTable() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {campaigns.map((campaign) => (
-                  <tr key={campaign.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 text-blue-600 border-gray-300 rounded mr-3"
-                        />
-                        <span
-                          className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
-                          onClick={() =>
-                            navigate(
-                              `/campaigns/${campaign.campaign_id}/manage`
-                            )
-                          }
-                        >
-                          {campaign.name}
-                        </span>
+                {loading ? (
+                  <tr>
+                    <td colSpan="7" className="px-6 py-10 text-center">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-800"></div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {campaign.delivered}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {campaign.opened}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      0{campaign.bounced}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      0{campaign.scheduled}
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() =>
-                          toggleActive(campaign.campaign_id, campaign.is_active)
-                        }
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          campaign.is_active ? "bg-green-500" : "bg-gray-300"
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                            campaign.active ? "translate-x-6" : "translate-x-1"
+                  </tr>
+                ) : campaigns.length > 0 ? (
+                  campaigns.map((campaign) => (
+                    <tr key={campaign.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4 text-blue-600 border-gray-300 rounded mr-3"
+                          />
+                          <span
+                            className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                            onClick={() =>
+                              navigate(
+                                `/campaigns/${campaign.campaign_id}/manage`
+                              )
+                            }
+                          >
+                            {campaign.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {campaign.emails_delivered}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {campaign.emails_opened}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {campaign.emails_bounced}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {campaign.emails_scheduled}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() =>
+                            toggleActive(
+                              campaign.campaign_id,
+                              campaign.is_active
+                            )
+                          }
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            campaign.is_active ? "bg-green-500" : "bg-gray-300"
                           }`}
-                        />
-                      </button>
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => deleteCampaign(campaign.campaign_id)}
-                        className="text-gray-400 hover:text-red-600 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              campaign.is_active
+                                ? "translate-x-6"
+                                : "translate-x-1"
+                            }`}
+                          />
+                        </button>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => deleteCampaign(campaign.campaign_id)}
+                          className="text-gray-400 hover:text-red-600 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="7"
+                      className="px-6 py-6 text-center text-sm text-gray-500"
+                    >
+                      No campaigns found.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
