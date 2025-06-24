@@ -1,0 +1,144 @@
+{
+    "common": {
+        "appName": "WISE Video",
+        "dashboard": "Tablero",
+        "campaign": "Campaña",
+        "visitorsList": "Lista de Visitantes",
+        "adminUser": "Usuario Administrador",
+        "logout": "Cerrar Sesión",
+        "language": "Idioma"
+    },
+    "dashboard": {
+        "title": "Tablero",
+        "welcome": "Bienvenido a WISE Video Analytics",
+        "totalVisitors": "Total de Visitantes",
+        "totalVisitorsSubtext": "+12% del mes pasado",
+        "activeVisitors": "Visitantes Activos",
+        "activeVisitorsSubtext": "+{{count}} nuevos esta semana",
+        "avgVisitDuration": "Duración Promedio de Visita",
+        "avgVisitDurationSubtext": "+5m del mes pasado",
+        "membershipDistribution": "Distribución de Membresías",
+        "platinum": "Platino",
+        "gold": "Oro",
+        "silver": "Plata",
+        "bronze": "Bronce"
+    },
+    "visitors": {
+        "title": "Lista de Visitantes",
+        "visitsCount": "{{count}} Visitas",
+        "searchPlaceholder": "Buscar",
+        "addToEmailCampaign": "Agregar a Campaña de Email",
+        "filters": "Filtros",
+        "clearAllFilters": "Limpiar Todos los Filtros",
+        "cancel": "Cancelar",
+        "search": "Buscar",
+        "delete": "Eliminar",
+        "filterLabels": {
+            "name": "Nombre",
+            "email": "Email",
+            "membership": "Membresía",
+            "storesVisited": "Tiendas Visitadas",
+            "visits": "Visitas",
+            "monthlyFrequency": "Frecuencia Mensual",
+            "lastVisit": "Última Visita (YYYY-MM-DD)"
+        },
+        "tableHeaders": {
+            "name": "Nombre",
+            "email": "Email",
+            "visits": "Visitas",
+            "shows": "Shows",
+            "lastVisit": "Última Visita",
+            "membership": "Membresía",
+            "actions": "Acciones"
+        },
+        "pagination": {
+            "showing": "Mostrando página {{currentPage}} de {{totalPages}} ({{totalCount}} visitantes totales)",
+            "previous": "Anterior",
+            "next": "Siguiente",
+            "page": "Página {{page}}"
+        },
+        "deleteConfirm": {
+            "title": "¿Eliminar {{name}}?",
+            "message": "¿Estás seguro de que quieres eliminar este usuario? Esta acción no se puede deshacer."
+        }
+    },
+    "visitorsProfile": {
+        "title": "Perfil del Visitante",
+        "error": "No se pudo cargar el perfil del visitante. Por favor, inténtalo de nuevo más tarde.",
+        "notFound": "Visitante no encontrado",
+        "visitorId": "ID del Visitante",
+        "name": "Nombre",
+        "email": "Email",
+        "phone": "Número de Teléfono",
+        "address": "Dirección",
+        "monthlyVisits": "Visitas Mensuales",
+        "yearlyVisits": "Visitas Anuales",
+        "lifeVisits": "Visitas Totales",
+        "storesVisitedMonth": "Tiendas visitadas este mes:",
+        "storesVisitedLife": "Tiendas visitadas en la vida:",
+        "firstVisit": "Primera visita:",
+        "lastVisit": "Última visita:",
+        "recency": "Recencia:",
+        "days": "días",
+        "monthlyFrequency": "Frecuencia Mensual:",
+        "visits": "visitas",
+        "showingVisits": "Mostrando {{count}} visitas",
+        "tableHeaders": {
+            "date": "Fecha",
+            "timeEntry": "Hora de entrada",
+            "timeExit": "Hora de salida",
+            "storesVisited": "Tiendas Visitadas",
+            "timeSpent": "Tiempo empleado",
+            "interest": "Interés"
+        }
+    },
+    "visitorMovements": {
+        "title": "Movimientos del Visitante",
+        "loading": "Cargando visitantes...",
+        "fetchError": "No se pudo obtener los visitantes:",
+        "visitsCount": "3,265 Visitas",
+        "searchPlaceholder": "Buscar",
+        "showingDate": "Mostrando {{date}}",
+        "exportCsv": "Exportar a CSV",
+        "filters": "Filtros",
+        "tableHeaders": {
+            "cameraId": "ID de Cámara",
+            "startTime": "Hora de Inicio (TimeStamp)",
+            "endTime": "Hora de Fin (TimeStamp)",
+            "situation": "Situación",
+            "location": "Ubicación",
+            "storeName": "Nombre de la Tienda"
+        },
+        "na": "N/D"
+    },
+    "addContactModal": {
+        "successTitle": "Visitantes agregados exitosamente a la campaña 🎉",
+        "successMessage": "Los visitantes fueron agregados a la campaña. Recuerda que cada visitante solo puede pertenecer a una campaña específica.",
+        "viewCampaign": "Ver Campaña",
+        "title": "Agregar Visitante(s) a la Campaña de Email",
+        "selectSequence": "Selecciona la secuencia a la que deseas agregar el visitante. También puedes crear una nueva secuencia si ninguna de las opciones disponibles se ajusta a tus necesidades.",
+        "emailCampaign": "Campaña de Email",
+        "noCampaigns": "¿No hay campañas de email?",
+        "createOne": "Crear una",
+        "cancel": "Cancelar",
+        "addVisitors": "Agregar Visitantes"
+    },
+    "campaigns": {
+        "fetchError": "No se pudo obtener las campañas:",
+        "toggleError": "No se pudo cambiar el estado activo:",
+        "deleteError": "No se pudo eliminar la campaña:",
+        "showing": "Mostrando",
+        "campaigns": "Campañas",
+        "newCampaign": "Nueva Campaña",
+        "noCampaignsFound": "No se encontraron campañas.",
+        "tableHeaders": {
+            "campaignName": "Nombre de la Campaña",
+            "emailsDelivered": "Emails Entregados",
+            "emailsOpened": "Emails Abiertos",
+            "emailsBounced": "Emails Rebotados",
+            "emailsScheduled": "Emails Programados",
+            "active": "Activo",
+            "action": "Acción"
+        }
+    }
+}

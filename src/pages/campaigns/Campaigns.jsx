@@ -5,9 +5,11 @@ import Layout from "../../components/Layout";
 import EmailModal from "./EmailModal";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 export default function CampaignTable() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [campaigns, setCampaigns] = useState([]);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
@@ -24,7 +26,7 @@ export default function CampaignTable() {
       const res = await api.get("/campaigns/");
       setCampaigns(res.data);
     } catch (error) {
-      console.error("Failed to fetch campaigns:", error);
+      console.error(t('campaigns.fetchError'), error);
     } finally {
       setLoading(false);
     }
@@ -38,7 +40,7 @@ export default function CampaignTable() {
       });
       fetchCampaigns();
     } catch (err) {
-      console.error("Failed to toggle active status:", err);
+      console.error(t('campaigns.toggleError'), err);
     }
   };
 
@@ -48,7 +50,7 @@ export default function CampaignTable() {
       await api.delete(`/campaigns/${id}/`);
       fetchCampaigns();
     } catch (err) {
-      console.error("Failed to delete campaign:", err);
+      console.error(t('campaigns.deleteError'), err);
     }
   };
 
@@ -64,18 +66,14 @@ export default function CampaignTable() {
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-500">
-                Showing{" "}
-                <span className="font-medium text-gray-900">
-                  {campaigns.length}
-                </span>{" "}
-                Campaigns
+                {t('campaigns.showing')} <span className="font-medium text-gray-900">{campaigns.length}</span> {t('campaigns.campaigns')}
               </div>
               <button
                 className="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-700 transition-colors"
                 onClick={() => setIsEmailModalOpen(true)}
               >
                 <Plus className="w-4 h-4" />
-                <span>New Campaign</span>
+                <span>{t('campaigns.newCampaign')}</span>
               </button>
             </div>
           </div>
@@ -86,25 +84,25 @@ export default function CampaignTable() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Campaign Name
+                    {t('campaigns.tableHeaders.campaignName')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Emails Delivered
+                    {t('campaigns.tableHeaders.emailsDelivered')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Emails Opened
+                    {t('campaigns.tableHeaders.emailsOpened')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Emails Bounced
+                    {t('campaigns.tableHeaders.emailsBounced')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Emails Scheduled
+                    {t('campaigns.tableHeaders.emailsScheduled')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Active
+                    {t('campaigns.tableHeaders.active')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Action
+                    {t('campaigns.tableHeaders.action')}
                   </th>
                 </tr>
               </thead>
@@ -158,16 +156,14 @@ export default function CampaignTable() {
                               campaign.is_active
                             )
                           }
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                            campaign.is_active ? "bg-green-500" : "bg-gray-300"
-                          }`}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${campaign.is_active ? "bg-green-500" : "bg-gray-300"
+                            }`}
                         >
                           <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              campaign.is_active
-                                ? "translate-x-6"
-                                : "translate-x-1"
-                            }`}
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${campaign.is_active
+                              ? "translate-x-6"
+                              : "translate-x-1"
+                              }`}
                           />
                         </button>
                       </td>
@@ -187,7 +183,7 @@ export default function CampaignTable() {
                       colSpan="7"
                       className="px-6 py-6 text-center text-sm text-gray-500"
                     >
-                      No campaigns found.
+                      {t('campaigns.noCampaignsFound')}
                     </td>
                   </tr>
                 )}

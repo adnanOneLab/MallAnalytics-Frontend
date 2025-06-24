@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Search, Settings, Download, ArrowUpDown } from "lucide-react";
 import { fetchVisitorProfile } from "../../services/visitorService";
-
 import Layout from "../../components/Layout";
 import { useNavigate, useParams } from "react-router-dom";
 import { getPresignedUrl } from "../../services/userService";
+import { useTranslation } from 'react-i18next';
 
 const VisitorDetail = () => {
   const navigate = useNavigate();
   const { user_id } = useParams();
+  const { t } = useTranslation();
 
   // const { id } = useParams();
   const [loading, setLoading] = useState(true);
@@ -81,7 +82,7 @@ const VisitorDetail = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          {error}
+          {t('visitorsProfile.error')}
         </div>
       </div>
     );
@@ -91,7 +92,7 @@ const VisitorDetail = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
-          Visitor not found
+          {t('visitorsProfile.notFound')}
         </div>
       </div>
     );
@@ -102,16 +103,16 @@ const VisitorDetail = () => {
   };
   return (
     <Layout>
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <span className="font-semibold text-lg">Visitor</span>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <span className="font-semibold text-lg">{t('visitorsProfile.title')}</span>
+              </div>
             </div>
-          </div>
-          {/* <div className="flex items-center space-x-4">
+            {/* <div className="flex items-center space-x-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
@@ -126,8 +127,8 @@ const VisitorDetail = () => {
               </div>
             </div>
           </div> */}
+          </div>
         </div>
-      </div>
 
         {/* Main Content */}
         <div className="py-3">
@@ -167,39 +168,39 @@ const VisitorDetail = () => {
                   <div className="grid grid-cols-4 gap-x-8 gap-y-4">
                     <div>
                       <div className="text-sm text-gray-500 mb-1">
-                        Visitor ID
+                        {t('visitorsProfile.visitorId')}
                       </div>
                       <div className="font-medium text-gray-900">{user_id}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Name</div>
+                      <div className="text-sm text-gray-500 mb-1">{t('visitorsProfile.name')}</div>
                       <div className="font-medium text-gray-900">
                         {visitorInfo.name || "-"}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Email</div>
+                      <div className="text-sm text-gray-500 mb-1">{t('visitorsProfile.email')}</div>
                       <div className="font-medium text-blue-600">
                         {visitorInfo.email || "-"}
                       </div>
                     </div>
                     <div>
                       <div className="text-sm text-gray-500 mb-1">
-                        Phone Number
+                        {t('visitorsProfile.phone')}
                       </div>
                       <div className="font-medium text-gray-900">
                         {visitorInfo.phone || "-"}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Address</div>
+                      <div className="text-sm text-gray-500 mb-1">{t('visitorsProfile.address')}</div>
                       <div className="font-medium text-gray-900">
                         {visitorInfo.address || "-"}
                       </div>
                     </div>
                     <div>
                       <div className="text-sm text-gray-500 mb-1">
-                        Monthly Visits
+                        {t('visitorsProfile.monthlyVisits')}
                       </div>
                       <div className="text-lg font-semibold text-gray-900">
                         {visitorInfo.monthlyVisits || "0"}
@@ -207,7 +208,7 @@ const VisitorDetail = () => {
                     </div>
                     <div>
                       <div className="text-sm text-gray-500 mb-1">
-                        Yearly Visits
+                        {t('visitorsProfile.yearlyVisits')}
                       </div>
                       <div className="text-lg font-semibold text-gray-900">
                         {visitorInfo.yearlyVisits || "0"}
@@ -215,7 +216,7 @@ const VisitorDetail = () => {
                     </div>
                     <div>
                       <div className="text-sm text-gray-500 mb-1">
-                        Life Visits
+                        {t('visitorsProfile.lifeVisits')}
                       </div>
                       <div className="text-lg font-semibold text-gray-900">
                         {visitorInfo.lifeVisits || "0"}
@@ -232,39 +233,39 @@ const VisitorDetail = () => {
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center space-x-4">
                   <div>
-                    <span className="text-gray-500">Stores visited month:</span>
+                    <span className="text-gray-500">{t('visitorsProfile.storesVisitedMonth')}</span>
                     <span className="ml-2 font-semibold text-gray-900">
                       {visitorInfo.storesVisitedMonth || "0"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Stores visited life:</span>
+                    <span className="text-gray-500">{t('visitorsProfile.storesVisitedLife')}</span>
                     <span className="ml-2 font-semibold text-gray-900">
                       {visitorInfo.storesVisitedLife || "0"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-500">First visit:</span>
+                    <span className="text-gray-500">{t('visitorsProfile.firstVisit')}</span>
                     <span className="ml-2 font-semibold text-gray-900">
                       {visitorInfo.firstVisit || "-"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Last visit:</span>
+                    <span className="text-gray-500">{t('visitorsProfile.lastVisit')}</span>
                     <span className="ml-2 font-semibold text-gray-900">
                       {visitorInfo.lastVisit || "-"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Recency:</span>
+                    <span className="text-gray-500">{t('visitorsProfile.recency')}</span>
                     <span className="ml-2 font-semibold text-gray-900">
-                      {visitorInfo.recency || "0"} days
+                      {visitorInfo.recency || "0"} {t('visitorsProfile.days')}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Monthly Frequency:</span>
+                    <span className="text-gray-500">{t('visitorsProfile.monthlyFrequency')}</span>
                     <span className="ml-2 font-semibold text-gray-900">
-                      {visitorInfo.monthlyFrequency || "0"} visits
+                      {visitorInfo.monthlyFrequency || "0"} {t('visitorsProfile.visits')}
                     </span>
                   </div>
                 </div>
@@ -272,14 +273,14 @@ const VisitorDetail = () => {
             </div>
           </div>
 
-        {/* Visit History Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-500">
-                Showing <span className="font-medium text-gray-900">{visitData.length || '0'}</span> Visits
-              </div>
-              {/* <div className="flex items-center space-x-2">
+          {/* Visit History Table */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-500">
+                  {t('visitorsProfile.showingVisits', { count: visitData.length || '0' })}
+                </div>
+                {/* <div className="flex items-center space-x-2">
                 <button className="flex items-center space-x-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 text-sm">
                   <Download className="w-4 h-4" />
                   <span>Export</span>
@@ -288,8 +289,8 @@ const VisitorDetail = () => {
                   <Settings className="w-4 h-4" />
                 </button>
               </div> */}
+              </div>
             </div>
-          </div>
 
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -297,37 +298,37 @@ const VisitorDetail = () => {
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <div className="flex items-center space-x-1">
-                        <span>Date</span>
+                        <span>{t('visitorsProfile.tableHeaders.date')}</span>
                         <ArrowUpDown className="w-3 h-3" />
                       </div>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <div className="flex items-center space-x-1">
-                        <span>Time of entry</span>
+                        <span>{t('visitorsProfile.tableHeaders.timeEntry')}</span>
                         <ArrowUpDown className="w-3 h-3" />
                       </div>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <div className="flex items-center space-x-1">
-                        <span>Time of Exit</span>
+                        <span>{t('visitorsProfile.tableHeaders.timeExit')}</span>
                         <ArrowUpDown className="w-3 h-3" />
                       </div>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <div className="flex items-center space-x-1">
-                        <span>Stores Visited</span>
+                        <span>{t('visitorsProfile.tableHeaders.storesVisited')}</span>
                         <ArrowUpDown className="w-3 h-3" />
                       </div>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <div className="flex items-center space-x-1">
-                        <span>Time spent</span>
+                        <span>{t('visitorsProfile.tableHeaders.timeSpent')}</span>
                         <ArrowUpDown className="w-3 h-3" />
                       </div>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <div className="flex items-center space-x-1">
-                        <span>Interest</span>
+                        <span>{t('visitorsProfile.tableHeaders.interest')}</span>
                         <ArrowUpDown className="w-3 h-3" />
                       </div>
                     </th>

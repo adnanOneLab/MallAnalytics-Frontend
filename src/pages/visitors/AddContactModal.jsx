@@ -3,6 +3,7 @@ import { X, ChevronDown } from "lucide-react";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import CreateCampaignModal from "../campaigns/CreateCampaignModal";
+import { useTranslation } from 'react-i18next';
 
 export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
   const [campaigns, setCampaigns] = useState([]);
@@ -10,6 +11,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleCreateNew = () => {
     setIsCreateModalOpen(true);
@@ -89,11 +91,10 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
           </div>
 
           <h3 className="text-lg font-semibold mb-2">
-            Visitors Added Successfully to campaign 🎉
+            {t('addContactModal.successTitle')}
           </h3>
           <p className="text-sm text-gray-600 mb-6">
-            Visitors were added to the campaign. Remember that each visitor can
-            belong to only one specific campaign.
+            {t('addContactModal.successMessage')}
           </p>
 
           <button
@@ -103,7 +104,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
             }}
             className="bg-gray-900 text-white px-6 py-2 rounded-md hover:bg-gray-800"
           >
-            View Campaign
+            {t('addContactModal.viewCampaign')}
           </button>
         </div>
       </div>
@@ -116,7 +117,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-medium text-gray-900">
-            Add Visitor(s) to Email Campaign
+            {t('addContactModal.title')}
           </h2>
           <button
             onClick={handleClose}
@@ -129,15 +130,13 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
         {/* Content */}
         <div className="space-y-6">
           <p className="text-sm text-gray-600">
-            Select the sequence to which you would like to add the visitor. You
-            can also create a new sequence if none of the available options fit
-            your needs.
+            {t('addContactModal.selectSequence')}
           </p>
 
           {/* Email Campaign Dropdown */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Campaign
+              {t('addContactModal.emailCampaign')}
             </label>
             <div className="relative flex justify-center">
               <button
@@ -145,11 +144,10 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
                 className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-left flex items-center justify-between bg-gray-50 text-gray-500"
               >
                 {campaigns.find((c) => c.campaign_id === selectedCampaign)
-                  ?.name || "Email Campaign"}
+                  ?.name || t('addContactModal.emailCampaign')}
                 <ChevronDown
-                  className={`w-4 h-4 transition-transform ${
-                    isDropdownOpen ? "rotate-180" : ""
-                  }`}
+                  className={`w-4 h-4 transition-transform ${isDropdownOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 
@@ -176,12 +174,12 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
 
           {/* No campaigns message */}
           <div className="flex items-center space-x-2 text-sm">
-            <span className="text-gray-600">No email campaigns?</span>
+            <span className="text-gray-600">{t('addContactModal.noCampaigns')}</span>
             <button
               onClick={handleCreateNew}
               className="text-blue-600 hover:text-blue-800 transition-colors"
             >
-              Create one
+              {t('addContactModal.createOne')}
             </button>
           </div>
         </div>
@@ -192,14 +190,14 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
             onClick={handleClose}
             className="px-4 py-2 text-gray-700 hover:text-gray-900 transition-colors"
           >
-            Cancel
+            {t('addContactModal.cancel')}
           </button>
           <button
             onClick={handleAddContact}
             disabled={!selectedCampaign}
             className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-900 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           >
-            Add Visitors
+            {t('addContactModal.addVisitors')}
           </button>
         </div>
         <CreateCampaignModal

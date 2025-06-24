@@ -8,6 +8,7 @@ import {
   User,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import Layout from "../../components/Layout";
 import { fetchVisitors } from "../../services/visitorService";
 import AddContactModal from "./AddContactModal";
@@ -15,6 +16,7 @@ import api from "../../services/api";
 
 const VisitorsList = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [visitors, setVisitors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,6 +74,7 @@ const VisitorsList = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     loadVisitors();
   }, [searchTerm, currentPage, pageSize, filters]);
@@ -115,16 +118,18 @@ const VisitorsList = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-            Visitors List
+            {t('visitors.title')}
           </h1>
-          <p className="text-gray-600">{visitors.length} Visits</p>
+          <p className="text-gray-600">
+            {t('visitors.visitsCount', { count: visitors.length })}
+          </p>
         </div>
         <div className="flex items-center space-x-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Search"
+              placeholder={t('visitors.searchPlaceholder')}
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
               value={searchTerm}
               onChange={(e) => {
@@ -133,9 +138,6 @@ const VisitorsList = () => {
               }}
             />
           </div>
-          {/* <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-            <User className="w-4 h-4 text-gray-600" />
-          </div> */}
         </div>
       </div>
 
@@ -145,32 +147,28 @@ const VisitorsList = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <button
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  selectedVisitors.size > 0
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedVisitors.size > 0
+                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
                 onClick={() => setIsAddContactModalOpen(true)}
                 disabled={selectedVisitors.size === 0}
               >
-                Add to Email Campaign
+                {t('visitors.addToEmailCampaign')}
               </button>
-              {/* <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
-                Export to CSV
-              </button> */}
               <div className="flex items-center space-x-3 relative">
                 <button
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center space-x-2"
                   onClick={() => setShowFilters(!showFilters)}
                 >
-                  <span>Filters</span>
+                  <span>{t('visitors.filters')}</span>
                   <ChevronDown className="w-4 h-4" />
                 </button>
                 {showFilters && (
                   <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg p-4 border z-10">
                     <div className="mb-3">
                       <label className="block text-sm text-gray-700">
-                        Name
+                        {t('visitors.filterLabels.name')}
                       </label>
                       <input
                         type="text"
@@ -183,7 +181,7 @@ const VisitorsList = () => {
                     </div>
                     <div className="mb-3">
                       <label className="block text-sm text-gray-700">
-                        Email
+                        {t('visitors.filterLabels.email')}
                       </label>
                       <input
                         type="text"
@@ -196,7 +194,7 @@ const VisitorsList = () => {
                     </div>
                     <div className="mb-3">
                       <label className="block text-sm text-gray-700">
-                        Membership
+                        {t('visitors.filterLabels.membership')}
                       </label>
                       <input
                         type="text"
@@ -209,7 +207,7 @@ const VisitorsList = () => {
                     </div>
                     <div className="mb-3">
                       <label className="block text-sm text-gray-700">
-                        Stores Visited
+                        {t('visitors.filterLabels.storesVisited')}
                       </label>
                       <input
                         type="text"
@@ -222,7 +220,7 @@ const VisitorsList = () => {
                     </div>
                     <div className="mb-3">
                       <label className="block text-sm text-gray-700">
-                        Visits
+                        {t('visitors.filterLabels.visits')}
                       </label>
                       <input
                         type="text"
@@ -235,7 +233,7 @@ const VisitorsList = () => {
                     </div>
                     <div className="mb-3">
                       <label className="block text-sm text-gray-700">
-                        Monthly Frequency
+                        {t('visitors.filterLabels.monthlyFrequency')}
                       </label>
                       <input
                         type="number"
@@ -251,7 +249,7 @@ const VisitorsList = () => {
                     </div>
                     <div className="mb-3">
                       <label className="block text-sm text-gray-700">
-                        Last Visit (YYYY-MM-DD)
+                        {t('visitors.filterLabels.lastVisit')}
                       </label>
                       <input
                         type="date"
@@ -278,16 +276,16 @@ const VisitorsList = () => {
                           setShowFilters(false);
                         }}
                       >
-                        Cancel
+                        {t('visitors.cancel')}
                       </button>
                       <button
                         className="px-4 py-1 rounded bg-blue-600 text-white text-sm hover:bg-blue-700"
                         onClick={() => {
-                          setCurrentPage(1); // reset pagination if needed
+                          setCurrentPage(1);
                           setShowFilters(false);
                         }}
                       >
-                        Search
+                        {t('visitors.search')}
                       </button>
                     </div>
                   </div>
@@ -309,7 +307,7 @@ const VisitorsList = () => {
                     setCurrentPage(1);
                   }}
                 >
-                  Clear All Filters
+                  {t('visitors.clearAllFilters')}
                 </button>
               )}
             </div>
@@ -339,43 +337,43 @@ const VisitorsList = () => {
                   scope="col"
                   className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Name
+                  {t('visitors.tableHeaders.name')}
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Email
+                  {t('visitors.tableHeaders.email')}
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Visits
+                  {t('visitors.tableHeaders.visits')}
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Shows
+                  {t('visitors.tableHeaders.shows')}
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Last Visit
+                  {t('visitors.tableHeaders.lastVisit')}
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Membership
+                  {t('visitors.tableHeaders.membership')}
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Actions
+                  {t('visitors.tableHeaders.actions')}
                 </th>
               </tr>
             </thead>
@@ -457,8 +455,11 @@ const VisitorsList = () => {
           {/* Pagination Controls */}
           <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
             <div className="text-sm text-gray-600">
-              Showing page {currentPage} of {totalPages} ({totalCount} total
-              visitors)
+              {t('visitors.pagination.showing', {
+                currentPage,
+                totalPages,
+                totalCount
+              })}
             </div>
             <div className="flex items-center space-x-2">
               <button
@@ -466,9 +467,11 @@ const VisitorsList = () => {
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
               >
-                Previous
+                {t('visitors.pagination.previous')}
               </button>
-              <span className="text-sm">Page {currentPage}</span>
+              <span className="text-sm">
+                {t('visitors.pagination.page', { page: currentPage })}
+              </span>
               <button
                 className="px-3 py-1 border rounded disabled:opacity-50"
                 onClick={() =>
@@ -476,7 +479,7 @@ const VisitorsList = () => {
                 }
                 disabled={currentPage === totalPages}
               >
-                Next
+                {t('visitors.pagination.next')}
               </button>
             </div>
           </div>
@@ -485,30 +488,29 @@ const VisitorsList = () => {
       <AddContactModal
         isOpen={isAddContactModalOpen}
         onClose={() => setIsAddContactModalOpen(false)}
-        selectedVisitors={Array.from(selectedVisitors)} // 👈 convert Set to array
+        selectedVisitors={Array.from(selectedVisitors)}
       />
       {showDeleteConfirm && userToDelete && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded shadow-lg">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Delete {userToDelete.name}?
+              {t('visitors.deleteConfirm.title', { name: userToDelete.name })}
             </h2>
             <p className="text-sm text-gray-700 mb-4">
-              Are you sure you want to delete this user? This action cannot be
-              undone.
+              {t('visitors.deleteConfirm.message')}
             </p>
             <div className="flex justify-end space-x-4">
               <button
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded"
                 onClick={() => setShowDeleteConfirm(false)}
               >
-                Cancel
+                {t('visitors.cancel')}
               </button>
               <button
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                 onClick={() => handleDelete(userToDelete.user_id)}
               >
-                Delete
+                {t('visitors.delete')}
               </button>
             </div>
           </div>

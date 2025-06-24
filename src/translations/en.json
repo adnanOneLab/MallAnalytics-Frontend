@@ -1,0 +1,144 @@
+{
+    "common": {
+        "appName": "WISE Video",
+        "dashboard": "Dashboard",
+        "campaign": "Campaign",
+        "visitorsList": "Visitors List",
+        "adminUser": "Admin User",
+        "logout": "Logout",
+        "language": "Language"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "welcome": "Welcome to WISE Video Analytics",
+        "totalVisitors": "Total Visitors",
+        "totalVisitorsSubtext": "+12% from last month",
+        "activeVisitors": "Active Visitors",
+        "activeVisitorsSubtext": "+{{count}} new this week",
+        "avgVisitDuration": "Avg. Visit Duration",
+        "avgVisitDurationSubtext": "+5m from last month",
+        "membershipDistribution": "Membership Distribution",
+        "platinum": "Platinum",
+        "gold": "Gold",
+        "silver": "Silver",
+        "bronze": "Bronze"
+    },
+    "visitors": {
+        "title": "Visitors List",
+        "visitsCount": "{{count}} Visits",
+        "searchPlaceholder": "Search",
+        "addToEmailCampaign": "Add to Email Campaign",
+        "filters": "Filters",
+        "clearAllFilters": "Clear All Filters",
+        "cancel": "Cancel",
+        "search": "Search",
+        "delete": "Delete",
+        "filterLabels": {
+            "name": "Name",
+            "email": "Email",
+            "membership": "Membership",
+            "storesVisited": "Stores Visited",
+            "visits": "Visits",
+            "monthlyFrequency": "Monthly Frequency",
+            "lastVisit": "Last Visit (YYYY-MM-DD)"
+        },
+        "tableHeaders": {
+            "name": "Name",
+            "email": "Email",
+            "visits": "Visits",
+            "shows": "Shows",
+            "lastVisit": "Last Visit",
+            "membership": "Membership",
+            "actions": "Actions"
+        },
+        "pagination": {
+            "showing": "Showing page {{currentPage}} of {{totalPages}} ({{totalCount}} total visitors)",
+            "previous": "Previous",
+            "next": "Next",
+            "page": "Page {{page}}"
+        },
+        "deleteConfirm": {
+            "title": "Delete {{name}}?",
+            "message": "Are you sure you want to delete this user? This action cannot be undone."
+        }
+    },
+    "visitorsProfile": {
+        "title": "Visitor Profile",
+        "error": "Failed to load visitor profile. Please try again later.",
+        "notFound": "Visitor not found",
+        "visitorId": "Visitor ID",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "address": "Address",
+        "monthlyVisits": "Monthly Visits",
+        "yearlyVisits": "Yearly Visits",
+        "lifeVisits": "Life Visits",
+        "storesVisitedMonth": "Stores visited month:",
+        "storesVisitedLife": "Stores visited life:",
+        "firstVisit": "First visit:",
+        "lastVisit": "Last visit:",
+        "recency": "Recency:",
+        "days": "days",
+        "monthlyFrequency": "Monthly Frequency:",
+        "visits": "visits",
+        "showingVisits": "Showing {{count}} Visits",
+        "tableHeaders": {
+            "date": "Date",
+            "timeEntry": "Time of entry",
+            "timeExit": "Time of Exit",
+            "storesVisited": "Stores Visited",
+            "timeSpent": "Time spent",
+            "interest": "Interest"
+        }
+    },
+    "visitorMovements": {
+        "title": "Visitor Movements",
+        "loading": "Loading visitors...",
+        "fetchError": "Failed to fetch visitors:",
+        "visitsCount": "3,265 Visits",
+        "searchPlaceholder": "Search",
+        "showingDate": "Showing {{date}}",
+        "exportCsv": "Export to CSV",
+        "filters": "Filters",
+        "tableHeaders": {
+            "cameraId": "Camera Id",
+            "startTime": "Start Time (TimeStamp)",
+            "endTime": "End Time (TimeStamp)",
+            "situation": "Situation",
+            "location": "Location",
+            "storeName": "Store Name"
+        },
+        "na": "N/A"
+    },
+    "addContactModal": {
+        "successTitle": "Visitors Added Successfully to campaign 🎉",
+        "successMessage": "Visitors were added to the campaign. Remember that each visitor can belong to only one specific campaign.",
+        "viewCampaign": "View Campaign",
+        "title": "Add Visitor(s) to Email Campaign",
+        "selectSequence": "Select the sequence to which you would like to add the visitor. You can also create a new sequence if none of the available options fit your needs.",
+        "emailCampaign": "Email Campaign",
+        "noCampaigns": "No email campaigns?",
+        "createOne": "Create one",
+        "cancel": "Cancel",
+        "addVisitors": "Add Visitors"
+    },
+    "campaigns": {
+        "fetchError": "Failed to fetch campaigns:",
+        "toggleError": "Failed to toggle active status:",
+        "deleteError": "Failed to delete campaign:",
+        "showing": "Showing",
+        "campaigns": "Campaigns",
+        "newCampaign": "New Campaign",
+        "noCampaignsFound": "No campaigns found.",
+        "tableHeaders": {
+            "campaignName": "Campaign Name",
+            "emailsDelivered": "Emails Delivered",
+            "emailsOpened": "Emails Opened",
+            "emailsBounced": "Emails Bounced",
+            "emailsScheduled": "Emails Scheduled",
+            "active": "Active",
+            "action": "Action"
+        }
+    }
+}
