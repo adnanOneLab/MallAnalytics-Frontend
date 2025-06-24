@@ -284,15 +284,6 @@ const VisitorsList = () => {
                         className="px-4 py-1 rounded bg-blue-600 text-white text-sm hover:bg-blue-700"
                         onClick={() => {
                           setCurrentPage(1); // reset pagination if needed
-                          setFilters({
-                            name: "",
-                            email: "",
-                            membership: "",
-                            store: "",
-                            monthlyFreq: "",
-                            lastVisit: "",
-                            visits: "",
-                          });
                           setShowFilters(false);
                         }}
                       >
@@ -302,6 +293,25 @@ const VisitorsList = () => {
                   </div>
                 )}
               </div>
+              {Object.values(filters).some(Boolean) && (
+                <button
+                  className="text-sm text-blue-600 hover:underline ml-2"
+                  onClick={() => {
+                    setFilters({
+                      name: "",
+                      email: "",
+                      membership: "",
+                      store: "",
+                      monthlyFreq: "",
+                      lastVisit: "",
+                      visits: "",
+                    });
+                    setCurrentPage(1);
+                  }}
+                >
+                  Clear All Filters
+                </button>
+              )}
             </div>
             <button className="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
               <Settings className="w-4 h-4" />
