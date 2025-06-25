@@ -4,58 +4,141 @@ import Layout from "../../components/Layout";
 import ContactsTab from "../campaigns/tabs/ContactsTab";
 import { useParams } from "react-router-dom";
 import api from "../../services/api";
+import {
+  getCampaignSteps,
+  createCampaignStep,
+  updateCampaignStep,
+  deleteCampaignStep,
+  scheduleCampaignStep,
+  getSendGridSenders,
+} from '../../services/api';
+import StepModal from './StepModal';
 
 const CampaignManagement = () => {
   const [activeTab, setActiveTab] = useState("emails");
   const [searchTerm, setSearchTerm] = useState("");
   const [campaignName, setCampaignName] = useState("");
+  const [steps, setSteps] = useState([]);
+  const [stepsLoading, setStepsLoading] = useState(true);
+  const [showStepModal, setShowStepModal] = useState(false);
+  const [editingStep, setEditingStep] = useState(null);
+  const [stepForm, setStepForm] = useState({ subject: '', body: '', send_at: '', step_order: 1 });
+  const { id } = useParams();
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [scheduleStep, setScheduleStep] = useState(null);
+  const [senders, setSenders] = useState([]);
+  const [selectedSender, setSelectedSender] = useState('');
 
-  // Sample data for emails/campaign steps
-  const campaignSteps = [
-    {
-      id: 1,
-      day: "Day 1",
-      type: "Email",
-      subject: "Transform Your Aviation Operations with AI",
-      content:
-        "Hi [[first_name]], I hope this message finds you well! My name is [[sender_first_name]] [[sender_last_name]], and I'm reaching out from [[sender_company]] because I believe we can help [[company]] tackle a...",
-      active: true,
-      replyInThread: false,
-      noSubject: false,
-    },
-    {
-      id: 2,
-      day: "Day 4",
-      type: "Email",
-      subject: "Reply in Thread - No Subject",
-      content:
-        "Hi [[first_name]], I hope this message finds you well! My name is [[sender_first_name]] [[sender_last_name]], and I'm reaching out from [[sender_company]] because I believe we can help [[company]] tackle a...",
-      active: false,
-      replyInThread: true,
-      noSubject: true,
-    },
-    {
-      id: 3,
-      day: "Day 7",
-      type: "LinkedIn Connection",
-      subject: "Connection Request",
-      content: "",
-      active: false,
-      replyInThread: false,
-      noSubject: false,
-    },
-    {
-      id: 4,
-      day: "Day 11",
-      type: "LinkedIn Message",
-      subject: "Transform Your Aviation Operations with AI",
-      content:
-        "Hi [[first_name]], I hope this message finds you well! My name is [[sender_first_name]] [[sender_last_name]], and I'm reaching out from [[sender_company]] because I believe we can help [[company]] tackle a...",
-      active: true,
-      replyInThread: false,
-      noSubject: false,
-    },
-  ];
+  // Fetch campaign steps
+  useEffect(() => {
+    if (id) fetchSteps();
+  }, [id]);
+
+  const fetchSteps = async () => {
+    setStepsLoading(true);
+    try {
+      const res = await getCampaignSteps(id);
+      setSteps(res.data);
+    } catch (error) {
+      console.error('Error fetching steps:', error);
+    } finally {
+      setStepsLoading(false);
+    }
+  };
+
+  // Fetch senders for step modal
+  const fetchSenders = async () => {
+    try {
+      const res = await getSendGridSenders();
+      setSenders(res.data);
+    } catch (error) {
+      setSenders([]);
+    }
+  };
+
+  const handleStepFormChange = (e) => {
+    setStepForm({ ...stepForm, [e.target.name]: e.target.value });
+  };
+
+  const handleAddStep = async () => {
+    setEditingStep(null);
+    setStepForm({ subject: '', body: '', send_at: '', step_order: steps.length + 1 });
+    setSelectedSender('');
+    await fetchSenders();
+    setShowStepModal(true);
+  };
+
+  const handleEditStep = async (step) => {
+    setEditingStep(step);
+    setStepForm({
+      subject: step.subject,
+      body: step.body,
+      send_at: step.send_at ? step.send_at.slice(0, 16) : '',
+      step_order: step.step_order,
+    });
+    setSelectedSender(step.sender_id || '');
+    await fetchSenders();
+    setShowStepModal(true);
+  };
+
+  const handleSenderChange = (e) => {
+    setSelectedSender(e.target.value);
+  };
+
+  const handleDeleteStep = async (stepId) => {
+    if (!window.confirm('Delete this step?')) return;
+    try {
+      await deleteCampaignStep(id, stepId);
+      fetchSteps();
+    } catch (error) {
+      alert('Failed to delete step');
+    }
+  };
+
+  const handleStepFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = { ...stepForm, sender_id: selectedSender };
+      if (editingStep) {
+        await updateCampaignStep(id, editingStep.id, payload);
+      } else {
+        await createCampaignStep(id, payload);
+      }
+      setShowStepModal(false);
+      fetchSteps();
+    } catch (error) {
+      alert('Failed to save step');
+    }
+  };
+
+  const handleScheduleStep = async (step) => {
+    setScheduleStep(step);
+    setShowScheduleModal(true);
+    setSelectedSender('');
+    try {
+      const res = await getSendGridSenders();
+      setSenders(res.data);
+    } catch (error) {
+      setSenders([]);
+      alert('Failed to fetch senders');
+    }
+  };
+
+  const handleConfirmSchedule = async () => {
+    if (!selectedSender) {
+      alert('Please select a sender');
+      return;
+    }
+    try {
+      await scheduleCampaignStep(scheduleStep.id, { sender_id: selectedSender });
+      alert('Step scheduled!');
+      setShowScheduleModal(false);
+      setScheduleStep(null);
+      fetchSteps();
+    } catch (error) {
+      alert('Failed to schedule step');
+    }
+  };
 
   // Sample data for contacts
   const contacts = [
@@ -241,78 +324,76 @@ const CampaignManagement = () => {
   const EmailsTab = () => (
     <div className="p-6">
       <div className="flex justify-end mb-6">
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-          Add Steps
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" onClick={handleAddStep}>
+          Add Step
         </button>
       </div>
 
       <div className="bg-white rounded-lg border-2 border-blue-200">
         <div className="border-b border-gray-200">
           <div className="grid grid-cols-12 gap-4 p-4 text-sm font-medium text-gray-700 bg-gray-50">
-            <div className="col-span-2">Steps</div>
-            <div className="col-span-2">Type</div>
-            <div className="col-span-6">Summary</div>
-            <div className="col-span-1">Active</div>
+            <div className="col-span-2">Step Order</div>
+            <div className="col-span-2">Subject</div>
+            <div className="col-span-4">Body</div>
+            <div className="col-span-2">Send At</div>
             <div className="col-span-1">Action</div>
+            <div className="col-span-1">SendGrid</div>
           </div>
         </div>
-
         <div className="divide-y divide-gray-200">
-          {campaignSteps.map((step) => (
-            <div
-              key={step.id}
-              className="grid grid-cols-12 gap-4 p-4 hover:bg-gray-50"
-            >
-              <div className="col-span-2 flex items-center">
-                <input type="checkbox" className="rounded border-gray-300" />
-                <span className="ml-3 text-sm text-gray-900">{step.day}</span>
-              </div>
-
-              <div className="col-span-2 flex items-center">
-                <span className="text-sm text-gray-900">{step.type}</span>
-              </div>
-
-              <div className="col-span-6">
-                <div className="space-y-2">
-                  <div className="text-sm font-medium text-gray-900">
-                    {step.subject}
-                    {step.replyInThread && (
-                      <span className="ml-2 text-xs text-gray-500">
-                        Reply in Thread - No Subject
-                      </span>
-                    )}
-                  </div>
-                  {step.content && (
-                    <div className="text-sm text-gray-600 line-clamp-2">
-                      {step.content}
-                    </div>
-                  )}
+          {stepsLoading ? (
+            <div className="p-8 text-center">Loading...</div>
+          ) : steps.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">No steps found.</div>
+          ) : (
+            steps.map((step) => (
+              <div key={step.id} className="grid grid-cols-12 gap-4 p-4 hover:bg-gray-50">
+                <div className="col-span-2 flex items-center">{step.step_order}</div>
+                <div className="col-span-2 flex items-center">{step.subject}</div>
+                <div className="col-span-4 text-sm text-gray-600 line-clamp-2">{step.body}</div>
+                <div className="col-span-2 flex items-center">{step.send_at ? new Date(step.send_at).toLocaleString() : ''}</div>
+                <div className="col-span-1 flex items-center space-x-2">
+                  <button className="text-blue-500 hover:text-blue-700" onClick={() => handleEditStep(step)}>Edit</button>
+                  <button className="text-red-500 hover:text-red-700" onClick={() => handleDeleteStep(step.id)}><Trash2 className="w-4 h-4" /></button>
+                </div>
+                <div className="col-span-1 flex items-center">
+                  <button className="bg-green-500 text-white px-2 py-1 rounded text-xs" onClick={() => handleScheduleStep(step)} disabled={!!step.sendgrid_campaign_id}>
+                    {step.sendgrid_campaign_id ? 'Scheduled' : 'Schedule'}
+                  </button>
                 </div>
               </div>
-
-              <div className="col-span-1 flex items-center">
-                <div
-                  className={`w-10 h-6 rounded-full p-1 ${
-                    step.active ? "bg-green-500" : "bg-gray-300"
-                  } transition-colors cursor-pointer`}
-                >
-                  <div
-                    className={`w-4 h-4 rounded-full bg-white transform transition-transform ${
-                      step.active ? "translate-x-4" : ""
-                    }`}
-                  ></div>
-                </div>
-              </div>
-
-              <div className="col-span-1 flex items-center">
-                <button className="text-red-500 hover:text-red-700">
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
+
+      {/* Schedule Modal */}
+      {showScheduleModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 w-full max-w-md shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Select Sender</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Sender</label>
+              <select
+                className="w-full border rounded px-3 py-2"
+                value={selectedSender}
+                onChange={e => setSelectedSender(e.target.value)}
+              >
+                <option value="">Select a sender</option>
+                {senders.map(sender => (
+                  <option key={sender.id} value={sender.id}>
+                    {sender.nickname || sender.from?.email || sender.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <button className="px-4 py-2 bg-gray-200 rounded" onClick={() => setShowScheduleModal(false)}>Cancel</button>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handleConfirmSchedule}>Schedule</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -326,7 +407,7 @@ const CampaignManagement = () => {
       </div>
     </div>
   );
-  const { id } = useParams();
+
   // Fetch campaign name on load
   useEffect(() => {
     const fetchCampaign = async () => {
@@ -352,6 +433,17 @@ const CampaignManagement = () => {
           {activeTab === "contacts" && <ContactsTab />}
           {activeTab === "settings" && <SettingsTab />}
         </div>
+        <StepModal
+          open={showStepModal}
+          onClose={() => setShowStepModal(false)}
+          onSubmit={handleStepFormSubmit}
+          form={stepForm}
+          onChange={handleStepFormChange}
+          editing={!!editingStep}
+          senders={senders}
+          selectedSender={selectedSender}
+          onSenderChange={handleSenderChange}
+        />
       </div>
     </Layout>
   );
