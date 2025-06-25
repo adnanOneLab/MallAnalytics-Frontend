@@ -12,11 +12,19 @@ export default function CampaignTable() {
   const [campaigns, setCampaigns] = useState([]);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [campaignStats, setCampaignStats] = useState({});
 
   // 🔹 Fetch campaigns on mount
   useEffect(() => {
     fetchCampaigns();
   }, [isEmailModalOpen]);
+
+  useEffect(() => {
+    if (campaigns.length > 0) {
+      fetchAllCampaignStats();
+    }
+    // eslint-disable-next-line
+  }, [campaigns]);
 
   const fetchCampaigns = async () => {
     try {
@@ -28,6 +36,38 @@ export default function CampaignTable() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Fetch and aggregate stats for all campaigns
+  const fetchAllCampaignStats = async () => {
+    const statsByCampaign = {};
+    for (const campaign of campaigns) {
+      let delivered = 0, opens = 0, bounces = 0, scheduled = 0;
+      try {
+        const stepsRes = await api.get(`/campaigns/${campaign.campaign_id}/steps/`);
+        const steps = stepsRes.data;
+        for (const step of steps) {
+          if (step.sendgrid_campaign_id) {
+            try {
+              const statsRes = await api.get(`/steps/${step.id}/sendgrid-stats/`);
+              const stats = statsRes.data.results && statsRes.data.results.length > 0 ? statsRes.data.results[0].stats : null;
+              if (stats) {
+                delivered += Number(stats.delivered) || 0;
+                opens += Number(stats.opens) || 0;
+                bounces += Number(stats.bounces) || 0;
+                scheduled += Number(stats.requests) || 0;
+              }
+            } catch (e) {
+              // Ignore step stats fetch error
+            }
+          }
+        }
+      } catch (e) {
+        // Ignore steps fetch error
+      }
+      statsByCampaign[campaign.campaign_id] = { delivered, opens, bounces, scheduled };
+    }
+    setCampaignStats(statsByCampaign);
   };
 
   // 🔹 Toggle active status
@@ -44,6 +84,8 @@ export default function CampaignTable() {
 
   // 🔹 Delete campaign
   const deleteCampaign = async (id) => {
+    const confirmed = window.confirm('Are you sure you want to delete this campaign? This will also delete all steps and the SendGrid list.');
+    if (!confirmed) return;
     try {
       await api.delete(`/campaigns/${id}/`);
       fetchCampaigns();
@@ -118,69 +160,72 @@ export default function CampaignTable() {
                     </td>
                   </tr>
                 ) : campaigns.length > 0 ? (
-                  campaigns.map((campaign) => (
-                    <tr key={campaign.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            className="h-4 w-4 text-blue-600 border-gray-300 rounded mr-3"
-                          />
-                          <span
-                            className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                  campaigns.map((campaign) => {
+                    const stats = campaignStats[campaign.campaign_id];
+                    return (
+                      <tr key={campaign.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center">
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4 text-blue-600 border-gray-300 rounded mr-3"
+                            />
+                            <span
+                              className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                              onClick={() =>
+                                navigate(
+                                  `/campaigns/${campaign.campaign_id}/manage`
+                                )
+                              }
+                            >
+                              {campaign.name}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">
+                          {stats ? stats.delivered : campaign.sendgrid_list_id ? '...' : '-'}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">
+                          {stats ? stats.opens : campaign.sendgrid_list_id ? '...' : '-'}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">
+                          {stats ? stats.bounces : campaign.sendgrid_list_id ? '...' : '-'}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">
+                          {stats ? stats.scheduled : campaign.sendgrid_list_id ? '...' : '-'}
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
                             onClick={() =>
-                              navigate(
-                                `/campaigns/${campaign.campaign_id}/manage`
+                              toggleActive(
+                                campaign.campaign_id,
+                                campaign.is_active
                               )
                             }
-                          >
-                            {campaign.name}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {campaign.emails_delivered}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {campaign.emails_opened}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {campaign.emails_bounced}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {campaign.emails_scheduled}
-                      </td>
-                      <td className="px-6 py-4">
-                        <button
-                          onClick={() =>
-                            toggleActive(
-                              campaign.campaign_id,
-                              campaign.is_active
-                            )
-                          }
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                            campaign.is_active ? "bg-green-500" : "bg-gray-300"
-                          }`}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              campaign.is_active
-                                ? "translate-x-6"
-                                : "translate-x-1"
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                              campaign.is_active ? "bg-green-500" : "bg-gray-300"
                             }`}
-                          />
-                        </button>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button
-                          onClick={() => deleteCampaign(campaign.campaign_id)}
-                          className="text-gray-400 hover:text-red-600 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                campaign.is_active
+                                  ? "translate-x-6"
+                                  : "translate-x-1"
+                              }`}
+                            />
+                          </button>
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
+                            onClick={() => deleteCampaign(campaign.campaign_id)}
+                            className="text-gray-400 hover:text-red-600 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr>
                     <td
