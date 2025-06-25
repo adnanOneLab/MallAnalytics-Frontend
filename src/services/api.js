@@ -3,8 +3,8 @@ import axios from 'axios';
 
 // Use local IP address for development to allow mobile access
 const BACKEND = import.meta.env.VITE_BACKEND_URL;
-// const BASE_URL = BACKEND ? `${BACKEND}/api` : "http://localhost:8000/api";
-const BASE_URL='https://mallanalytics-backend.onrender.com/api';
+const BASE_URL = BACKEND ? `${BACKEND}/api` : "http://localhost:8000/api";
+// const BASE_URL='https://mallanalytics-backend.onrender.com/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -62,5 +62,14 @@ api.interceptors.response.use(
     throw new Error(errorMessage);
   }
 );
+
+// Campaign Steps API
+export const getCampaignSteps = (campaignId) => api.get(`/campaigns/${campaignId}/steps/`);
+export const createCampaignStep = (campaignId, data) => api.post(`/campaigns/${campaignId}/steps/`, data);
+export const updateCampaignStep = (campaignId, stepId, data) => api.put(`/campaigns/${campaignId}/steps/${stepId}/`, data);
+export const deleteCampaignStep = (campaignId, stepId) => api.delete(`/campaigns/${campaignId}/steps/${stepId}/`);
+export const scheduleCampaignStep = (stepId, data) => api.post(`/steps/${stepId}/schedule/`, data);
+
+export const getSendGridSenders = () => api.get('/sendgrid/senders/');
 
 export default api;
