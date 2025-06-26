@@ -38,9 +38,30 @@ const StepModal = ({
 
   const handleSubmit = async (e) => {
     if (isSubmitting) return;
+    e.preventDefault();
+    // Check sender
+    if (!selectedSender) {
+      alert('Please select a sender.');
+      return;
+    }
+    // Check send_at
+    let sendAt = form.send_at;
+    let sendAtDate = sendAt ? new Date(sendAt) : null;
+    const now = new Date();
+    if (!sendAtDate || sendAtDate <= now) {
+      // Set to 2 minutes in the future
+      sendAtDate = new Date(now.getTime() + 2 * 60 * 1000);
+      sendAt = sendAtDate.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+      alert('Send time was not set or was in the past. It has been set to 2 minutes in the future.');
+    }
     setIsSubmitting(true);
     try {
-      await onSubmit(e);
+      await onSubmit({
+        ...form,
+        send_at: sendAtDate.toISOString(),
+        sender_id: selectedSender,
+        suppression_group_id: selectedSuppressionGroup || undefined,
+      });
     } finally {
       setIsSubmitting(false);
     }

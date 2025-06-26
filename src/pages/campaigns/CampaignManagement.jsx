@@ -105,19 +105,8 @@ const CampaignManagement = () => {
     }
   };
 
-  const handleStepFormSubmit = async (e) => {
-    e.preventDefault();
+  const handleStepFormSubmit = async (payload) => {
     try {
-      const payload = { ...stepForm, sender_id: selectedSender };
-      // Convert send_at from local time to UTC ISO string
-      if (stepForm.send_at) {
-        const localDate = new Date(stepForm.send_at);
-        payload.send_at = localDate.toISOString();
-      }
-      if (selectedSuppressionGroup) {
-        payload.suppression_group_id = Number(selectedSuppressionGroup);
-        console.log('Suppression group to send:', payload.suppression_group_id, typeof payload.suppression_group_id);
-      }
       if (editingStep) {
         await updateCampaignStep(id, editingStep.id, payload);
       } else {
