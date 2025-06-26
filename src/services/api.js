@@ -71,5 +71,6 @@ export const deleteCampaignStep = (campaignId, stepId) => api.delete(`/campaigns
 export const scheduleCampaignStep = (stepId, data) => api.post(`/steps/${stepId}/schedule/`, data);
 
 export const getSendGridSenders = () => api.get('/sendgrid/senders/');
+export const getSuppressionGroups = () => api.get('/sendgrid/suppression-groups/');
 
 export default api;
