@@ -16,17 +16,20 @@ export default defineConfig({
     }
   },
   build: {
-    assetsInclude: ['**/*.bin', '**/*.shard*'], // Include model files as assets
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => {
-          // Keep model files in models directory with original names
-          if (assetInfo.name && (assetInfo.name.includes('model') || assetInfo.name.includes('shard'))) {
+          // Ensure model files maintain their original names and structure
+          if (assetInfo.name && assetInfo.name.includes('model')) {
             return 'models/[name][extname]';
           }
           return 'assets/[name]-[hash][extname]';
         }
       }
-    }
-  }
+    },
+    copyPublicDir: true, // Ensure public directory is copied to dist
+    assetsDir: 'assets',
+  },
+  // Ensure public folder assets are properly served
+  publicDir: 'public'
 })
