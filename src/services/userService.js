@@ -30,7 +30,7 @@ export const registerUser = async (userData, photoFile) => {
 
     let photoResponse;
     try {
-      photoResponse = await api.post('/upload-photo/', photoFormData, {
+      photoResponse = await api.post('api/upload-photo/', photoFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -89,7 +89,7 @@ export const registerUser = async (userData, photoFile) => {
       picture_url: 'URL received from server' // Don't log the actual URL
     });
 
-    const userResponse = await api.post('/users-create/', userDataWithoutInterests);
+    const userResponse = await api.post('api/users-create/', userDataWithoutInterests);
     console.log('User registered successfully:', userResponse.data);
 
     // Create user interests if any were selected
@@ -98,7 +98,7 @@ export const registerUser = async (userData, photoFile) => {
       console.log('Creating user interests:', interests);
 
       // Get all available interests from the backend
-      const interestsResponse = await api.get('/interests/');
+      const interestsResponse = await api.get('api/interests/');
       const availableInterests = interestsResponse.data;
 
       // Link selected interests to the user
@@ -106,7 +106,7 @@ export const registerUser = async (userData, photoFile) => {
         try {
           const existingInterest = availableInterests.find(i => i.name === interestName);
           if (existingInterest) {
-            await api.post('/user-interests/', {
+            await api.post('api/user-interests/', {
               user_id,
               interest_id: existingInterest.interest_id,
               source: 'registration'
@@ -220,6 +220,72 @@ export const registerUser = async (userData, photoFile) => {
 }; 
 
 export const getPresignedUrl = async (s3_key) => {
-  const response = await api.get('/get-photo-url/', { params: { s3_key } });
+  const response = await api.get('api/get-photo-url/', { params: { s3_key } });
   return response.data.url;
+};
+
+export const getUser = async () => {
+  try {
+    const response = await api.get('accounts/user/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    
+    if (error.response?.status === 401) {
+      throw new Error('Authentication required. Please log in again.');
+    }
+    
+    if (error.response?.status === 404) {
+      throw new Error('User not found.');
+    }
+    
+    if (error.response?.status === 500) {
+      throw new Error('Server error occurred. Please try again later.');
+    }
+    
+    throw new Error(
+      error.response?.data?.detail || 
+      error.response?.data?.message || 
+      error.message || 
+      'Failed to fetch user details.'
+    );
+  }
+};
+
+export const updateUser = async (userData) => {
+  try {
+    const response = await api.put('accounts/user/', userData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user:', error);
+    
+    if (error.response?.status === 400) {
+      const errorData = error.response.data;
+      
+      // Handle validation errors
+      if (errorData.email) {
+        throw new Error(`Email error: ${errorData.email.join(', ')}`);
+      }
+      if (errorData.username) {
+        throw new Error(`Username error: ${errorData.username.join(', ')}`);
+      }
+      
+      throw new Error('Please check your information and try again.');
+    }
+    
+    if (error.response?.status === 401) {
+      throw new Error('Authentication required. Please log in again.');
+    }
+    
+    if (error.response?.status === 500) {
+      throw new Error('Server error occurred. Please try again later.');
+    }
+    
+    throw new Error(
+      error.response?.data?.detail || 
+      error.response?.data?.message || 
+      error.message || 
+      'Failed to update user details.'
+    );
+  }
 };

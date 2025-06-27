@@ -20,7 +20,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     api
-      .get("/dashboard-metrics/")
+      .get("api/dashboard-metrics/")
       .then((res) => setMetrics(res.data))
       .catch((err) => console.error("Failed to fetch dashboard metrics", err));
   }, []);

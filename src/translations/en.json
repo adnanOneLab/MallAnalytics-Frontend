@@ -6,7 +6,10 @@
         "visitorsList": "Visitors List",
         "adminUser": "Admin User",
         "logout": "Logout",
-        "language": "Language"
+        "language": "Language",
+        "confirmLogout": "Confirm Logout",
+        "logoutMessage": "Are you sure you want to logout?",
+        "cancel": "Cancel"
     },
     "dashboard": {
         "title": "Dashboard",

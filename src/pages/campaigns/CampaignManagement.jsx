@@ -166,7 +166,7 @@ const CampaignManagement = () => {
       for (const step of steps) {
         if (step.sendgrid_campaign_id) {
           try {
-            const res = await api.get(`/steps/${step.id}/sendgrid-stats/`);
+            const res = await api.get(`api/steps/${step.id}/sendgrid-stats/`);
             // The API returns an array in results
             const stats = res.data.results && res.data.results.length > 0 ? res.data.results[0].stats : null;
             statsObj[step.id] = stats || null;
@@ -424,7 +424,7 @@ const CampaignManagement = () => {
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
-        const res = await api.get(`/campaigns/${id}/`);
+        const res = await api.get(`api/campaigns/${id}/`);
         setCampaignName(res.data.name || "Campaign");
         setIsActive(res.data.is_active !== undefined ? res.data.is_active : true);
       } catch (error) {

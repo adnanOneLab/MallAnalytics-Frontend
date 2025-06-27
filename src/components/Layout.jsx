@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import { Menu } from 'lucide-react';
+import LogoutConfirmationModal from './LogoutConfirmationModal';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const Layout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const { logout } = useAuth0();
+
+  const handleLogout = () => {
+    logout({ logoutParams: { returnTo: window.location.origin } });
+    setShowLogoutModal(false);
+    setIsSidebarOpen(false);
+  };
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -25,7 +35,7 @@ const Layout = ({ children }) => {
         `}
         style={{ height: '100vh' }}
       >
-        <Sidebar onClose={() => setIsSidebarOpen(false)} />
+        <Sidebar onClose={() => setIsSidebarOpen(false)} onLogoutClick={() => setShowLogoutModal(true)} />
       </div>
 
       {/* Overlay for mobile when sidebar is open */}
@@ -42,6 +52,13 @@ const Layout = ({ children }) => {
           {children}
         </div>
       </div>
+
+      {/* Logout Confirmation Modal at root level */}
+      <LogoutConfirmationModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+      />
     </div>
   );
 };

@@ -35,7 +35,7 @@ const RegistrationForm = () => {
 
   const fetchInterests = async () => {
     try {
-      const response = await api.get('/interests/');
+      const response = await api.get('api/interests/');
       setAvailableInterests(response.data);
     } catch (error) {
       console.error('Error fetching interests:', error);

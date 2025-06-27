@@ -3,10 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { User, LogOut, LayoutDashboard, Users, X, Megaphone, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const Sidebar = ({ onClose }) => {
+const Sidebar = ({ onClose, onLogoutClick }) => {
   const location = useLocation();
   const { t, i18n } = useTranslation();
-
   console.log(t, "t from i 18", i18n)
 
   const toggleLanguage = () => {
@@ -91,7 +90,7 @@ const Sidebar = ({ onClose }) => {
         </button>
 
         <button
-          onClick={onClose}
+          onClick={onLogoutClick}
           className="flex items-center space-x-3 text-gray-400 hover:text-white px-3 py-2 rounded-lg w-full hover:bg-black/50 transition-colors"
         >
           <LogOut className="w-5 h-5" />

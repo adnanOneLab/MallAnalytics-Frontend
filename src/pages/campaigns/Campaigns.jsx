@@ -31,7 +31,7 @@ export default function CampaignTable() {
   const fetchCampaigns = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/campaigns/");
+      const res = await api.get("api/campaigns/");
       setCampaigns(res.data);
     } catch (error) {
       console.error(t('campaigns.fetchError'), error);
@@ -46,12 +46,12 @@ export default function CampaignTable() {
     for (const campaign of campaigns) {
       let delivered = 0, opens = 0, bounces = 0, scheduled = 0;
       try {
-        const stepsRes = await api.get(`/campaigns/${campaign.campaign_id}/steps/`);
+        const stepsRes = await api.get(`api/campaigns/${campaign.campaign_id}/steps/`);
         const steps = stepsRes.data;
         for (const step of steps) {
           if (step.sendgrid_campaign_id) {
             try {
-              const statsRes = await api.get(`/steps/${step.id}/sendgrid-stats/`);
+              const statsRes = await api.get(`api/steps/${step.id}/sendgrid-stats/`);
               const stats = statsRes.data.results && statsRes.data.results.length > 0 ? statsRes.data.results[0].stats : null;
               if (stats) {
                 delivered += Number(stats.delivered) || 0;
@@ -75,7 +75,7 @@ export default function CampaignTable() {
   // 🔹 Toggle active status
   const toggleActive = async (id, currentStatus) => {
     try {
-      await api.patch(`/campaigns/${id}/toggle/`, {
+      await api.patch(`api/campaigns/${id}/toggle/`, {
         is_active: !currentStatus,
       });
       fetchCampaigns();
@@ -89,7 +89,7 @@ export default function CampaignTable() {
     const confirmed = window.confirm('Are you sure you want to delete this campaign? This will also delete all steps and the SendGrid list.');
     if (!confirmed) return;
     try {
-      await api.delete(`/campaigns/${id}/`);
+      await api.delete(`api/campaigns/${id}/`);
       fetchCampaigns();
     } catch (err) {
       console.error(t('campaigns.deleteError'), err);

@@ -58,7 +58,7 @@ export default function CreateEmailCampaignModal({ isOpen, onClose }) {
         business_hours: [selectedBusinessHourId],
         is_active: false
       };
-      const res = await api.post('/campaigns/', payload);
+      const res = await api.post('api/campaigns/', payload);
       console.log('Campaign created:', res.data);
       onClose();
     } catch (err) {

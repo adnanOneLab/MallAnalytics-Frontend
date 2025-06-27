@@ -50,7 +50,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
       )
         return;
 
-      await api.post(`/campaigns/${selectedCampaign}/add-contacts/`, {
+      await api.post(`api/campaigns/${selectedCampaign}/add-contacts/`, {
         user_ids: selectedVisitors,
       });
 

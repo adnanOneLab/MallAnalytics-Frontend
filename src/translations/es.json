@@ -6,7 +6,10 @@
         "visitorsList": "Lista de Visitantes",
         "adminUser": "Usuario Administrador",
         "logout": "Cerrar Sesión",
-        "language": "Idioma"
+        "language": "Idioma",
+        "confirmLogout": "Confirmar cierre de sesión",
+        "logoutMessage": "¿Estás seguro de que deseas cerrar sesión?",
+        "cancel": "Cancelar"
     },
     "dashboard": {
         "title": "Tablero",

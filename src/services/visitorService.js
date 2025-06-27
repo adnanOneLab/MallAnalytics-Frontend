@@ -15,18 +15,18 @@ const BASE_URL = api.defaults.baseURL.replace('/api', '');
 //   return response.data;
 // };
 export const fetchVisitors = async (params = {}) => {
-  const response = await api.get('/users/', { params });
+  const response = await api.get('api/users/', { params });
   return response.data;
 };
 
 export const fetchVisitorProfile = async (userId) => {
   try {
     // Fetch user details including visits
-    const userResponse = await api.get(`/users/${userId}/`);
+    const userResponse = await api.get(`api/users/${userId}/`);
     const userData = userResponse.data;
 
     // Fetch user interests
-    const interestsResponse = await api.get(`/user-interests/${userId}/`);
+    const interestsResponse = await api.get(`api/user-interests/${userId}/`);
     const interests = interestsResponse.data;
 
     // Format the data to match the frontend structure
@@ -66,6 +66,6 @@ export const fetchVisitorProfile = async (userId) => {
 };
 
 export const fetchMovementsByVisitId=async(visit_id)=>{
-  const response=await api.get(`/movements/${visit_id}/`);
+  const response=await api.get(`api/movements/${visit_id}/`);
   return response.data
 }

@@ -1,10 +1,12 @@
 // src/services/api.js
 import axios from 'axios';
-
+import { getAccessToken } from '../context/auth0-provider-with-history';
 // Use local IP address for development to allow mobile access
-const BACKEND = import.meta.env.VITE_BACKEND_URL;
-// const BASE_URL = BACKEND ? `${BACKEND}/api` : "http://localhost:8000/api";
-const BASE_URL='https://wise-video-api-dev.wiseagents.com/api';
+const BACKEND = import.meta.env.VITE_API_URL;
+const BASE_URL = BACKEND ? `${BACKEND}` : "http://localhost:8000/";
+// const BASE_URL='https://wise-video-api-dev.wiseagents.com/api';
+
+
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -16,8 +18,9 @@ const api = axios.create({
 
 // Request interceptor
 api.interceptors.request.use(
-  config => {
-    const token = localStorage.getItem('token');
+  async (config) => {
+    let token = await getAccessToken()
+    token = token?.id_token
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -64,13 +67,13 @@ api.interceptors.response.use(
 );
 
 // Campaign Steps API
-export const getCampaignSteps = (campaignId) => api.get(`/campaigns/${campaignId}/steps/`);
-export const createCampaignStep = (campaignId, data) => api.post(`/campaigns/${campaignId}/steps/`, data);
-export const updateCampaignStep = (campaignId, stepId, data) => api.put(`/campaigns/${campaignId}/steps/${stepId}/`, data);
-export const deleteCampaignStep = (campaignId, stepId) => api.delete(`/campaigns/${campaignId}/steps/${stepId}/`);
-export const scheduleCampaignStep = (stepId, data) => api.post(`/steps/${stepId}/schedule/`, data);
+export const getCampaignSteps = (campaignId) => api.get(`api/campaigns/${campaignId}/steps/`);
+export const createCampaignStep = (campaignId, data) => api.post(`api/campaigns/${campaignId}/steps/`, data);
+export const updateCampaignStep = (campaignId, stepId, data) => api.put(`api/campaigns/${campaignId}/steps/${stepId}/`, data);
+export const deleteCampaignStep = (campaignId, stepId) => api.delete(`api/campaigns/${campaignId}/steps/${stepId}/`);
+export const scheduleCampaignStep = (stepId, data) => api.post(`api/steps/${stepId}/schedule/`, data);
 
-export const getSendGridSenders = () => api.get('/sendgrid/senders/');
-export const getSuppressionGroups = () => api.get('/sendgrid/suppression-groups/');
+export const getSendGridSenders = () => api.get('api/sendgrid/senders/');
+export const getSuppressionGroups = () => api.get('api/sendgrid/suppression-groups/');
 
 export default api;

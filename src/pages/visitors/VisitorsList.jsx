@@ -44,7 +44,7 @@ const VisitorsList = () => {
 
   const handleDelete = async (userId) => {
     try {
-      await api.delete(`/users/${userId}/`);
+      await api.delete(`api/users/${userId}/`);
       setVisitors(visitors.filter((v) => v.user_id !== userId));
       await loadVisitors();
       setShowDeleteConfirm(false);

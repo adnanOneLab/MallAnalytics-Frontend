@@ -16,7 +16,7 @@ const ContactsTab = () => {
   const fetchContacts = async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/campaigns/${id}/contacts/`);
+      const res = await api.get(`api/campaigns/${id}/contacts/`);
       setContacts(res.data);
     } catch (error) {
       console.error("Error fetching Visitors:", error);
