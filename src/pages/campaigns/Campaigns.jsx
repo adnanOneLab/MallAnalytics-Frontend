@@ -23,7 +23,7 @@ export default function CampaignTable() {
   }, [isEmailModalOpen]);
 
   useEffect(() => {
-    if (campaigns.length > 0) {
+    if (campaigns?.length > 0) {
       fetchAllCampaignStats();
     }
     // eslint-disable-next-line
@@ -33,7 +33,7 @@ export default function CampaignTable() {
     try {
       setLoading(true);
       const res = await api.get("api/campaigns/");
-      setCampaigns(res.results);
+      setCampaigns(res.data.results);
     } catch (error) {
       console.error(t("campaigns.fetchError"), error);
     } finally {
@@ -148,7 +148,7 @@ export default function CampaignTable() {
               <div className="text-sm text-gray-500">
                 {t("campaigns.showing")}{" "}
                 <span className="font-medium text-gray-900">
-                  {campaigns.length}
+                  {campaigns?.length}
                 </span>{" "}
                 {t("campaigns.campaigns")}
               </div>
@@ -199,7 +199,7 @@ export default function CampaignTable() {
                       </div>
                     </td>
                   </tr>
-                ) : campaigns.length > 0 ? (
+                ) : campaigns?.length > 0 ? (
                   // campaigns.map((campaign, index) => {
                   campaigns
                     .filter((c) =>
