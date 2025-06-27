@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import api from "../../../services/api";
 import { useNavigate, useParams } from "react-router-dom";
 
-const ContactsTab = () => {
+const ContactsTab = ({ searchTerm }) => {
   const navigate = useNavigate();
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +24,16 @@ const ContactsTab = () => {
       setLoading(false);
     }
   };
+  const filteredContacts = contacts.filter(({ user }) => {
+    const lowerSearch = searchTerm.toLowerCase();
+    return (
+      user.name?.toLowerCase().includes(lowerSearch) ||
+      user.email?.toLowerCase().includes(lowerSearch) ||
+      user.cell_phone?.toLowerCase().includes(lowerSearch) ||
+      user.address?.toLowerCase().includes(lowerSearch) ||
+      new Date(user.date_of_birth).toLocaleDateString().includes(lowerSearch)
+    );
+  });
 
   if (loading) {
     return (
@@ -84,7 +94,7 @@ const ContactsTab = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200 text-sm">
-              {contacts.map((contact, index) => (
+              {filteredContacts.map((contact, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   <td
                     className="px-6 py-4 whitespace-nowrap flex items-center space-x-2 cursor-pointer"

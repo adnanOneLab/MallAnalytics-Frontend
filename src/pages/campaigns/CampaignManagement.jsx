@@ -12,8 +12,8 @@ import {
   scheduleCampaignStep,
   getSendGridSenders,
   getSuppressionGroups,
-} from '../../services/api';
-import StepModal from './StepModal';
+} from "../../services/api";
+import StepModal from "./StepModal";
 
 const CampaignManagement = () => {
   const [activeTab, setActiveTab] = useState("emails");
@@ -23,14 +23,19 @@ const CampaignManagement = () => {
   const [stepsLoading, setStepsLoading] = useState(true);
   const [showStepModal, setShowStepModal] = useState(false);
   const [editingStep, setEditingStep] = useState(null);
-  const [stepForm, setStepForm] = useState({ subject: '', body: '', send_at: '', step_order: 1 });
+  const [stepForm, setStepForm] = useState({
+    subject: "",
+    body: "",
+    send_at: "",
+    step_order: 1,
+  });
   const { id } = useParams();
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [scheduleStep, setScheduleStep] = useState(null);
   const [senders, setSenders] = useState([]);
-  const [selectedSender, setSelectedSender] = useState('');
+  const [selectedSender, setSelectedSender] = useState("");
   const [suppressionGroups, setSuppressionGroups] = useState([]);
-  const [selectedSuppressionGroup, setSelectedSuppressionGroup] = useState('');
+  const [selectedSuppressionGroup, setSelectedSuppressionGroup] = useState("");
   const [stepStats, setStepStats] = useState({});
   const [isActive, setIsActive] = useState(true);
   const [addStepLoading, setAddStepLoading] = useState(false);
@@ -46,7 +51,7 @@ const CampaignManagement = () => {
       const res = await getCampaignSteps(id);
       setSteps(res.data);
     } catch (error) {
-      console.error('Error fetching steps:', error);
+      console.error("Error fetching steps:", error);
     } finally {
       setStepsLoading(false);
     }
@@ -78,9 +83,14 @@ const CampaignManagement = () => {
   const handleAddStep = async () => {
     setAddStepLoading(true);
     setEditingStep(null);
-    setStepForm({ subject: '', body: '', send_at: '', step_order: steps.length + 1 });
-    setSelectedSender('');
-    setSelectedSuppressionGroup('');
+    setStepForm({
+      subject: "",
+      body: "",
+      send_at: "",
+      step_order: steps.length + 1,
+    });
+    setSelectedSender("");
+    setSelectedSuppressionGroup("");
     await fetchSenders();
     await fetchSuppressionGroups();
     setShowStepModal(true);
@@ -96,12 +106,12 @@ const CampaignManagement = () => {
   };
 
   const handleDeleteStep = async (stepId) => {
-    if (!window.confirm('Delete this step?')) return;
+    if (!window.confirm("Delete this step?")) return;
     try {
       await deleteCampaignStep(id, stepId);
       fetchSteps();
     } catch (error) {
-      alert('Failed to delete step');
+      alert("Failed to delete step");
     }
   };
 
@@ -116,7 +126,11 @@ const CampaignManagement = () => {
       }
       if (selectedSuppressionGroup) {
         payload.suppression_group_id = Number(selectedSuppressionGroup);
-        console.log('Suppression group to send:', payload.suppression_group_id, typeof payload.suppression_group_id);
+        console.log(
+          "Suppression group to send:",
+          payload.suppression_group_id,
+          typeof payload.suppression_group_id
+        );
       }
       if (editingStep) {
         await updateCampaignStep(id, editingStep.id, payload);
@@ -126,36 +140,38 @@ const CampaignManagement = () => {
       setShowStepModal(false);
       fetchSteps();
     } catch (error) {
-      alert('Failed to save step');
+      alert("Failed to save step");
     }
   };
 
   const handleScheduleStep = async (step) => {
     setScheduleStep(step);
     setShowScheduleModal(true);
-    setSelectedSender('');
+    setSelectedSender("");
     try {
       const res = await getSendGridSenders();
       setSenders(res.data);
     } catch (error) {
       setSenders([]);
-      alert('Failed to fetch senders');
+      alert("Failed to fetch senders");
     }
   };
 
   const handleConfirmSchedule = async () => {
     if (!selectedSender) {
-      alert('Please select a sender');
+      alert("Please select a sender");
       return;
     }
     try {
-      await scheduleCampaignStep(scheduleStep.id, { sender_id: selectedSender });
-      alert('Step scheduled!');
+      await scheduleCampaignStep(scheduleStep.id, {
+        sender_id: selectedSender,
+      });
+      alert("Step scheduled!");
       setShowScheduleModal(false);
       setScheduleStep(null);
       fetchSteps();
     } catch (error) {
-      alert('Failed to schedule step');
+      alert("Failed to schedule step");
     }
   };
 
@@ -168,7 +184,10 @@ const CampaignManagement = () => {
           try {
             const res = await api.get(`api/steps/${step.id}/sendgrid-stats/`);
             // The API returns an array in results
-            const stats = res.data.results && res.data.results.length > 0 ? res.data.results[0].stats : null;
+            const stats =
+              res.data.results && res.data.results.length > 0
+                ? res.data.results[0].stats
+                : null;
             statsObj[step.id] = stats || null;
           } catch (e) {
             statsObj[step.id] = null;
@@ -181,8 +200,11 @@ const CampaignManagement = () => {
   }, [steps]);
 
   const getAggregateStats = () => {
-    let delivered = 0, opens = 0, bounces = 0, requests = 0;
-    Object.values(stepStats).forEach(stats => {
+    let delivered = 0,
+      opens = 0,
+      bounces = 0,
+      requests = 0;
+    Object.values(stepStats).forEach((stats) => {
       if (stats) {
         delivered += Number(stats.delivered) || 0;
         opens += Number(stats.opens) || 0;
@@ -192,28 +214,6 @@ const CampaignManagement = () => {
     });
     return { delivered, opens, bounces, requests };
   };
-
-  const Header = () => (
-    <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-      <h1 className="text-2xl font-semibold text-gray-900">{campaignName}</h1>
-      <div className="flex items-center space-x-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        {/* <div className="w-8 h-8 bg-gray-300 rounded-full"></div> */}
-        <div className="w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center">
-          <span className="text-white text-sm font-semibold">A</span>
-        </div>
-      </div>
-    </div>
-  );
 
   const TabNavigation = () => (
     <div className="bg-white border-b border-gray-200">
@@ -252,26 +252,53 @@ const CampaignManagement = () => {
     </div>
   );
 
-  const EmailsTab = () => {
+  const EmailsTab = ({ searchTerm }) => {
     const aggregate = getAggregateStats();
+    // Normalize the search term
+    const normalizedSearch = searchTerm.toLowerCase();
+    // Filter steps by subject or body
+    const filteredSteps = steps.filter(
+      (step) =>
+        step.subject?.toLowerCase().includes(normalizedSearch) ||
+        step.body?.toLowerCase().includes(normalizedSearch)
+    );
     return (
       <div className="p-6">
         {/* Aggregate Stats Card */}
         <div className="mb-6">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-wrap gap-6 items-center">
-            <div className="text-lg font-semibold text-blue-800 mr-6">Campaign Stats</div>
-            <div className="text-sm text-gray-700">Delivered: <span className="font-bold">{aggregate.delivered}</span></div>
-            <div className="text-sm text-gray-700">Opens: <span className="font-bold">{aggregate.opens}</span></div>
-            <div className="text-sm text-gray-700">Bounces: <span className="font-bold">{aggregate.bounces}</span></div>
-            <div className="text-sm text-gray-700">Requests: <span className="font-bold">{aggregate.requests}</span></div>
+            <div className="text-lg font-semibold text-blue-800 mr-6">
+              Campaign Stats
+            </div>
+            <div className="text-sm text-gray-700">
+              Delivered:{" "}
+              <span className="font-bold">{aggregate.delivered}</span>
+            </div>
+            <div className="text-sm text-gray-700">
+              Opens: <span className="font-bold">{aggregate.opens}</span>
+            </div>
+            <div className="text-sm text-gray-700">
+              Bounces: <span className="font-bold">{aggregate.bounces}</span>
+            </div>
+            <div className="text-sm text-gray-700">
+              Requests: <span className="font-bold">{aggregate.requests}</span>
+            </div>
           </div>
         </div>
         <div className="flex justify-end mb-6">
           <button
-            className={`bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors ${!isActive ? 'bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300' : ''}`}
+            className={`bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors ${
+              !isActive
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300"
+                : ""
+            }`}
             onClick={handleAddStep}
             disabled={!isActive || addStepLoading}
-            title={!isActive ? 'This campaign is inactive. Activate it to add steps.' : ''}
+            title={
+              !isActive
+                ? "This campaign is inactive. Activate it to add steps."
+                : ""
+            }
           >
             {addStepLoading ? (
               <span className="flex items-center gap-2">
@@ -279,7 +306,7 @@ const CampaignManagement = () => {
                 Adding...
               </span>
             ) : (
-              'Add Step'
+              "Add Step"
             )}
           </button>
         </div>
@@ -291,71 +318,118 @@ const CampaignManagement = () => {
               <div className="col-span-2 flex items-center">Subject</div>
               <div className="col-span-3 flex items-center">Body</div>
               <div className="col-span-1 flex items-center">Send At</div>
-              <div className="col-span-1 flex items-center justify-center">SendGrid</div>
-              <div className="col-span-2 flex items-center justify-center">Stats</div>
-              <div className="col-span-1 flex items-center justify-center">Actions</div>
+              <div className="col-span-1 flex items-center justify-center">
+                SendGrid
+              </div>
+              <div className="col-span-2 flex items-center justify-center">
+                Stats
+              </div>
+              <div className="col-span-1 flex items-center justify-center">
+                Actions
+              </div>
             </div>
           </div>
           <div className="divide-y divide-gray-200">
             {stepsLoading ? (
               <div className="p-8 text-center">Loading...</div>
-            ) : steps.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">No steps found.</div>
+            ) : filteredSteps.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                No steps found.
+              </div>
             ) : (
-              steps.map((step) => {
+              filteredSteps.map((step) => {
                 const stats = stepStats[step.id];
-                const scheduleDisabled = !!step.sendgrid_campaign_id || !isActive;
+                const scheduleDisabled =
+                  !!step.sendgrid_campaign_id || !isActive;
                 return (
-                  <div key={step.id} className="grid grid-cols-11 gap-4 p-4 hover:bg-gray-50 items-center">
+                  <div
+                    key={step.id}
+                    className="grid grid-cols-11 gap-4 p-4 hover:bg-gray-50 items-center"
+                  >
                     <div className="col-span-1 flex items-center">
                       <span className="font-medium">{step.step_order}</span>
                     </div>
                     <div className="col-span-2 flex items-center">
-                      <span className="truncate" title={step.subject}>{step.subject}</span>
+                      <span className="truncate" title={step.subject}>
+                        {step.subject}
+                      </span>
                     </div>
                     <div className="col-span-3 flex items-center">
-                      <span className="text-sm text-gray-600 line-clamp-2" title={step.body}>
+                      <span
+                        className="text-sm text-gray-600 line-clamp-2"
+                        title={step.body}
+                      >
                         {step.body}
                       </span>
                     </div>
                     <div className="col-span-1 flex items-center">
                       <span className="text-sm">
-                        {step.send_at ? new Date(step.send_at).toLocaleDateString() : 'Not scheduled'}
+                        {step.send_at
+                          ? new Date(step.send_at).toLocaleDateString()
+                          : "Not scheduled"}
                       </span>
                     </div>
                     <div className="col-span-1 flex items-center justify-center">
                       <button
                         className={`px-3 py-1 rounded text-xs font-medium ${
                           step.sendgrid_campaign_id
-                            ? 'bg-green-100 text-green-800 cursor-not-allowed'
+                            ? "bg-green-100 text-green-800 cursor-not-allowed"
                             : !isActive
-                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                              : 'bg-blue-500 text-white hover:bg-blue-600'
+                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            : "bg-blue-500 text-white hover:bg-blue-600"
                         }`}
                         onClick={() => handleScheduleStep(step)}
                         disabled={scheduleDisabled}
                         title={
                           !isActive
-                            ? 'This campaign is inactive. Activate it to schedule steps.'
+                            ? "This campaign is inactive. Activate it to schedule steps."
                             : step.sendgrid_campaign_id
-                              ? 'Already scheduled.'
-                              : ''
+                            ? "Already scheduled."
+                            : ""
                         }
                       >
-                        {step.sendgrid_campaign_id ? 'Scheduled' : 'Schedule'}
+                        {step.sendgrid_campaign_id ? "Scheduled" : "Schedule"}
                       </button>
                     </div>
                     <div className="col-span-2 flex items-center justify-center">
                       <div className="text-xs text-gray-500 space-y-1">
-                        <div>Delivered: {stats ? stats.delivered ?? '-' : step.sendgrid_campaign_id ? '...' : '-'}</div>
-                        <div>Opens: {stats ? stats.opens ?? '-' : step.sendgrid_campaign_id ? '...' : '-'}</div>
-                        <div>Bounces: {stats ? stats.bounces ?? '-' : step.sendgrid_campaign_id ? '...' : '-'}</div>
-                        <div>Requests: {stats ? stats.requests ?? '-' : step.sendgrid_campaign_id ? '...' : '-'}</div>
+                        <div>
+                          Delivered:{" "}
+                          {stats
+                            ? stats.delivered ?? "-"
+                            : step.sendgrid_campaign_id
+                            ? "..."
+                            : "-"}
+                        </div>
+                        <div>
+                          Opens:{" "}
+                          {stats
+                            ? stats.opens ?? "-"
+                            : step.sendgrid_campaign_id
+                            ? "..."
+                            : "-"}
+                        </div>
+                        <div>
+                          Bounces:{" "}
+                          {stats
+                            ? stats.bounces ?? "-"
+                            : step.sendgrid_campaign_id
+                            ? "..."
+                            : "-"}
+                        </div>
+                        <div>
+                          Requests:{" "}
+                          {stats
+                            ? stats.requests ?? "-"
+                            : step.sendgrid_campaign_id
+                            ? "..."
+                            : "-"}
+                        </div>
                       </div>
                     </div>
                     <div className="col-span-1 flex items-center justify-center space-x-1">
-                      <button 
-                        className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50" 
+                      <button
+                        className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50"
                         onClick={() => handleDeleteStep(step.id)}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -378,10 +452,10 @@ const CampaignManagement = () => {
                 <select
                   className="w-full border rounded px-3 py-2"
                   value={selectedSender}
-                  onChange={e => setSelectedSender(e.target.value)}
+                  onChange={(e) => setSelectedSender(e.target.value)}
                 >
                   <option value="">Select a sender</option>
-                  {senders.map(sender => (
+                  {senders.map((sender) => (
                     <option key={sender.id} value={sender.id}>
                       {sender.nickname || sender.from?.email || sender.email}
                     </option>
@@ -389,14 +463,14 @@ const CampaignManagement = () => {
                 </select>
               </div>
               <div className="flex justify-end space-x-2">
-                <button 
-                  className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors" 
+                <button
+                  className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
                   onClick={() => setShowScheduleModal(false)}
                 >
                   Cancel
                 </button>
-                <button 
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors" 
+                <button
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                   onClick={handleConfirmSchedule}
                 >
                   Schedule
@@ -426,7 +500,9 @@ const CampaignManagement = () => {
       try {
         const res = await api.get(`api/campaigns/${id}/`);
         setCampaignName(res.data.name || "Campaign");
-        setIsActive(res.data.is_active !== undefined ? res.data.is_active : true);
+        setIsActive(
+          res.data.is_active !== undefined ? res.data.is_active : true
+        );
       } catch (error) {
         console.error("Failed to load campaign", error);
         setCampaignName("Campaign");
@@ -439,11 +515,15 @@ const CampaignManagement = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
-        <Header />
+        <Header
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          campaignName={campaignName}
+        />
         <TabNavigation />
         <div className="flex-1 overflow-auto">
-          {activeTab === "emails" && <EmailsTab />}
-          {activeTab === "contacts" && <ContactsTab />}
+          {activeTab === "emails" && <EmailsTab searchTerm={searchTerm} />}
+          {activeTab === "contacts" && <ContactsTab searchTerm={searchTerm} />}
           {activeTab === "settings" && <SettingsTab />}
         </div>
         <StepModal
@@ -466,3 +546,21 @@ const CampaignManagement = () => {
 };
 
 export default CampaignManagement;
+
+const Header = ({ searchTerm, setSearchTerm, campaignName }) => (
+  <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+    <h1 className="text-2xl font-semibold text-gray-900">{campaignName}</h1>
+    <div className="flex items-center gap-3">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        <input
+          type="text"
+          placeholder={"Search by name..."}
+          className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+    </div>
+  </div>
+);

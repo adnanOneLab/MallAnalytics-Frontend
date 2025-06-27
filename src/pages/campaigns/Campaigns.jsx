@@ -15,6 +15,7 @@ export default function CampaignTable() {
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [campaignStats, setCampaignStats] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
 
   // 🔹 Fetch campaigns on mount
   useEffect(() => {
@@ -116,6 +117,26 @@ export default function CampaignTable() {
   return (
     <Layout>
       <div className="px-6 py-6">
+        {/* Header with Search */}
+        <div className="bg-white px-6 py-4 rounded-lg shadow-sm flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-gray-800">
+            {"Campaigns"}
+          </h2>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder={
+                  t("campaigns.searchPlaceholder") || "Search by name..."
+                }
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
         <EmailModal
           isOpen={isEmailModalOpen}
           onClose={() => setIsEmailModalOpen(false)}
@@ -179,12 +200,17 @@ export default function CampaignTable() {
                     </td>
                   </tr>
                 ) : campaigns.length > 0 ? (
-                  campaigns.map((campaign, index) => {
-                    const stats = campaignStats[campaign.campaign_id];
-                    return (
-                      <tr key={campaign.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4">
-                          {/* <div className="flex items-center">
+                  // campaigns.map((campaign, index) => {
+                  campaigns
+                    .filter((c) =>
+                      c.name.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map((campaign, index) => {
+                      const stats = campaignStats[campaign.campaign_id];
+                      return (
+                        <tr key={campaign.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4">
+                            {/* <div className="flex items-center">
                             <span className="text-sm font-semibold text-black">
                               {index+1}
                             </span>
@@ -199,84 +225,86 @@ export default function CampaignTable() {
                               {campaign.name}
                             </span>
                           </div> */}
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm font-semibold text-black">
-                              {index + 1}.
-                            </span>
-                            <span
-                              className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm font-semibold text-black">
+                                {index + 1}.
+                              </span>
+                              <span
+                                className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                                onClick={() =>
+                                  navigate(
+                                    `/campaigns/${campaign.campaign_id}/manage`
+                                  )
+                                }
+                              >
+                                {campaign.name}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-900">
+                            {stats
+                              ? stats.delivered
+                              : campaign.sendgrid_list_id
+                              ? "..."
+                              : "-"}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-900">
+                            {stats
+                              ? stats.opens
+                              : campaign.sendgrid_list_id
+                              ? "..."
+                              : "-"}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-900">
+                            {stats
+                              ? stats.bounces
+                              : campaign.sendgrid_list_id
+                              ? "..."
+                              : "-"}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-900">
+                            {stats
+                              ? stats.scheduled
+                              : campaign.sendgrid_list_id
+                              ? "..."
+                              : "-"}
+                          </td>
+                          <td className="px-6 py-4">
+                            <button
                               onClick={() =>
-                                navigate(
-                                  `/campaigns/${campaign.campaign_id}/manage`
+                                toggleActive(
+                                  campaign.campaign_id,
+                                  campaign.is_active
                                 )
                               }
-                            >
-                              {campaign.name}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {stats
-                            ? stats.delivered
-                            : campaign.sendgrid_list_id
-                            ? "..."
-                            : "-"}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {stats
-                            ? stats.opens
-                            : campaign.sendgrid_list_id
-                            ? "..."
-                            : "-"}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {stats
-                            ? stats.bounces
-                            : campaign.sendgrid_list_id
-                            ? "..."
-                            : "-"}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {stats
-                            ? stats.scheduled
-                            : campaign.sendgrid_list_id
-                            ? "..."
-                            : "-"}
-                        </td>
-                        <td className="px-6 py-4">
-                          <button
-                            onClick={() =>
-                              toggleActive(
-                                campaign.campaign_id,
+                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                                 campaign.is_active
-                              )
-                            }
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                              campaign.is_active
-                                ? "bg-green-500"
-                                : "bg-gray-300"
-                            }`}
-                          >
-                            <span
-                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                campaign.is_active
-                                  ? "translate-x-6"
-                                  : "translate-x-1"
+                                  ? "bg-green-500"
+                                  : "bg-gray-300"
                               }`}
-                            />
-                          </button>
-                        </td>
-                        <td className="px-6 py-4">
-                          <button
-                            onClick={() => deleteCampaign(campaign.campaign_id)}
-                            className="text-gray-400 hover:text-red-600 transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
+                            >
+                              <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                  campaign.is_active
+                                    ? "translate-x-6"
+                                    : "translate-x-1"
+                                }`}
+                              />
+                            </button>
+                          </td>
+                          <td className="px-6 py-4">
+                            <button
+                              onClick={() =>
+                                deleteCampaign(campaign.campaign_id)
+                              }
+                              className="text-gray-400 hover:text-red-600 transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
                 ) : (
                   <tr>
                     <td
