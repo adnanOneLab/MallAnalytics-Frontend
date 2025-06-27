@@ -6,7 +6,7 @@ import "../../assets/calendarStyles.css";
 import { loadFaceDetectionModels } from '../../utils/faceDetection';
 import PhotoCapture from './PhotoCapture';
 import { registerUser } from '../../services/userService';
-import api from '../../services/api';
+// import api from '../../services/api';
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -35,8 +35,8 @@ const RegistrationForm = () => {
 
   const fetchInterests = async () => {
     try {
-      const response = await api.get('api/interests/');
-      setAvailableInterests(response.data);
+      // const response = await api.get('api/interests/');
+      setAvailableInterests([]);
     } catch (error) {
       console.error('Error fetching interests:', error);
       setError('Failed to load interests. Please try again later.');
