@@ -60,6 +60,9 @@ const CampaignManagement = () => {
     try {
       const res = await getSendGridSenders();
       setSenders(res.data);
+      if (res.data && res.data.length > 0) {
+        setSelectedSender(res.data[0].id);
+      }
     } catch (error) {
       setSenders([]);
     }
@@ -144,6 +147,9 @@ const CampaignManagement = () => {
     try {
       const res = await getSendGridSenders();
       setSenders(res.data);
+      if (res.data && res.data.length > 0) {
+        setSelectedSender(res.data[0].id);
+      }
     } catch (error) {
       setSenders([]);
       alert('Failed to fetch senders');
