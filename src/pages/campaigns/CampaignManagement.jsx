@@ -107,10 +107,25 @@ const CampaignManagement = () => {
 
   const handleStepFormSubmit = async (payload) => {
     try {
+      let dataToSend = payload;
+      // If image_files is present and is an array, use FormData
+      if (payload.image_files && Array.isArray(payload.image_files) && payload.image_files.length > 0) {
+        const formData = new FormData();
+        // Append all fields except image_files
+        Object.entries(payload).forEach(([key, value]) => {
+          if (key === 'image_files') return;
+          formData.append(key, value);
+        });
+        // Append images
+        payload.image_files.forEach((file) => {
+          formData.append('image_files', file);
+        });
+        dataToSend = formData;
+      }
       if (editingStep) {
-        await updateCampaignStep(id, editingStep.id, payload);
+        await updateCampaignStep(id, editingStep.id, dataToSend);
       } else {
-        await createCampaignStep(id, payload);
+        await createCampaignStep(id, dataToSend);
       }
       setShowStepModal(false);
       fetchSteps();

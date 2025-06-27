@@ -34,7 +34,12 @@ const StepModal = ({
   onSuppressionGroupChange 
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageFiles, setImageFiles] = useState([]);
   if (!open) return null;
+
+  const handleImageChange = (e) => {
+    setImageFiles(Array.from(e.target.files));
+  };
 
   const handleSubmit = async (e) => {
     if (isSubmitting) return;
@@ -61,6 +66,7 @@ const StepModal = ({
         send_at: sendAtDate.toISOString(),
         sender_id: selectedSender,
         suppression_group_id: selectedSuppressionGroup || undefined,
+        image_files: imageFiles,
       });
     } finally {
       setIsSubmitting(false);
@@ -183,6 +189,23 @@ const StepModal = ({
                 </select>
               </InputField>
             </div>
+
+            {/* Image Upload */}
+            <InputField icon={null} label="Step Images (optional)">
+              <input
+                type="file"
+                name="image_files"
+                multiple
+                accept="image/*"
+                onChange={handleImageChange}
+                className={baseInputClasses}
+              />
+              {imageFiles.length > 0 && (
+                <div className="mt-2 text-xs text-gray-500">
+                  {imageFiles.length} image(s) selected
+                </div>
+              )}
+            </InputField>
 
             {/* Action Buttons */}
             <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">

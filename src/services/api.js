@@ -65,8 +65,22 @@ api.interceptors.response.use(
 
 // Campaign Steps API
 export const getCampaignSteps = (campaignId) => api.get(`/campaigns/${campaignId}/steps/`);
-export const createCampaignStep = (campaignId, data) => api.post(`/campaigns/${campaignId}/steps/`, data);
-export const updateCampaignStep = (campaignId, stepId, data) => api.put(`/campaigns/${campaignId}/steps/${stepId}/`, data);
+export const createCampaignStep = (campaignId, data) => {
+  if (data instanceof FormData) {
+    return api.post(`/campaigns/${campaignId}/steps/`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
+  return api.post(`/campaigns/${campaignId}/steps/`, data);
+};
+export const updateCampaignStep = (campaignId, stepId, data) => {
+  if (data instanceof FormData) {
+    return api.put(`/campaigns/${campaignId}/steps/${stepId}/`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
+  return api.put(`/campaigns/${campaignId}/steps/${stepId}/`, data);
+};
 export const deleteCampaignStep = (campaignId, stepId) => api.delete(`/campaigns/${campaignId}/steps/${stepId}/`);
 export const scheduleCampaignStep = (stepId, data) => api.post(`/steps/${stepId}/schedule/`, data);
 
