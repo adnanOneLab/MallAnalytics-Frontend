@@ -17,13 +17,27 @@ const Dashboard = () => {
     avg_visit_duration: null,
     new_active_users: null,
   });
+  
+  const [days, setDays] = useState(30); // default to 30 days
 
+  // useEffect(() => {
+  //   api
+  //     .get("/dashboard-metrics/")
+  //     .then((res) => setMetrics(res.data))
+  //     .catch((err) => console.error("Failed to fetch dashboard metrics", err));
+  // }, []);
   useEffect(() => {
+    fetchMetrics(days);
+  }, [days]);
+
+  const fetchMetrics = (selectedDays) => {
+    console.log(selectedDays,'selectedddf');
+    
     api
-      .get("/dashboard-metrics/")
+      .get(`/dashboard-metrics/?days=${selectedDays}`)
       .then((res) => setMetrics(res.data))
       .catch((err) => console.error("Failed to fetch dashboard metrics", err));
-  }, []);
+  };
 
   const formatDuration = (duration) => {
     if (!duration) return "0m";
@@ -37,7 +51,23 @@ const Dashboard = () => {
         <h1 className="text-2xl font-semibold text-gray-900 mb-2">
           {t("dashboard.title")}
         </h1>
-        <p className="text-gray-600">{t("dashboard.welcome")}</p>
+        <p className="text-gray-600 mb-4">{t("dashboard.welcome")}</p>
+
+        <div className="mb-4 flex items-center gap-3">
+          <label htmlFor="days" className="text-sm font-medium text-gray-700">
+            {t("dashboard.selectRange")}:
+          </label>
+          <select
+            id="days"
+            value={days}
+            onChange={(e) => setDays(e.target.value)}
+            className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm hover:border-gray-400"
+          >
+            <option value={7}>Last 7 Days</option>
+            <option value={15}>Last 15 Days</option>
+            <option value={30}>Last 30 Days</option>
+          </select>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -49,9 +79,9 @@ const Dashboard = () => {
           <p className="text-3xl font-bold text-gray-900 mt-2">
             {metrics.total_visitors}
           </p>
-          <p className="text-sm text-gray-600 mt-1">
+          {/* <p className="text-sm text-gray-600 mt-1">
             {t("dashboard.totalVisitorsSubtext")}
-          </p>
+          </p> */}
         </div>
 
         {/* Average Stores Visited Card */}
@@ -67,21 +97,6 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Active Visitors Card */}
-        {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-medium text-gray-900">
-            {t("dashboard.activeVisitors")}
-          </h3>
-          <p className="text-3xl font-bold text-gray-900 mt-2">
-            {metrics.active_users}
-          </p>
-          <p className="text-sm text-gray-600 mt-1">
-            {t("dashboard.activeVisitorsSubtext", {
-              count: metrics.new_active_users || 0,
-            })}
-          </p>
-        </div> */}
-
         {/* Average Visit Duration Card */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-medium text-gray-900">
@@ -90,35 +105,10 @@ const Dashboard = () => {
           <p className="text-3xl font-bold text-gray-900 mt-2">
             {formatDuration(metrics.avg_visit_duration)}
           </p>
-          <p className="text-sm text-gray-600 mt-1">
+          {/* <p className="text-sm text-gray-600 mt-1">
             {t("dashboard.avgVisitDurationSubtext")}
-          </p>
+          </p> */}
         </div>
-
-        {/* Membership Distribution Card - Commented out but translated for future use */}
-        {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-medium text-gray-900">
-            {t('dashboard.membershipDistribution')}
-          </h3>
-          <div className="mt-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">{t('dashboard.platinum')}</span>
-              <span className="text-sm font-medium text-gray-900">15%</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">{t('dashboard.gold')}</span>
-              <span className="text-sm font-medium text-gray-900">35%</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">{t('dashboard.silver')}</span>
-              <span className="text-sm font-medium text-gray-900">30%</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">{t('dashboard.bronze')}</span>
-              <span className="text-sm font-medium text-gray-900">20%</span>
-            </div>
-          </div>
-        </div> */}
       </div>
     </Layout>
   );

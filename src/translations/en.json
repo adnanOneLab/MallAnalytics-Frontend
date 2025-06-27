@@ -23,7 +23,8 @@
         "platinum": "Platinum",
         "gold": "Gold",
         "silver": "Silver",
-        "bronze": "Bronze"
+        "bronze": "Bronze",
+        "selectRange": "Select Range"
     },
     "visitors": {
         "title": "Visitors List",
