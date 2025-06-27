@@ -33,7 +33,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
         .get("api/campaigns/")
         .then((res) => {
           // Handle both paginated and non-paginated responses
-          setCampaigns(Array.isArray(res.data) ? res.data : res.data.results || []);
+          setCampaigns(res.data.results || []);
         })
         .catch((err) => {
           console.error("Error fetching campaigns:", err);
@@ -152,6 +152,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t('addContactModal.emailCampaign')}
             </label>
+            {console.log(campaigns, "campaigns")}
             <div className="relative flex justify-center">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}

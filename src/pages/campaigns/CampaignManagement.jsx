@@ -245,8 +245,17 @@ const CampaignManagement = () => {
     </div>
   );
 
-  const EmailsTab = () => {
+  const EmailsTab = ({searchTerm}) => {
     const aggregate = getAggregateStats();
+
+    const normalizedSearch = searchTerm.toLowerCase();
+    // Filter steps by subject or body
+    const filteredSteps = steps.filter(
+      (step) =>
+        step.subject?.toLowerCase().includes(normalizedSearch) ||
+        step.body?.toLowerCase().includes(normalizedSearch)
+    );
+
     const navigate = useNavigate();
     const [contactsLoading, setContactsLoading] = useState(true);
 
@@ -254,7 +263,7 @@ const CampaignManagement = () => {
       const fetchContacts = async () => {
         setContactsLoading(true);
         try {
-          const res = await api.get(`/campaigns/${id}/contacts/?page=1`);
+          const res = await api.get(`api/campaigns/${id}/contacts/?page=1`);
           const count = res.data.results ? res.data.results.length : 0;
           setContactsCount(count);
           if (!noVisitorsDismissed) {
@@ -350,10 +359,10 @@ const CampaignManagement = () => {
           <div className="divide-y divide-gray-200">
             {stepsLoading ? (
               <div className="p-8 text-center">Loading...</div>
-            ) : steps.length === 0 ? (
+            ) : filteredSteps.length === 0 ? (
               <div className="p-8 text-center text-gray-500">No steps found.</div>
             ) : (
-              steps.map((step) => {
+              filteredSteps.map((step) => {
                 const stats = stepStats[step.id];
                 const scheduleDisabled = !!step.sendgrid_campaign_id || !isActive;
                 return (

@@ -89,7 +89,7 @@ const ContactsTab = ({ onHasVisitorsChange, searchTerm }) => {
     setBulkDeleting(true);
     try {
       for (const user_id of selectedVisitors) {
-        await api.delete(`/campaigns/${id}/contacts/${user_id}/`);
+        await api.delete(`api/campaigns/${id}/contacts/${user_id}/`);
       }
       setShowBulkDeleteModal(false);
       setSelectedVisitors(new Set());
