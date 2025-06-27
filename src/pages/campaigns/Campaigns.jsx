@@ -148,7 +148,7 @@ export default function CampaignTable() {
               <div className="text-sm text-gray-500">
                 {t("campaigns.showing")}{" "}
                 <span className="font-medium text-gray-900">
-                  {campaigns?.length}
+                  {campaigns.length}
                 </span>{" "}
                 {t("campaigns.campaigns")}
               </div>

@@ -8,7 +8,7 @@ export default function CreateCampaignModal({ isOpen, onClose, onCreated }) {
   const handleCreate = async () => {
     try {
       const res = await api.post("api/campaigns/", { name: campaignName });
-      onCreated(res.data); // send new campaign data up
+      onCreated(res.data.results); // send new campaign data up
       setCampaignName("");
     } catch (err) {
       console.error("Failed to create campaign:", err);

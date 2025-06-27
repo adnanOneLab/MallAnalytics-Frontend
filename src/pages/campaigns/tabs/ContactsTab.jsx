@@ -17,14 +17,14 @@ const ContactsTab = ({ searchTerm }) => {
     setLoading(true);
     try {
       const res = await api.get(`api/campaigns/${id}/contacts/`);
-      setContacts(res.data);
+      setContacts(res.data.results);
     } catch (error) {
       console.error("Error fetching Visitors:", error);
     } finally {
       setLoading(false);
     }
   };
-  const filteredContacts = contacts.filter(({ user }) => {
+  const filteredContacts = contacts?.filter(({ user }) => {
     const lowerSearch = searchTerm.toLowerCase();
     return (
       user.name?.toLowerCase().includes(lowerSearch) ||
