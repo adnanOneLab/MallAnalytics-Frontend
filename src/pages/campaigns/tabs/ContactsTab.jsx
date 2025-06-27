@@ -49,9 +49,9 @@ const ContactsTab = () => {
             <Plus className="w-4 h-4 mr-2" />
             Add Visitors
           </button>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+          {/* <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
             Add Steps
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -60,9 +60,9 @@ const ContactsTab = () => {
           <table className="min-w-full divide-y divide-gray-200 table-auto">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3">
+                {/* <th className="px-6 py-3">
                   <input type="checkbox" />
-                </th>
+                </th> */}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Name
                 </th>
@@ -86,15 +86,18 @@ const ContactsTab = () => {
             <tbody className="bg-white divide-y divide-gray-200 text-sm">
               {contacts.map((contact, index) => (
                 <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <input type="checkbox" />
-                  </td>
                   <td
-                    className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                    className="px-6 py-4 whitespace-nowrap flex items-center space-x-2 cursor-pointer"
                     onClick={() => handleVisitorClick(contact.user.user_id)}
                   >
-                    <span>{contact.user.name}</span>
+                    <span className="text-sm font-semibold text-black">
+                      {index + 1}.
+                    </span>
+                    <span className="text-sm font-medium text-blue-600 hover:text-blue-800">
+                      {contact.user.name}
+                    </span>
                   </td>
+
                   <td className="px-6 py-4 whitespace-nowrap">
                     {contact.user.email}
                   </td>

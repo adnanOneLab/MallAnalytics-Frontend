@@ -207,7 +207,7 @@ const CampaignManagement = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+        {/* <div className="w-8 h-8 bg-gray-300 rounded-full"></div> */}
         <div className="w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center">
           <span className="text-white text-sm font-semibold">A</span>
         </div>
@@ -238,7 +238,7 @@ const CampaignManagement = () => {
         >
           Visitors
         </button>
-        <button
+        {/* <button
           onClick={() => setActiveTab("settings")}
           className={`py-4 px-1 border-b-2 font-medium text-sm ${
             activeTab === "settings"
@@ -247,7 +247,7 @@ const CampaignManagement = () => {
           }`}
         >
           Settings
-        </button>
+        </button> */}
       </div>
     </div>
   );

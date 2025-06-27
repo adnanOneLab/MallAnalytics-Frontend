@@ -5,7 +5,7 @@ import Layout from "../../components/Layout";
 import EmailModal from "./EmailModal";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 export default function CampaignTable() {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ export default function CampaignTable() {
       const res = await api.get("api/campaigns/");
       setCampaigns(res.data);
     } catch (error) {
-      console.error(t('campaigns.fetchError'), error);
+      console.error(t("campaigns.fetchError"), error);
     } finally {
       setLoading(false);
     }
@@ -44,15 +44,25 @@ export default function CampaignTable() {
   const fetchAllCampaignStats = async () => {
     const statsByCampaign = {};
     for (const campaign of campaigns) {
-      let delivered = 0, opens = 0, bounces = 0, scheduled = 0;
+      let delivered = 0,
+        opens = 0,
+        bounces = 0,
+        scheduled = 0;
       try {
-        const stepsRes = await api.get(`api/campaigns/${campaign.campaign_id}/steps/`);
+        const stepsRes = await api.get(
+          `api/campaigns/${campaign.campaign_id}/steps/`
+        );
         const steps = stepsRes.data;
         for (const step of steps) {
           if (step.sendgrid_campaign_id) {
             try {
-              const statsRes = await api.get(`api/steps/${step.id}/sendgrid-stats/`);
-              const stats = statsRes.data.results && statsRes.data.results.length > 0 ? statsRes.data.results[0].stats : null;
+              const statsRes = await api.get(
+                `api/steps/${step.id}/sendgrid-stats/`
+              );
+              const stats =
+                statsRes.data.results && statsRes.data.results.length > 0
+                  ? statsRes.data.results[0].stats
+                  : null;
               if (stats) {
                 delivered += Number(stats.delivered) || 0;
                 opens += Number(stats.opens) || 0;
@@ -67,7 +77,12 @@ export default function CampaignTable() {
       } catch (e) {
         // Ignore steps fetch error
       }
-      statsByCampaign[campaign.campaign_id] = { delivered, opens, bounces, scheduled };
+      statsByCampaign[campaign.campaign_id] = {
+        delivered,
+        opens,
+        bounces,
+        scheduled,
+      };
     }
     setCampaignStats(statsByCampaign);
   };
@@ -80,19 +95,21 @@ export default function CampaignTable() {
       });
       fetchCampaigns();
     } catch (err) {
-      console.error(t('campaigns.toggleError'), err);
+      console.error(t("campaigns.toggleError"), err);
     }
   };
 
   // 🔹 Delete campaign
   const deleteCampaign = async (id) => {
-    const confirmed = window.confirm('Are you sure you want to delete this campaign? This will also delete all steps and the SendGrid list.');
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this campaign? This will also delete all steps and the SendGrid list."
+    );
     if (!confirmed) return;
     try {
       await api.delete(`api/campaigns/${id}/`);
       fetchCampaigns();
     } catch (err) {
-      console.error(t('campaigns.deleteError'), err);
+      console.error(t("campaigns.deleteError"), err);
     }
   };
 
@@ -108,14 +125,18 @@ export default function CampaignTable() {
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-500">
-                {t('campaigns.showing')} <span className="font-medium text-gray-900">{campaigns.length}</span> {t('campaigns.campaigns')}
+                {t("campaigns.showing")}{" "}
+                <span className="font-medium text-gray-900">
+                  {campaigns.length}
+                </span>{" "}
+                {t("campaigns.campaigns")}
               </div>
               <button
                 className="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-700 transition-colors"
                 onClick={() => setIsEmailModalOpen(true)}
               >
                 <Plus className="w-4 h-4" />
-                <span>{t('campaigns.newCampaign')}</span>
+                <span>{t("campaigns.newCampaign")}</span>
               </button>
             </div>
           </div>
@@ -126,25 +147,25 @@ export default function CampaignTable() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('campaigns.tableHeaders.campaignName')}
+                    {t("campaigns.tableHeaders.campaignName")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('campaigns.tableHeaders.emailsDelivered')}
+                    {t("campaigns.tableHeaders.emailsDelivered")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('campaigns.tableHeaders.emailsOpened')}
+                    {t("campaigns.tableHeaders.emailsOpened")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('campaigns.tableHeaders.emailsBounced')}
+                    {t("campaigns.tableHeaders.emailsBounced")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('campaigns.tableHeaders.emailsScheduled')}
+                    {t("campaigns.tableHeaders.emailsScheduled")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('campaigns.tableHeaders.active')}
+                    {t("campaigns.tableHeaders.active")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('campaigns.tableHeaders.action')}
+                    {t("campaigns.tableHeaders.action")}
                   </th>
                 </tr>
               </thead>
@@ -158,16 +179,30 @@ export default function CampaignTable() {
                     </td>
                   </tr>
                 ) : campaigns.length > 0 ? (
-                  campaigns.map((campaign) => {
+                  campaigns.map((campaign, index) => {
                     const stats = campaignStats[campaign.campaign_id];
                     return (
                       <tr key={campaign.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <input
-                              type="checkbox"
-                              className="h-4 w-4 text-blue-600 border-gray-300 rounded mr-3"
-                            />
+                          {/* <div className="flex items-center">
+                            <span className="text-sm font-semibold text-black">
+                              {index+1}
+                            </span>
+                            <span
+                              className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                              onClick={() =>
+                                navigate(
+                                  `/campaigns/${campaign.campaign_id}/manage`
+                                )
+                              }
+                            >
+                              {campaign.name}
+                            </span>
+                          </div> */}
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-semibold text-black">
+                              {index + 1}.
+                            </span>
                             <span
                               className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
                               onClick={() =>
@@ -181,16 +216,32 @@ export default function CampaignTable() {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
-                          {stats ? stats.delivered : campaign.sendgrid_list_id ? '...' : '-'}
+                          {stats
+                            ? stats.delivered
+                            : campaign.sendgrid_list_id
+                            ? "..."
+                            : "-"}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
-                          {stats ? stats.opens : campaign.sendgrid_list_id ? '...' : '-'}
+                          {stats
+                            ? stats.opens
+                            : campaign.sendgrid_list_id
+                            ? "..."
+                            : "-"}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
-                          {stats ? stats.bounces : campaign.sendgrid_list_id ? '...' : '-'}
+                          {stats
+                            ? stats.bounces
+                            : campaign.sendgrid_list_id
+                            ? "..."
+                            : "-"}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
-                          {stats ? stats.scheduled : campaign.sendgrid_list_id ? '...' : '-'}
+                          {stats
+                            ? stats.scheduled
+                            : campaign.sendgrid_list_id
+                            ? "..."
+                            : "-"}
                         </td>
                         <td className="px-6 py-4">
                           <button
@@ -201,7 +252,9 @@ export default function CampaignTable() {
                               )
                             }
                             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                              campaign.is_active ? "bg-green-500" : "bg-gray-300"
+                              campaign.is_active
+                                ? "bg-green-500"
+                                : "bg-gray-300"
                             }`}
                           >
                             <span
@@ -230,7 +283,7 @@ export default function CampaignTable() {
                       colSpan="7"
                       className="px-6 py-6 text-center text-sm text-gray-500"
                     >
-                      {t('campaigns.noCampaignsFound')}
+                      {t("campaigns.noCampaignsFound")}
                     </td>
                   </tr>
                 )}
