@@ -484,7 +484,10 @@ const VisitorsList = () => {
       </div>
       <AddContactModal
         isOpen={isAddContactModalOpen}
-        onClose={() => setIsAddContactModalOpen(false)}
+        onClose={() => {
+          setIsAddContactModalOpen(false);
+          setSelectedVisitors(new Set());
+        }}
         selectedVisitors={Array.from(selectedVisitors)} // 👈 convert Set to array
       />
       {showDeleteConfirm && userToDelete && (

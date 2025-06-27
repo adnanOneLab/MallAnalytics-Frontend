@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { X, ChevronDown } from "lucide-react";
 import api from "../../services/api";
-import { useNavigate } from "react-router-dom";
 import CreateCampaignModal from "../campaigns/CreateCampaignModal";
+import { useNavigate } from "react-router-dom";
 
 export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
   const [campaigns, setCampaigns] = useState([]);
@@ -10,6 +10,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleCreateNew = () => {
     setIsCreateModalOpen(true);
@@ -23,19 +24,29 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
 
   console.log(selectedCampaign, "selectedCampaignsd");
 
-  const navigate = useNavigate();
-
   // 🟢 Fetch all campaigns on mount
   useEffect(() => {
     if (isOpen) {
       api
         .get("/campaigns/")
         .then((res) => {
-          setCampaigns(res.data);
+          // Handle both paginated and non-paginated responses
+          setCampaigns(Array.isArray(res.data) ? res.data : res.data.results || []);
         })
         .catch((err) => {
           console.error("Error fetching campaigns:", err);
+          setCampaigns([]); // Prevent undefined
         });
+    }
+  }, [isOpen]);
+
+  // Reset modal state on open/close
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedCampaign("");
+      setIsDropdownOpen(false);
+      setSuccess(false);
+      setIsCreateModalOpen(false);
     }
   }, [isOpen]);
 
@@ -99,7 +110,10 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
           <button
             onClick={() => {
               setSuccess(false);
-              navigate(`/campaigns/${selectedCampaign}/manage/`);
+              onClose && onClose();
+              if (selectedCampaign) {
+                navigate(`/campaigns/${selectedCampaign}/manage`);
+              }
             }}
             className="bg-gray-900 text-white px-6 py-2 rounded-md hover:bg-gray-800"
           >

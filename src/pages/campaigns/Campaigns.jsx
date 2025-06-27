@@ -13,11 +13,18 @@ export default function CampaignTable() {
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [campaignStats, setCampaignStats] = useState({});
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [count, setCount] = useState(0);
+  const [pageSize, setPageSize] = useState(3); // default fallback
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [campaignToDelete, setCampaignToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   // 🔹 Fetch campaigns on mount
   useEffect(() => {
-    fetchCampaigns();
-  }, [isEmailModalOpen]);
+    fetchCampaigns(page);
+  }, [isEmailModalOpen, page]);
 
   useEffect(() => {
     if (campaigns.length > 0) {
@@ -26,11 +33,14 @@ export default function CampaignTable() {
     // eslint-disable-next-line
   }, [campaigns]);
 
-  const fetchCampaigns = async () => {
+  const fetchCampaigns = async (pageNum = page) => {
     try {
       setLoading(true);
-      const res = await api.get("/campaigns/");
-      setCampaigns(res.data);
+      const res = await api.get(`/campaigns/?page=${pageNum}`);
+      setCampaigns(res.data.results);
+      setCount(res.data.count);
+      setPageSize(res.data.page_size || 3);
+      setTotalPages(Math.ceil(res.data.count / (res.data.page_size || 3)));
     } catch (error) {
       console.error("Failed to fetch campaigns:", error);
     } finally {
@@ -76,22 +86,36 @@ export default function CampaignTable() {
       await api.patch(`/campaigns/${id}/toggle/`, {
         is_active: !currentStatus,
       });
-      fetchCampaigns();
+      fetchCampaigns(page);
     } catch (err) {
       console.error("Failed to toggle active status:", err);
     }
   };
 
   // 🔹 Delete campaign
-  const deleteCampaign = async (id) => {
-    const confirmed = window.confirm('Are you sure you want to delete this campaign? This will also delete all steps and the SendGrid list.');
-    if (!confirmed) return;
+  const handleDeleteClick = (id) => {
+    setCampaignToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteCampaign = async () => {
+    if (!campaignToDelete) return;
+    setDeleting(true);
     try {
-      await api.delete(`/campaigns/${id}/`);
-      fetchCampaigns();
+      await api.delete(`/campaigns/${campaignToDelete}/`);
+      fetchCampaigns(page);
     } catch (err) {
       console.error("Failed to delete campaign:", err);
+    } finally {
+      setDeleting(false);
+      setShowDeleteModal(false);
+      setCampaignToDelete(null);
     }
+  };
+
+  const cancelDeleteCampaign = () => {
+    setShowDeleteModal(false);
+    setCampaignToDelete(null);
   };
 
   return (
@@ -165,22 +189,16 @@ export default function CampaignTable() {
                     return (
                       <tr key={campaign.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <input
-                              type="checkbox"
-                              className="h-4 w-4 text-blue-600 border-gray-300 rounded mr-3"
-                            />
-                            <span
-                              className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
-                              onClick={() =>
-                                navigate(
-                                  `/campaigns/${campaign.campaign_id}/manage`
-                                )
-                              }
-                            >
-                              {campaign.name}
-                            </span>
-                          </div>
+                          <span
+                            className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                            onClick={() =>
+                              navigate(
+                                `/campaigns/${campaign.campaign_id}/manage`
+                              )
+                            }
+                          >
+                            {campaign.name}
+                          </span>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
                           {stats ? stats.delivered : campaign.sendgrid_list_id ? '...' : '-'}
@@ -217,7 +235,7 @@ export default function CampaignTable() {
                         </td>
                         <td className="px-6 py-4">
                           <button
-                            onClick={() => deleteCampaign(campaign.campaign_id)}
+                            onClick={() => handleDeleteClick(campaign.campaign_id)}
                             className="text-gray-400 hover:text-red-600 transition-colors"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -239,8 +257,62 @@ export default function CampaignTable() {
               </tbody>
             </table>
           </div>
+          {/* Pagination Controls */}
+          <div className="flex justify-between items-center px-6 py-4 border-t border-gray-200">
+            <div className="text-sm text-gray-500">
+              Showing page <span className="font-medium text-gray-900">{page}</span> of <span className="font-medium text-gray-900">{totalPages}</span> ({count} total, {pageSize} per page)
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                className="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 disabled:opacity-50"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+              >
+                Previous
+              </button>
+              <button
+                className="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 disabled:opacity-50"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+      {/* Delete Campaign Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+            <h2 className="text-lg font-semibold mb-4 text-gray-900">Delete Campaign</h2>
+            <p className="mb-6 text-gray-700">Are you sure you want to delete this campaign? This will also delete all steps and the SendGrid list. This action cannot be undone.</p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelDeleteCampaign}
+                className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300"
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteCampaign}
+                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 flex items-center justify-center min-w-[90px]"
+                disabled={deleting}
+              >
+                {deleting ? (
+                  <span className="flex items-center">
+                    <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></span>
+                    Deleting...
+                  </span>
+                ) : (
+                  'Delete'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Search, Plus, Trash2, MoreVertical } from "lucide-react";
 import Layout from "../../components/Layout";
 import ContactsTab from "../campaigns/tabs/ContactsTab";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import {
   getCampaignSteps,
@@ -24,7 +24,6 @@ const CampaignManagement = () => {
   const [showStepModal, setShowStepModal] = useState(false);
   const [editingStep, setEditingStep] = useState(null);
   const [stepForm, setStepForm] = useState({ subject: '', body: '', send_at: '', step_order: 1 });
-  const { id } = useParams();
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [scheduleStep, setScheduleStep] = useState(null);
   const [senders, setSenders] = useState([]);
@@ -34,6 +33,10 @@ const CampaignManagement = () => {
   const [stepStats, setStepStats] = useState({});
   const [isActive, setIsActive] = useState(true);
   const [addStepLoading, setAddStepLoading] = useState(false);
+  const { id } = useParams();
+  const [showNoVisitorsModal, setShowNoVisitorsModal] = useState(false);
+  const [noVisitorsDismissed, setNoVisitorsDismissed] = useState(false);
+  const [contactsCount, setContactsCount] = useState(0);
 
   // Fetch campaign steps
   useEffect(() => {
@@ -258,8 +261,59 @@ const CampaignManagement = () => {
 
   const EmailsTab = () => {
     const aggregate = getAggregateStats();
+    const navigate = useNavigate();
+    const [contactsLoading, setContactsLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchContacts = async () => {
+        setContactsLoading(true);
+        try {
+          const res = await api.get(`/campaigns/${id}/contacts/?page=1`);
+          const count = res.data.results ? res.data.results.length : 0;
+          setContactsCount(count);
+          if (!noVisitorsDismissed) {
+            setShowNoVisitorsModal(count === 0);
+          }
+        } catch (error) {
+          setContactsCount(0);
+          if (!noVisitorsDismissed) {
+            setShowNoVisitorsModal(true);
+          }
+        } finally {
+          setContactsLoading(false);
+        }
+      };
+      fetchContacts();
+    }, [id, noVisitorsDismissed]);
+
     return (
       <div className="p-6">
+        {/* No Visitors Modal */}
+        {showNoVisitorsModal && !contactsLoading && !noVisitorsDismissed && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+              <h2 className="text-lg font-semibold mb-4 text-gray-900">No Visitors in Campaign</h2>
+              <p className="mb-6 text-gray-700">There's no visitors in this campaign. Would you like to add visitors?</p>
+              <div className="flex justify-end space-x-3">
+                <button
+                  className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  onClick={() => {
+                    setShowNoVisitorsModal(false);
+                    setNoVisitorsDismissed(true);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+                  onClick={() => navigate('/visitors')}
+                >
+                  Add Visitors
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {/* Aggregate Stats Card */}
         <div className="mb-6">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-wrap gap-6 items-center">
@@ -273,7 +327,14 @@ const CampaignManagement = () => {
         <div className="flex justify-end mb-6">
           <button
             className={`bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors ${!isActive ? 'bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300' : ''}`}
-            onClick={handleAddStep}
+            onClick={() => {
+              if (contactsCount === 0) {
+                setShowNoVisitorsModal(true);
+                setNoVisitorsDismissed(false);
+                return;
+              }
+              handleAddStep();
+            }}
             disabled={!isActive || addStepLoading}
             title={!isActive ? 'This campaign is inactive. Activate it to add steps.' : ''}
           >
