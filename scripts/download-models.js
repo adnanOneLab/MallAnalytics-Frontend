@@ -19,7 +19,7 @@ const models = [
     url: 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/tiny_face_detector_model-weights_manifest.json'
   },
   {
-    name: 'tiny_face_detector_model-shard1',
+    name: 'tiny_face_detector_model-shard1.bin',
     url: 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/tiny_face_detector_model-shard1'
   },
   {
@@ -27,7 +27,7 @@ const models = [
     url: 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/face_landmark_68_model-weights_manifest.json'
   },
   {
-    name: 'face_landmark_68_model-shard1',
+    name: 'face_landmark_68_model-shard1.bin',
     url: 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/face_landmark_68_model-shard1'
   },
   {
@@ -35,7 +35,7 @@ const models = [
     url: 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/face_recognition_model-weights_manifest.json'
   },
   {
-    name: 'face_recognition_model-shard1',
+    name: 'face_recognition_model-shard1.bin',
     url: 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/face_recognition_model-shard1'
   },
   {
@@ -43,7 +43,7 @@ const models = [
     url: 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/face_expression_model-weights_manifest.json'
   },
   {
-    name: 'face_expression_model-shard1',
+    name: 'face_expression_model-shard1.bin',
     url: 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/face_expression_model-shard1'
   }
 ];
@@ -65,6 +65,40 @@ function downloadFile(url, filepath) {
   });
 }
 
+async function updateManifestFiles() {
+  const manifestFiles = [
+    'tiny_face_detector_model-weights_manifest.json',
+    'face_landmark_68_model-weights_manifest.json',
+    'face_recognition_model-weights_manifest.json',
+    'face_expression_model-weights_manifest.json'
+  ];
+
+  for (const manifestFile of manifestFiles) {
+    const manifestPath = join(modelsDir, manifestFile);
+    try {
+      const data = fs.readFileSync(manifestPath, 'utf8');
+      const manifest = JSON.parse(data);
+      
+      // Update paths to include .bin extension
+      manifest.forEach(entry => {
+        if (entry.paths) {
+          entry.paths = entry.paths.map(path => {
+            if (path.includes('shard') && !path.includes('.bin')) {
+              return path + '.bin';
+            }
+            return path;
+          });
+        }
+      });
+      
+      fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+      console.log(`Updated manifest: ${manifestFile}`);
+    } catch (error) {
+      console.error(`Error updating manifest ${manifestFile}:`, error);
+    }
+  }
+}
+
 async function downloadModels() {
   console.log('Downloading face-api models...');
   
@@ -79,7 +113,11 @@ async function downloadModels() {
     }
   }
   
-  console.log('All models downloaded successfully!');
+  // Update manifest files to reference the new .bin filenames
+  console.log('Updating manifest files...');
+  await updateManifestFiles();
+  
+  console.log('All models downloaded and configured successfully!');
 }
 
 downloadModels().catch(console.error); 

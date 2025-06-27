@@ -20,7 +20,7 @@ export default defineConfig({
       output: {
         assetFileNames: (assetInfo) => {
           // Ensure model files maintain their original names and structure
-          if (assetInfo.name && assetInfo.name.includes('model')) {
+          if (assetInfo.name && (assetInfo.name.includes('model') || assetInfo.name.includes('.bin'))) {
             return 'models/[name][extname]';
           }
           return 'assets/[name]-[hash][extname]';
@@ -29,6 +29,8 @@ export default defineConfig({
     },
     copyPublicDir: true, // Ensure public directory is copied to dist
     assetsDir: 'assets',
+    // Ensure .bin files are treated as assets
+    assetsInclude: ['**/*.bin']
   },
   // Ensure public folder assets are properly served
   publicDir: 'public'
