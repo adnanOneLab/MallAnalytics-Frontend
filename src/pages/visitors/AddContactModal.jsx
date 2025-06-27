@@ -33,7 +33,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
       api
         .get("api/campaigns/")
         .then((res) => {
-          setCampaigns(res.data);
+          setCampaigns(res.data.results);
         })
         .catch((err) => {
           console.error("Error fetching campaigns:", err);
