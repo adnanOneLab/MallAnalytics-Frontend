@@ -34,13 +34,40 @@ const StepModal = ({
   onSuppressionGroupChange 
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageFiles, setImageFiles] = useState([]);
   if (!open) return null;
+
+  const handleImageChange = (e) => {
+    setImageFiles(Array.from(e.target.files));
+  };
 
   const handleSubmit = async (e) => {
     if (isSubmitting) return;
+    e.preventDefault();
+    // Check sender
+    if (!selectedSender) {
+      alert('Please select a sender.');
+      return;
+    }
+    // Check send_at
+    let sendAt = form.send_at;
+    let sendAtDate = sendAt ? new Date(sendAt) : null;
+    const now = new Date();
+    if (!sendAtDate || sendAtDate <= now) {
+      // Set to 2 minutes in the future
+      sendAtDate = new Date(now.getTime() + 2 * 60 * 1000);
+      sendAt = sendAtDate.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+      alert('Send time was not set or was in the past. It has been set to 2 minutes in the future.');
+    }
     setIsSubmitting(true);
     try {
-      await onSubmit(e);
+      await onSubmit({
+        ...form,
+        send_at: sendAtDate.toISOString(),
+        sender_id: selectedSender,
+        suppression_group_id: selectedSuppressionGroup || undefined,
+        image_files: imageFiles,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -162,6 +189,23 @@ const StepModal = ({
                 </select>
               </InputField>
             </div>
+
+            {/* Image Upload */}
+            <InputField icon={null} label="Step Images (optional)">
+              <input
+                type="file"
+                name="image_files"
+                multiple
+                accept="image/*"
+                onChange={handleImageChange}
+                className={baseInputClasses}
+              />
+              {imageFiles.length > 0 && (
+                <div className="mt-2 text-xs text-gray-500">
+                  {imageFiles.length} image(s) selected
+                </div>
+              )}
+            </InputField>
 
             {/* Action Buttons */}
             <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
