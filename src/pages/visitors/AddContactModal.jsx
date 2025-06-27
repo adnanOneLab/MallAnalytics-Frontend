@@ -31,7 +31,7 @@ export default function AddContactModal({ isOpen, onClose, selectedVisitors }) {
   useEffect(() => {
     if (isOpen) {
       api
-        .get("/campaigns/")
+        .get("api/campaigns/")
         .then((res) => {
           setCampaigns(res.data);
         })
