@@ -18,6 +18,8 @@
         "avgVisitDuration": "Avg. Visit Duration",
         "avgVisitDurationSubtext": "+5m from last month",
         "membershipDistribution": "Membership Distribution",
+        "avgStoresVisited": "Avg. Stores Visited",
+        "avgStoresVisitedSubtext": "Average number of stores visited overall",
         "platinum": "Platinum",
         "gold": "Gold",
         "silver": "Silver",
