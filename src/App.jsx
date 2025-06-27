@@ -90,9 +90,7 @@ const AppContent = () => {
       <Route
         path="/register-user"
         element={
-          <ProtectedRoute>
             <RegistrationForm />
-          </ProtectedRoute>
         }
       />
       <Route path="/registration-success" element={<SuccessScreen />} />
