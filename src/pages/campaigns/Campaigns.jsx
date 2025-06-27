@@ -33,7 +33,7 @@ export default function CampaignTable() {
     try {
       setLoading(true);
       const res = await api.get("api/campaigns/");
-      setCampaigns(res.data);
+      setCampaigns(res.results);
     } catch (error) {
       console.error(t("campaigns.fetchError"), error);
     } finally {
