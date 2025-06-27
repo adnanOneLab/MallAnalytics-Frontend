@@ -19,10 +19,15 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   async (config) => {
-    let token = await getAccessToken()
-    token = token?.id_token
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    try {
+      let token = await getAccessToken()
+      token = token?.id_token
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      // Silently continue without token for unauthenticated requests (like registration)
+      console.log('No authentication token available, proceeding without authorization header');
     }
     return config;
   },
