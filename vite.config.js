@@ -14,5 +14,19 @@ export default defineConfig({
       protocol: 'ws', // Use WebSocket for HMR
       host: 'localhost'
     }
+  },
+  build: {
+    assetsInclude: ['**/*.bin', '**/*.shard*'], // Include model files as assets
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          // Keep model files in models directory with original names
+          if (assetInfo.name && (assetInfo.name.includes('model') || assetInfo.name.includes('shard'))) {
+            return 'models/[name][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
+        }
+      }
+    }
   }
 })
