@@ -30,17 +30,17 @@ const VisitorDetail = () => {
           phone: data.phone,
           address: data.address,
           picture_url: data.picture_url,
-          monthlyVisits: data.monthlyVisits,
-          yearlyVisits: data.yearlyVisits,
-          lifeVisits: data.lifeVisits,
+          monthlyVisits: data.metrics?.average_monthly_visits ?? data.monthlyVisits,
+          yearlyVisits: data.metrics?.average_yearly_visits ?? data.yearlyVisits,
+          lifeVisits: data.metrics?.total_life_visits ?? data.lifeVisits,
           avgTimePerVisitYear: data.avgTimePerVisitYear,
           avgTimePerVisitLife: data.avgTimePerVisitLife,
-          storesVisitedMonth: data.storesVisitedMonth,
-          storesVisitedLife: data.storesVisitedLife,
-          firstVisit: data.firstVisit,
-          lastVisit: data.lastVisit,
-          recency: data.recency,
-          monthlyFrequency: data.monthlyFrequency,
+          storesVisitedMonth: data.metrics?.average_stores_visited_per_month ?? data.storesVisitedMonth,
+          storesVisitedLife: data.metrics?.total_stores_visited_life ?? data.storesVisitedLife,
+          firstVisit: data.metrics?.first_visit ?? data.firstVisit,
+          lastVisit: data.metrics?.last_visit ?? data.lastVisit,
+          recency: data.metrics?.recency ?? data.recency,
+          monthlyFrequency: data.metrics?.monthly_frequency ?? data.monthlyFrequency,
         });
         setVisitData(data.visits);
         setError(null);
@@ -180,7 +180,7 @@ const VisitorDetail = () => {
                     </div>
                     <div>
                       <div className="text-sm text-gray-500 mb-1">{t('visitorsProfile.email')}</div>
-                      <div className="font-medium text-blue-600">
+                      <div className="font-medium text-black">
                         {visitorInfo.email || "-"}
                       </div>
                     </div>
@@ -223,6 +223,24 @@ const VisitorDetail = () => {
                       </div>
                     </div>
                   </div>
+                  {/* Metrics Grid */}
+                  {visitorInfo.metrics && (
+                    <div className="mt-8">
+                      <h3 className="text-md font-semibold mb-2">Visitor Metrics</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-2 text-sm">
+                        <div><span className="text-gray-500">First Visit:</span> <span className="font-medium text-gray-900">{visitorInfo.metrics.first_visit || '-'}</span></div>
+                        <div><span className="text-gray-500">Last Visit:</span> <span className="font-medium text-gray-900">{visitorInfo.metrics.last_visit || '-'}</span></div>
+                        <div><span className="text-gray-500">Recency (days):</span> <span className="font-medium text-gray-900">{visitorInfo.metrics.recency ?? '-'}</span></div>
+                        <div><span className="text-gray-500">Total Life Visits:</span> <span className="font-medium text-gray-900">{visitorInfo.metrics.total_life_visits ?? '-'}</span></div>
+                        <div><span className="text-gray-500">Avg. Monthly Visits:</span> <span className="font-medium text-gray-900">{visitorInfo.metrics.average_monthly_visits ?? '-'}</span></div>
+                        <div><span className="text-gray-500">Avg. Yearly Visits:</span> <span className="font-medium text-gray-900">{visitorInfo.metrics.average_yearly_visits ?? '-'}</span></div>
+                        <div><span className="text-gray-500">Avg. Stores/Month:</span> <span className="font-medium text-gray-900">{visitorInfo.metrics.average_stores_visited_per_month ?? '-'}</span></div>
+                        <div><span className="text-gray-500">Total Stores in Life:</span> <span className="font-medium text-gray-900">{visitorInfo.metrics.total_stores_visited_life ?? '-'}</span></div>
+                        <div><span className="text-gray-500">Monthly Frequency:</span> <span className="font-medium text-gray-900">{visitorInfo.metrics.monthly_frequency ?? '-'}</span></div>
+                        <div><span className="text-gray-500">Visit Freq. Over Timespan:</span> <span className="font-medium text-gray-900">{visitorInfo.metrics.visit_frequency_over_timespan ?? '-'}</span></div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
