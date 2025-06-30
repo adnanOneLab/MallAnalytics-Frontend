@@ -10,6 +10,7 @@ import {
 import { useParams } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { fetchMovementsByVisitId } from "../../services/visitorService";
+import api from "../../services/api";
 
 const VisitorMovements = () => {
   const { visit_id } = useParams();
@@ -58,6 +59,25 @@ const VisitorMovements = () => {
     setSelectAll(newSelected.size === movements.length);
   };
 
+  const handleExportCSV = async () => {
+    try {
+      const response = await api.get(`api/movements/${visit_id}/export_csv/`, {
+        responseType: 'blob',
+      });
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `visit_${visit_id}_movements.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      alert('Failed to export CSV');
+    }
+  };
+
   // const handleVisitorClick = (id) => {
   //   navigate(`/visitors/${id}`);
   // };
@@ -66,21 +86,21 @@ const VisitorMovements = () => {
     <Layout>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Visitor</h1>
-          <p className="text-gray-600">3,265 Visits</p>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Visitor Movements</h1>
+          <p className="text-gray-600">{movements.length.toLocaleString()} Movement(s)</p>
         </div>
         <div className="flex items-center space-x-4">
-          <div className="relative">
+          {/* <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
               placeholder="Search"
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
             />
-          </div>
-          <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+          </div> */}
+          {/* <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
             <User className="w-4 h-4 text-gray-600" />
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -92,16 +112,16 @@ const VisitorMovements = () => {
               <div>Showing 05/21/2025</div>
             </div>
             <div style={{ display: "flex" }}>
-              <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+              <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium" onClick={handleExportCSV}>
                 Export to CSV
               </button>
               <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center space-x-2">
                 <span>Filters</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
-              <button className="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+              {/* <button className="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                 <Settings className="w-4 h-4" />
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -171,7 +191,7 @@ const VisitorMovements = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div
                       // onClick={() => handleVisitorClick(visitor.camera_id)}
-                      className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                      className="text-sm font-medium text-black-900 hover:text-black-800"
                     >
                       {visitor.camera_id}
                     </div>
@@ -195,14 +215,14 @@ const VisitorMovements = () => {
                   </td>
 
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex items-center space-x-3">
+                    {/* <div className="flex items-center space-x-3">
                       <button className="text-gray-400 hover:text-gray-600">
                         <Edit className="w-4 h-4" />
                       </button>
                       <button className="text-gray-400 hover:text-red-600">
                         <Trash2 className="w-4 h-4" />
                       </button>
-                    </div>
+                    </div> */}
                   </td>
                 </tr>
               ))}

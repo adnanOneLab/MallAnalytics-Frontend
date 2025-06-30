@@ -57,7 +57,8 @@ export const fetchVisitorProfile = async (userId) => {
         storesVisited: visit.stores_visited?.toString() || '0',
         timeSpent: visit.duration || '-',
         interest: interests.map(i => i.interest.name).join(', ') || '-'
-      }))
+      })),
+      metrics: userData.metrics || {},
     };
   } catch (error) {
     console.error('Error fetching visitor profile:', error);
@@ -69,3 +70,11 @@ export const fetchMovementsByVisitId=async(visit_id)=>{
   const response=await api.get(`api/movements/${visit_id}/`);
   return response.data
 }
+
+export const exportMovementsCSV = async (visit_id) => {
+  const response = await api.get(`api/movements/${visit_id}/export_csv/`, {
+    responseType: 'blob',
+    headers: { 'Accept': 'text/csv' },
+  });
+  return response.data;
+};
