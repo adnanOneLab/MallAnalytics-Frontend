@@ -146,5 +146,45 @@
             "active": "Active",
             "action": "Action"
         }
+    },
+    "registration": {
+        "title": "Registration",
+        "name": "Full Name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "address": "Address",
+        "dob": "Date of Birth",
+        "interests": "Interests",
+        "photo": "Photo",
+        "select_date": "Select date of birth",
+        "loading_interests": "Loading interests...",
+        "register": "Register",
+        "registering": "Registering...",
+        "validation": {
+            "name_required": "Name is required",
+            "email_required": "Email is required",
+            "email_invalid": "Please enter a valid email address",
+            "dob_required": "Date of birth is required",
+            "photo_required": "Photo is required"
+        }
+    },
+    "photo": {
+        "button_webcam": "Take Photo with Webcam",
+        "button_gallery": "Choose from Gallery",
+        "button_capture": "Capture",
+        "button_cancel": "Cancel",
+        "analyzing_photo":"Analyzing photo...",
+        "no_face_detected": "No face detected in the image",
+        "multiple_faces_detected": "Multiple faces detected. Please take a photo with only one face.",
+        "image_blurry": "Image appears blurry. Please take a clearer photo",
+        "face_is_not_centered": "Face is not centered in the frame",
+        "face_too_small": "Face is too small in the frame",
+        "face_tilted": "Face is tilted. Please keep your head straight",
+        "eyes_not_visible": "Eyes are not clearly visible. Please remove sunglasses if wearing any",
+        "adjustments_needed": "Photo needs adjustments",
+        "ok": "Photo meets all requirements!",
+        "error_try_again": "Error analyzing image. Please try again.",
+        "retake": "Retake Photo"
     }
+
 }

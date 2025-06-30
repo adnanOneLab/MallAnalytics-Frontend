@@ -15,7 +15,7 @@ export const loadFaceDetectionModels = async () => {
   }
 };
 
-export const analyzeFaceImage = async (imageElement) => {
+export const analyzeFaceImage = async (imageElement,t) => {
   try {
     const detections = await faceapi.detectAllFaces(
       imageElement,
@@ -25,7 +25,7 @@ export const analyzeFaceImage = async (imageElement) => {
     if (detections.length === 0) {
       return {
         passed: false,
-        message: "No face detected in the image",
+        message: 'photo.no_face_detected',
         details: []
       };
     }
@@ -33,7 +33,7 @@ export const analyzeFaceImage = async (imageElement) => {
     if (detections.length > 1) {
       return {
         passed: false,
-        message: "Multiple faces detected. Please take a photo with only one face.",
+        message: t('photo.multiple_faces_detected'),
         details: []
       };
     }
@@ -46,7 +46,7 @@ export const analyzeFaceImage = async (imageElement) => {
     const detectionConfidence = face.detection.score;
     if (detectionConfidence < 0.7) {
       passed = false;
-      details.push("Image appears blurry. Please take a clearer photo");
+      details.push('photo.image_blurry');
     }
 
     // Additional blur check using landmark positions
@@ -61,7 +61,7 @@ export const analyzeFaceImage = async (imageElement) => {
     const distanceRatio = Math.max(leftEyeToNose, rightEyeToNose) / Math.min(leftEyeToNose, rightEyeToNose);
     if (distanceRatio > 1.2) {
       passed = false;
-      details.push("Image appears blurry. Please take a clearer photo");
+      details.push('photo.image_blurry');
     }
 
     // Check face position
@@ -79,21 +79,21 @@ export const analyzeFaceImage = async (imageElement) => {
 
     if (!isCentered) {
       passed = false;
-      details.push("Face is not centered in the frame");
+      details.push('photo.face_is_not_centered');
     }
 
     // Check face size
     const faceSize = (faceBox.width * faceBox.height) / (imageWidth * imageHeight);
     if (faceSize < 0.1) {
       passed = false;
-      details.push("Face is too small in the frame");
+      details.push('photo.face_too_small');
     }
 
     // Check face angle
     const eyeAngle = Math.abs(Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x) * 180 / Math.PI);
     if (eyeAngle > 15) {
       passed = false;
-      details.push("Face is tilted. Please keep your head straight");
+      details.push('photo.face_tilted');
     }
 
     // Check for sunglasses/glasses
@@ -102,7 +102,7 @@ export const analyzeFaceImage = async (imageElement) => {
     
     if (!leftEyeOpen || !rightEyeOpen) {
       passed = false;
-      details.push("Eyes are not clearly visible. Please remove sunglasses if wearing any");
+      details.push('photo.eyes_not_visible');
     }
 
     // // Check expression
@@ -114,7 +114,7 @@ export const analyzeFaceImage = async (imageElement) => {
 
     return {
       passed,
-      message: passed ? "Photo meets all requirements!" : "Photo needs adjustments",
+      message: passed ? 'photo.ok' : 'photo.adjustments_needed',
       details
     };
 
@@ -122,7 +122,7 @@ export const analyzeFaceImage = async (imageElement) => {
     console.error('Error analyzing image:', error);
     return {
       passed: false,
-      message: "Error analyzing image. Please try again.",
+      message: 'photo.error_try_again',
       details: []
     };
   }

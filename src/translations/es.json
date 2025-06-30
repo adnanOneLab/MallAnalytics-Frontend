@@ -143,5 +143,44 @@
             "active": "Activo",
             "action": "Acción"
         }
+    },
+    "registration": {
+        "title": "Registro",
+        "name": "Nombre completo",
+        "email": "Correo electrónico",
+        "phone": "Número de teléfono",
+        "address": "Dirección",
+        "dob": "Fecha de nacimiento",
+        "interests": "Intereses",
+        "photo": "Foto",
+        "select_date": "Seleccionar fecha de nacimiento",
+        "loading_interests": "Cargando intereses...",
+        "register": "Registrarse",
+        "registering": "Registrando...",
+        "validation": {
+            "name_required": "El nombre es obligatorio",
+            "email_required": "El correo electrónico es obligatorio",
+            "email_invalid": "Por favor, introduce un correo electrónico válido",
+            "dob_required": "La fecha de nacimiento es obligatoria",
+            "photo_required": "La foto es obligatoria"
+        }
+    },
+    "photo": {
+        "button_webcam": "Tomar foto con cámara web",
+        "button_gallery": "Elegir de la galería",
+        "button_capture": "Capturar",
+        "button_cancel": "Cancelar",
+        "analyzing_photo": "Analizando foto...",
+        "no_face_detected": "No se detectó ningún rostro en la imagen",
+        "multiple_faces_detected": "Se detectaron múltiples rostros. Por favor, tome una foto con solo una persona.",
+        "image_blurry": "La imagen está borrosa. Por favor, tome una foto más clara",
+        "face_is_not_centered": "El rostro no está centrado en el encuadre",
+        "face_too_small": "El rostro es demasiado pequeño en el encuadre",
+        "face_tilted": "El rostro está inclinado. Por favor, mantenga la cabeza recta",
+        "eyes_not_visible": "Los ojos no son claramente visibles. Por favor, quite las gafas de sol si las lleva puestas",
+        "adjustments_needed": "La foto necesita ajustes",
+        "ok": "¡La foto cumple con todos los requisitos!",
+        "error_try_again": "Error al analizar la imagen. Por favor, inténtelo de nuevo.",
+        "retake": "Volver a tomar la foto"
     }
 }

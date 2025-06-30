@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { analyzeFaceImage } from '../../utils/faceDetection';
 import CameraGuide from './CameraGuide';
+import { useTranslation } from 'react-i18next';
 
 const PhotoCapture = ({ onPhotoAccepted, photoError }) => {
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -16,6 +17,9 @@ const PhotoCapture = ({ onPhotoAccepted, photoError }) => {
   const galleryInputRef = useRef(null);
   const imageRef = useRef(null);
   const videoRef = useRef(null);
+
+  const { t } = useTranslation();
+
 
   useEffect(() => {
     // Detect device types
@@ -115,7 +119,7 @@ const PhotoCapture = ({ onPhotoAccepted, photoError }) => {
         img.onload = async () => {
           setIsAnalyzing(true);
           try {
-            const results = await analyzeFaceImage(img);
+            const results = await analyzeFaceImage(img,t);
             setAnalysisResults(results);
             if (results.passed) {
               onPhotoAccepted(imageUrl, blob);
@@ -230,8 +234,8 @@ const PhotoCapture = ({ onPhotoAccepted, photoError }) => {
   };
 
   const getButtonText = () => {
-    if (isDesktop) return 'Take Photo with Webcam';
-    return 'Take Photo or Choose from Gallery';
+    if (isDesktop) return t('photo.button_webcam');
+    return t('photo.button_webcam');
   };
 
   return (
@@ -302,7 +306,7 @@ const PhotoCapture = ({ onPhotoAccepted, photoError }) => {
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
               </svg>
-              <span>Capture</span>
+              <span>{t('photo.button_capture')}</span>
             </button>
             <button
               type="button"
@@ -312,7 +316,7 @@ const PhotoCapture = ({ onPhotoAccepted, photoError }) => {
               }}
               className="px-4 py-2.5 rounded-lg bg-gray-500 text-white text-sm hover:bg-gray-600 transition-colors"
             >
-              Cancel
+              {t('photo.button_cancel')}
             </button>
           </div>
         </div>
@@ -340,7 +344,7 @@ const PhotoCapture = ({ onPhotoAccepted, photoError }) => {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-center justify-center space-x-2">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-                <span className="text-blue-600">Analyzing photo...</span>
+                <span className="text-blue-600">{t('photo.analyzing_photo')}</span>
               </div>
             </div>
           ) : analysisResults && (
@@ -352,13 +356,13 @@ const PhotoCapture = ({ onPhotoAccepted, photoError }) => {
               <h4 className={`font-medium mb-2 ${
                 analysisResults.passed ? 'text-green-700' : 'text-yellow-700'
               }`}>
-                {analysisResults.message}
+                {t(analysisResults.message)}
               </h4>
               {analysisResults.details.length > 0 && (
                 <ul className="list-disc list-inside space-y-1">
                   {analysisResults.details.map((detail, index) => (
                     <li key={index} className="text-sm text-yellow-700">
-                      {detail}
+                      {t(detail)}
                     </li>
                   ))}
                 </ul>
@@ -376,7 +380,7 @@ const PhotoCapture = ({ onPhotoAccepted, photoError }) => {
                   }}
                   className="mt-3 w-full px-2 py-2 bg-yellow-500 text-white rounded-lg text-sm font-medium hover:bg-yellow-600"
                 >
-                  Retake Photo
+                  {t('photo.retake')}
                 </button>
                 </div>
               )}
@@ -420,7 +424,7 @@ const PhotoCapture = ({ onPhotoAccepted, photoError }) => {
               }}
               className={`w-full px-0 py-2.5 rounded-lg bg-gray-50 border border-gray-300 text-sm hover:bg-gray-100 transition-colors flex items-center justify-center ${photoError ? 'border-red-300 bg-red-50' : ''}`}
             >
-              Choose from Gallery
+              {t('photo.button_gallery')}
             </button>
           )}
         </div>

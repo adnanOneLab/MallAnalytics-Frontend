@@ -338,7 +338,7 @@ const VisitorDetail = () => {
                   {visitData.map((visit, index) => (
                     <tr
                       key={index}
-                      className="hover:bg-gray-50"
+                      className="hover:bg-gray-50 cursor-pointer"
                       onClick={() => handleVisitorClick(visit.visit_id)}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
