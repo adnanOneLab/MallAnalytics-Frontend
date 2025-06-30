@@ -4,7 +4,7 @@ import { getAccessToken } from '../context/auth0-provider-with-history';
 // Use local IP address for development to allow mobile access
 const BACKEND = import.meta.env.VITE_API_URL;
 const BASE_URL = BACKEND ? `${BACKEND}` : "http://localhost:8000/";
-// const BASE_URL='https://wise-video-api-dev.wiseagents.com/api';
+// const BASE_URL='https://wise-video-api-dev.wiseagents.com/';
 
 
 

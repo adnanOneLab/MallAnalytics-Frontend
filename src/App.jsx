@@ -20,14 +20,20 @@ import { getUser } from "./services/userService";
 import React from "react";
 import LandingPage from "./pages/landing/LandingPage";
 
+const isAuthDisabled = import.meta.env.VITE_DISABLE_AUTH === "true";
+
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
 
   React.useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isAuthDisabled && !isLoading && !isAuthenticated) {
       loginWithRedirect();
     }
-  }, [isLoading, isAuthenticated, loginWithRedirect]);
+  }, [isAuthDisabled, isLoading, isAuthenticated, loginWithRedirect]);
+
+  if (isAuthDisabled) {
+    return children;
+  }
 
   if (isLoading) {
     return <LoadingComponent />;
