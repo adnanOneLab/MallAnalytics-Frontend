@@ -52,8 +52,9 @@ export const fetchVisitorProfile = async (userId) => {
       visits: userData.visits.map(visit => ({
         visit_id:visit.visit_id,
         date: new Date(visit.visit_date).toLocaleDateString(),
-        timeEntry: new Date(visit.start_time).toLocaleTimeString(),
-        timeExit: visit.end_time ? new Date(visit.end_time).toLocaleTimeString() : '-',
+        timeEntry: new Date(visit.start_time).toLocaleTimeString('en-US', { timeZone: 'UTC' }),
+        timeExit: visit.end_time ? new Date(visit.end_time).toLocaleTimeString('en-US', { timeZone: 'UTC' }) : '-',
+        
         storesVisited: visit.stores_visited?.toString() || '0',
         timeSpent: visit.duration || '-',
         interest: interests.map(i => i.interest.name).join(', ') || '-'
