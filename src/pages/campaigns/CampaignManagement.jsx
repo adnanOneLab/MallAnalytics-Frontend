@@ -14,6 +14,7 @@ import {
   getSuppressionGroups,
 } from '../../services/api';
 import StepModal from './StepModal';
+import DuplicateStepModal from './DuplicateStepModal';
 
 const CampaignManagement = () => {
   const [activeTab, setActiveTab] = useState("emails");
@@ -37,6 +38,9 @@ const CampaignManagement = () => {
   const [showNoVisitorsModal, setShowNoVisitorsModal] = useState(false);
   const [noVisitorsDismissed, setNoVisitorsDismissed] = useState(false);
   const [contactsCount, setContactsCount] = useState(0);
+  const [duplicateStepModalOpen, setDuplicateStepModalOpen] = useState(false);
+  const [duplicateStepOrder, setDuplicateStepOrder] = useState(null);
+  const [duplicateStepMessage, setDuplicateStepMessage] = useState('');
 
   // Fetch campaign steps
   useEffect(() => {
@@ -112,6 +116,31 @@ const CampaignManagement = () => {
   };
 
   const handleStepFormSubmit = async (payload) => {
+    // Prevent duplicate step_order
+    const isDuplicateOrder = steps.some(
+      (step) => step.step_order === Number(payload.step_order) && (!editingStep || step.id !== editingStep.id)
+    );
+    if (isDuplicateOrder) {
+      setDuplicateStepOrder(payload.step_order);
+      setDuplicateStepMessage(`Step order ${payload.step_order} already exists. Please choose a different step order or delete the existing step first.`);
+      setDuplicateStepModalOpen(true);
+      return;
+    }
+    // Prevent duplicate send_at date (date only, ignore time)
+    const payloadDate = payload.send_at ? new Date(payload.send_at).toISOString().slice(0, 10) : null;
+    const isDuplicateDate = steps.some(
+      (step) => {
+        if (!step.send_at) return false;
+        const stepDate = new Date(step.send_at).toISOString().slice(0, 10);
+        return stepDate === payloadDate && (!editingStep || step.id !== editingStep.id);
+      }
+    );
+    if (isDuplicateDate) {
+      setDuplicateStepOrder(null);
+      setDuplicateStepMessage(`A step is already scheduled for ${payloadDate}. Please choose a different date or delete the existing step first.`);
+      setDuplicateStepModalOpen(true);
+      return;
+    }
     try {
       let dataToSend = payload;
       // If image_files is present and is an array, use FormData
@@ -523,6 +552,12 @@ const CampaignManagement = () => {
           suppressionGroups={suppressionGroups}
           selectedSuppressionGroup={selectedSuppressionGroup}
           onSuppressionGroupChange={handleSuppressionGroupChange}
+        />
+        <DuplicateStepModal
+          open={duplicateStepModalOpen}
+          stepOrder={duplicateStepOrder}
+          message={duplicateStepMessage}
+          onClose={() => setDuplicateStepModalOpen(false)}
         />
       </div>
     </Layout>

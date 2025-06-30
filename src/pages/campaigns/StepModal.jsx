@@ -28,10 +28,7 @@ const StepModal = ({
   editing, 
   senders = [], 
   selectedSender, 
-  onSenderChange, 
-  suppressionGroups = [], 
-  selectedSuppressionGroup, 
-  onSuppressionGroupChange 
+  onSenderChange
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFiles, setImageFiles] = useState([]);
@@ -65,7 +62,6 @@ const StepModal = ({
         ...form,
         send_at: sendAtDate.toISOString(),
         sender_id: selectedSender,
-        suppression_group_id: selectedSuppressionGroup || undefined,
         image_files: imageFiles,
       });
     } finally {
@@ -91,7 +87,7 @@ const StepModal = ({
             <button
               onClick={onClose}
               disabled={isSubmitting}
-              className="p-2 hover:bg-white/20 rounded-lg transition-colors disabled:opacity-50"
+              className="p-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition-colors disabled:opacity-50"
             >
               <X size={20} />
             </button>
@@ -139,26 +135,26 @@ const StepModal = ({
               />
             </InputField>
 
-            <InputField icon={Clock} label="Send Date & Time">
-              <input
-                type="datetime-local"
-                name="send_at"
-                value={form.send_at}
-                onChange={onChange}
-                className={baseInputClasses}
-                required
-                min={(() => {
-                  const now = new Date();
-                  const pad = n => n.toString().padStart(2, '0');
-                  return `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
-                })()}
-              />
-            </InputField>
-
             <div className="grid md:grid-cols-2 gap-6">
+              <InputField icon={Clock} label="Send Date & Time">
+                <input
+                  type="datetime-local"
+                  name="send_at"
+                  value={form.send_at}
+                  onChange={onChange}
+                  className={`${baseInputClasses} h-15`}
+                  required
+                  min={(() => {
+                    const now = new Date();
+                    const pad = n => n.toString().padStart(2, '0');
+                    return `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+                  })()}
+                />
+              </InputField>
+
               <InputField icon={User} label="Email Sender">
                 <select
-                  className={baseInputClasses}
+                  className={`${baseInputClasses} appearance-none h-15`}
                   value={selectedSender || ''}
                   onChange={onSenderChange}
                   required
@@ -168,22 +164,6 @@ const StepModal = ({
                   {senders.map(sender => (
                     <option key={sender.id} value={sender.id}>
                       {sender.nickname || sender.from?.email || sender.email}
-                    </option>
-                  ))}
-                </select>
-              </InputField>
-
-              <InputField icon={Shield} label="Unsubscribe Group">
-                <select
-                  className={baseInputClasses}
-                  value={selectedSuppressionGroup || ''}
-                  onChange={onSuppressionGroupChange}
-                  name="suppression"
-                >
-                  <option value="">No unsubscribe group</option>
-                  {suppressionGroups.map(group => (
-                    <option key={group.id} value={group.id}>
-                      {group.name}
                     </option>
                   ))}
                 </select>
